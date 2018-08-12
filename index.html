@@ -9,15 +9,32 @@
   <body>
     <h1>e-yuuki.org</h1>
     <hr>
-    <h2>Web Articles</h2>
-      <h3>NetBSD</h3>
+      <ul>
+        <li><a href="#articles">Web Articles</a></li>
+        <ul>
+          <li><a href="#netbsd">NetBSD</a></li>
+          <li><a href="#papers">Papers and Presentations</a></li>
+        </ul>
+        <li><a href="#links">Links</a></li>
+        <li><a href="#gnupg">GnuPG</a></li>
+        <ul>
+          <li><a href="#publickey">Public Key</a></li>
+          <li><a href="#fingerprint">Fingerprint</a></li>
+        </ul>
+      </ul>
+    <h2 id="articles">Web Articles</h2>
+      <h3 id="netbsd">NetBSD</h3>
         <ul>
           <li><a href="./netbsd/pkg_install.html">pkg_installについて</a></li>
           <li><a href="./netbsd/thinkpad.html">NetBSD on ThinkPad</a></li>
           <li><a href="./netbsd/xen.html">Xenで準仮想化環境を構築する</a></li>
           <li><a href="./netbsd/pkgsrc-wip.html">pkgsrc-wip上での作業</a></li>
         </ul>
-    <h2>Papers and Presentations</h2>
+      <h3 id="essay">Essay</h3>
+        <ul>
+          <li><a href="./essay/webpage.html">ウェブページについて</a></li>
+        </ul>
+    <h2 id="papers">Papers and Presentations</h2>
       <ul>
         <li>Yuuki Enomoto, <a href="./presentation/jpnetbsdbof/2018/main.pdf"> Progress of basepkg</a>,日本NetBSDユーザーグループ第二十回定期総会およびNetBSD BOF 2018</li>
         <li>Yuuki Enomoto &amp; Ken'ichi Fukamachi, <a href="./presentation/asiabsdcon2018/main.pdf"> Design, Implementation and Operation of NetBSD Base System Packaging
@@ -31,12 +48,12 @@
         <li>榎本優樹 &amp; 深町賢一, <a href="./presentation/fit2016/main.pdf"> Emmbedded NetBSD を生成するプログラムの展望</a>,
           情報処理学会, FIT2016 第15回情報科学技術フォーラム, 2016</li>
       </ul>
-    <h2>Links</h2>
+    <h2 id="links">Links</h2>
       <ul>
         <li><a href="https://github.com/user340">GitHub</a></li>
       </ul>
-    <h2>GnuPG</h2>
-    <h3>Public Key</h3>
+    <h2 id="gnupg">GnuPG</h2>
+    <h3 id="publickey">Public Key</h3>
     <pre><code>-----BEGIN PGP PUBLIC KEY BLOCK-----
     
 mQENBFpDZMQBCAC6Rs6wqlzFRf+Xw0QtKyV1GVgaX+0o38tDWw7ODKWKKg7/icQA
@@ -68,7 +85,7 @@ FYNlqNGf4sSVCDbISXel+WihyIM3S6WrGmN9j21a+yfWyvtsTlPA
 =51+i
 -----END PGP PUBLIC KEY BLOCK-----</code></pre>
     <p>またはpgp.mit.eduから取得できます。</p>
-    <h3>Fingerprint</h3>
+    <h3 id="fingerprint">Fingerprint</h3>
     <pre><code>EF84 8A8E D1C2 A92A BEEB  090B E2AE 7147 C209 0877</code></pre>
     <hr>
     <footer>
