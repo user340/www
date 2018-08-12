@@ -6,8 +6,13 @@
   </head>
   <body>
     <h1>pkg_installについて</h1>
+    <hr>
     <ol>
       <li><a href="#install">インストール</a></li>
+      <li><a href="#add">pkg_add(1)</a></li>
+      <li><a href="#admin">pkg_admin(1)</a></li>
+      <li><a href="#delete">pkg_delete(1)</a></li>
+      <li><a href="#create">pkg_create(1)</a></li>
     </ol>
     <h2 id="install">インストール</h2>
     <p>NetBSDではベースシステムに含まれている。</p>
@@ -37,7 +42,7 @@ Package git-base-2.14.1nb2 has a command-injection vulnerability, see https://nv
 Package libxml2-2.9.5 has a denial-of-service vulnerability, see https://nvd.nist.gov/vuln/detail/CVE-2017-8872</code></pre>
     <p>libxsltとgit-base、libxmlパッケージに脆弱性があるとわかる。</p>
 
-    <h2>pkg_delete(1)</h2>
+    <h2 id="delete">pkg_delete(1)</h2>
     <p>pkg_delete(1)は与えられたパッケージ名をデータベース（標準では/var/db/pkg）から探し、あれば削除する。pkgsrcでmake installを実行してインストールしたパッケージの場合、削除したいパッケージのディレクトリまで移動しmake deinstallを実行することもできる。</p>
     <p>たとえばfirefoxパッケージを削除するとき
     <pre><code># pkg_delete firefox</code></pre>
@@ -47,7 +52,7 @@ Package libxml2-2.9.5 has a denial-of-service vulnerability, see https://nvd.nis
     のどちらかを実行する。
     </p>
 
-    <h2>pkg_create(1)</h2>
+    <h2 id="create">pkg_create(1)</h2>
     <p>pkg_create(1)はその名の通りパッケージを作る。/usr/pkgsrc/packages/Allにあるtarballはpkg_create(1)によって生成されている。</p>
     <p>pkg_create(1)はパッケージに関する情報を含んだファイル（メタデータ）を必要とする。</p>
     <table border=1>

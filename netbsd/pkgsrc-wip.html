@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>e-yuuki.org</title>
+  </head>
+  <body>
+    <h1>pkgsrc-wip上での作業</h1>
+    <hr>
+    <ol>
+      <li><a href="#official">公式ドキュメント</a></li>
+      <li><a href="#practice">パッケージを更新する実例</a></li>
+    </ol>
+    <h2 id="official">公式ドキュメント</h2>
+    <p>公式サイトは<a href="https://www.pkgsrc.org/wip/">The pkgsrc-wip project</a></p>
+    <p><a href="https://www.pkgsrc.org/wip/users/">The pkgsrc-wip project -- committer access</a>にはpkgsrc-wip開発者の登録からパッケージの作成まで様々な情報が書かれている．これを読んでおけばwipの作業は問題ない．</p>
+
+    <h2 id="practice">パッケージを更新する実例</h2>
+    <p>pkgsrc-wipにてbasepkgパッケージのバージョンを1.2から1.3に挙げたときの作業手順をここに残す。</p>
+
+    <h3 id="makefile">Makefileを更新する</h3>
+    <pre><code># diff -u Makefile.org Makefile
+--- Makefile.org        2018-02-07 17:00:46.000000000 +0900
++++ Makefile    2018-02-07 16:08:41.000000000 +0900
+@@ -2,7 +2,7 @@
+
+ DEPENDS+=      pkg_install>=20170419:../../pkgtools/pkg_install
+
+-DISTNAME=      basepkg-1.2
++DISTNAME=      basepkg-1.3
+ CATEGORIES=    pkgtools
+ MASTER_SITES=  ${MASTER_SITE_GITHUB:=user340/}</code></pre>
+
+    <h3 id="distinfo">distinfoを更新する</h3>
+    <p>make distinfoを実行する。</p>
+
+    <h3 id="plist">PLISTを更新する</h3>
+    <p>make packageでパッケージを作成したあと、make print-PLISTの出力をPLISTに書き込む。</p>
+
+    <h3 id="test">テスト</h3>
+    <li>
+      <li>make package</li>
+      <li>make install</li>
+      <li>make deinstall</li>
+    </li>
+    <p>これらがすべて正常に動作するか確認する。</p>
+    <p>Makefileのチェックなどにpkgtools/pkglintを使う。</p>
+
+    <h3 id="commit">コミット</h3>
+    <p>変更を加えたファイルを対象にgit addする。</p>
+    <pre><code># git add Makefile distinfo PLIST</code></pre>
+    <p>コミットメッセージは以下のように書く。</p>
+    <pre><code>basepkg: Update wip/basepkg to 1.3
+
+Changes:
+ * New two meta data, +SIZE_PKG and +SIZE_ALL.</code></pre>
+    pkgsrc-wipリポジトリはmasterブランチ一本運用である。pushするまえにpull -rして、ローカルにcloneされているpkgsrc-wipリポジトリを更新する。
+
+    <h3 id="conclusion">作業のまとめ</h3>
+    <pre><code># cd /usr/pkgsrc/wip/basepkg
+# vim Makefile
+...バージョン番号の変更...
+# make distinfo
+...distinfo の更新...
+# make package
+...パッケージを作成する...
+# make print-PLIST > PLIST
+...PLIST の更新...
+# make clean
+...一旦，作業ディレクトリを削除する...
+# make install
+...[デバッグ] システムにインストールしてみる...
+# make deinstall
+...[デバッグ] アンインストールしてみる...
+# make clean
+...作業ディレクトリを削除する...
+# pkglint
+...警告を確認し，Makefile などに不備がないかを調べる...
+# git add Makefile distinfo PLIST
+# git commit
+...commit メッセージを書く...
+# git pull -r
+...リポジトリの更新...
+# git push
+...リポジトリへ変更を反映させる...</code></pre>
+    <hr>
+    <footer>
+      <address>
+        Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>
+      </address>
+      <p><small>Copyright (C) 2015,2016,2017,2018 Yuuki Enomoto</small></p>
+    </footer>
+  </body>
+</html>
