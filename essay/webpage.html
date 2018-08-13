@@ -7,8 +7,8 @@
     <title>e-yuuki.org</title>
   </head>
   <body>
-    <h1>ウェブページについて</h1>
-    <p><time>2018-08-12</time></p>
+    <h1>動的Webページから静的Webページへの移行</h1>
+    <p>Last Update <time>2018-08-13</time></p>
     <hr>
     <p>
     　今までウェブページはPico<a id="rpico" href="#pico">[1]</a>
@@ -40,7 +40,8 @@
     ついにHTML5ベタ書きによる静的なウェブページ公開に踏み切った。
     Pico固有の問題またはフラットファイルCMSの問題というわけではない。
     単に個人的なウェブページの使い方を考慮すると、
-    CMSの動的ページよりも静的ページのほうが有利な点が多いと気づいたからだ。
+    CMSの動的Webページよりも静的Webページのほうが
+    個人的に性に合った点が多いと気づいたからだ。
     </p>
     <p>
     　基本的に、書き物は自分があとから読み返すために書く。
@@ -96,6 +97,10 @@
     リレーショナルデータベースとかPHPとか関係なしにHTTPデーモンさえ動いていれば
     確実にブラウザで表示できる。
     僕はこういった原始的な手法による優位性を重んじる傾向にある。
+    MarkdownもCommonMark<a id="#rcm" href="cm">[5]</a>
+    という規格があるものの、GitHub Flavored Markdown（GFM）
+    <a id="rgfm" href="gfm">[6]</a>
+    に代表されるCommonMarkの拡張版も種類が多くややこしい。
     </p>
     <p>
     　無論、Markdownから原始的な方法に鞍替えした弊害もある。
@@ -104,7 +109,9 @@
     現に、Picoを使う前はHTMLを手書きしてウェブページを書いていたし、
     手作業が多すぎて嫌になったからPicoに移った経緯もある。
     しかしこれらの弊害を許容してでも、
-    なるべくまとまった文書を書いて長く残していきたい意思がある。
+    自身で制御し切れない動的なページ生成に頼るよりは
+    思ったように確実に描画される静的なページを書きたい。
+    そうしてまとまった文書を書いてなるべく長く残したい意思がある。
     </p>
     <hr>
     <footer>
@@ -116,6 +123,10 @@
         <a href="https://pandoc.org">pandoc.org</a></p>
       <p id="w3c"><a href="#rw3c">4</a>
         <a href="https://www.w3.org/TR/html52/">www.w3.org/TR/html52/</a></p>
+      <p id="cm"><a href="#rcm">5</a>
+        <a href="https://commonmark.org/">commonmark.org</a></p>
+      <p id="gfm"><a href="#rgfm">6</a>
+        <a href="https://github.github.com/gfm/">GitHub Flavored Markdown Spec</a>
       <address>
         Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>
       </address>
