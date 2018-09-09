@@ -22,7 +22,7 @@
 
     <h2 id="add">pkg_add(1)</h2>
     <p>pkg_add(1)はパッケージのインストールに使われる。pkgsrcでmake installすると裏で自動的に実行されるが、たまにパッケージを手動でインストールする場面もある。</p>
-    <p>manのEXAMPLESにあるように、パッケージが置かれているURLを環境変数PKG_PATHに指定すると、パッケージをそこからダウンロードしてインストールできる。</p>
+    <p>manのEXAMPLESにあるように、パッケージを配布しているURLを環境変数PKG_PATHに指定すると、パッケージをそこからダウンロードしてインストールできる。</p>
     <blockquote>
       <p>In all cases, <b>pkg_add</b> will try to install binary packages listed in dependencies list.</p>
       <p>You can specify a compiled binary package explicitly on the command line.</p>
@@ -43,6 +43,7 @@ Package libxslt-1.1.30 has a insufficiently-random-numbers vulnerability, see ht
 Package git-base-2.14.1nb2 has a command-injection vulnerability, see https://nvd.nist.gov/vuln/detail/CVE-2017-14867
 Package libxml2-2.9.5 has a denial-of-service vulnerability, see https://nvd.nist.gov/vuln/detail/CVE-2017-8872</code></pre>
     <p>libxsltとgit-base、libxmlパッケージに脆弱性があるとわかる。</p>
+    <p>脆弱性のあるパッケージはpkgsrcからインストールできないようになっているが、脆弱性があると認識した上でパッケージをインストールするには/etc/mk.confにALLOW_VULNERABLE_PACKAGES=yesを追加する。</p>
 
     <h2 id="delete">pkg_delete(1)</h2>
     <p>pkg_delete(1)は与えられたパッケージ名をデータベース（標準では/var/db/pkg）から探し、あれば削除する。pkgsrcでmake installを実行してインストールしたパッケージの場合、削除したいパッケージのディレクトリまで移動しmake deinstallを実行することもできる。</p>
@@ -103,6 +104,20 @@ Package libxml2-2.9.5 has a denial-of-service vulnerability, see https://nvd.nis
         </tr>
       </tbody>
     </table>
+
+    <h2 id="info">pkg_info(1)</h2>
+    <p>pkg_info(1)はパッケージの情報を表示する。マニュアルを読むとオプションの数が多いものの、大抵の場合はオプションを何も付けずに実行するだけで済む。</p>
+    <p>特定のファイルがどのパッケージに格納されているのかを調べるには-Feオプションを使う。
+    <pre><code> $ pkg_info -Fe /usr/pkg/bin/vim
+vim-8.1.0216</code></pre></p>
+    <p>特定のファイルを提供しているパッケージの、提供しているファイルの一覧を調べるには-LFオプションを使う。
+    <pre><code> $ pkg_info -LF /usr/pkg/bin/vim
+Information for vim-8.1.0216:
+
+Files:
+/usr/pkg/bin/rview
+/usr/pkg/bin/rvim
+/usr/pkg/bin/vim</code></pre></p>
     <hr>
     <footer>
       <address>
