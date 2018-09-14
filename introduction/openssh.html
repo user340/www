@@ -54,6 +54,8 @@ client$ ssh uki@xxx.xxx.xxx.xxx</code></pre></p>
 PermitEmptyPasswords no
 PasswordAuthentication yes</code></pre>設定後SSHデーモンをservice(8)のrestartかonerestartアクションで再起動する。
     <pre><code>server# service sshd onerestart</code></pre></p>
+    <h2>どうしてもパスワード認証を禁止できない場合</h2>
+    レンタルサーバのような/etcの下のファイルに書き込む権限がないサービスを使うとき、公開鍵認証でログインできてもパスワード認証までは禁止できないこともある。どうしようもないので、そのサービスで利用できる最大の長さまでパスワードを長くするしかない。パスワードジェネレータは調べればいろいろなものが見つかる。
     <hr>
     <footer>
       <address>
