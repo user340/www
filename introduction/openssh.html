@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/typesetting.css">
+    <title>e-yuuki.org</title>
+  </head>
+  <body>
+    <h1>OpenSSH</h1>
+    <hr>
+    <h2>インストール</h2>
+    <p>NetBSD 8.0ではベースシステム（base.tgz）に含まれている。
+    <pre><code>$ /usr/bin/ssh -V
+OpenSSH_7.6 NetBSD_Secure_Shell-20171007, OpenSSL 1.0.2k  26 Jan 2017</code></pre></p>
+    <p>pkgsrc(7)ではsecurity/opensshパッケージで提供されている。インストールするには
+    <pre><code># cd /usr/pkgsrc/security/openssh
+# make install clean clean-depends</code></pre>
+    を実行する。</p>
+    <p>pkgsrc(7)からインストールした場合、RCスクリプトは/usr/pkg/share/examples/rc.d/sshdを使う。これを/etc/rc.dディレクトリにコピーする。
+    <pre><code># cp /usr/pkg/share/examples/rc.d/sshd /etc/sshd</code></pre></p>
+    <h2>SSHサーバ</h2>
+    <p>SSHサーバとはSSHプロトコルで外部からのログインを受け付けるサーバを意味する。SSHデーモンはクライアントからの接続を受け付ける。外部からログインさせたくなければSSHデーモンは動かさない。</p>
+    <p>デスクトップ用途のマシンではリモートログインする機会が少ないだろう。しかしデスクトップ環境でもSSHデーモンを動かしておくことで、たとえばX Window Systemに異常が起こったときに他の端末からSSHログインをして救出作業できる場合がある。あるいは会社でデスクトップPCとノートPCを一台ずつ貸与されそれらが同一ネットワークに接続しているとして、自席のデスクトップPCでSSHデーモンを動かしノートPCからログインすることで自席でなくともデスクトップPCをCUI上またはX11転送を使って操作できる。会議室にいるとき、自宅から会社へVPN接続をするときなどに有効な手だ。</p>
+    <p>外部からのログインを受け付けるということは、自分以外の悪意ある第三者がログインを試みるケースも考慮しなければならない。パスワード認証では総当たり攻撃で突破される可能性が高いため、ここでは公開鍵を使った認証の設定方法について述べる。</p>
+    <h3>サーバ側でSSHデーモンを実行する</h3>
+    <p>はじめにSSHサーバ側でSSHデーモンを実行する。
+    <pre><code>server# service sshd onestart</code></pre>
+    OS起動時にSSHデーモンを自動で実行するよう設定するには
+    <pre><code>sshd=YES</code></pre>を/etc/rc.confに書き込む。
+    <pre><code>server# echo "sshd=YES" >> /etc/rc.conf</code></pre></p>
+    <p>SSHデーモンが動いているか確認するにはservice(8)のstatusもしくはonestatusアクションを使う。たとえば正常に動作していれば以下のような出力が得られるだろう。
+    <pre><code>server# service sshd onestatus
+sshd is running as pid 12864. </code></pre></p>
+    <h3>クライアント側から接続テストをする</h3>
+    <p>クライアントがサーバへSSHログインできるかを確認する。サーバ側のユーザが"uki"だとすると、クライアント側からログインするにはssh(1)を<pre><code>client$ ssh uki@xxx.xxx.xxx.xxx</code></pre>のように実行する。"xxx.xxx.xxx.xxx"はサーバのIPアドレスに適宜置き換えてほしい。これを実行すると、ukiのパスワードを聞かれ、入力したものが正しければログインできる。接続を切るには<pre><code>server$ exit</code></pre>を実行する。</p>
+    <h3>クライアント側で公開鍵と秘密鍵を作る</h3>
+    <p>SSHサーバへ接続する側にて公開鍵と秘密鍵をssh-keygen(1)で作る。鍵のタイプにはrsaやdsa・ecdsa・ed25519があり、SSHデーモンのバージョンによってはサポートされていないものもある。古いバージョンのSSHデーモンを使っている場合は注意が必要。</p>
+    <p>ここでは4096 bitのRSA鍵か、ed25519鍵の2通りを紹介する。ssh-keygen(1)でこれらを作るには
+    <pre><code>client$ ssh-keygen -t ed25519 -o -a 100</code></pre>または<pre><code>client$ ssh-keygen -t rsa -b 4096 -o -a 100</code></pre>のどちらかを実行する。前者ではed25519鍵が、後者では4096 bit長のRSA鍵が作られる。これらを実行したときウィザード形式で鍵の生成が始まる。Enter file in which to save the keyでは鍵をどこに作るか、Enter passphraseでは鍵のパスフレーズを、Enter same passphrase againでは直前に入力したものと同じパスフレーズを入力する。パスフレーズの入力のさい、入力した文字は画面にエコーされないので注意すること。</p>
+    <h3>クライアント側の公開鍵をサーバ側にコピーする</h3>
+    <p>ファイル名が.pubで終わるものが公開鍵。これをサーバ側になんらかの方法でコピーする。たとえば
+    <pre><code>client$ scp ~/.ssh/id_ed25519.pub uki@xxx.xxx.xxx.xxx:~/</code></pre>のようにscp(1)を使う。CentOSのようなGNU/Linuxではssh-copy-id(1)という公開鍵コピー用のユーティリティが用意されているが、NetBSD 8.0およびpkgsrc(7)では提供されていないので手動でおこなわなければならない。</p>
+    <h3>サーバ側のホームディレクトリに認証用のファイルを作る</h3>
+    <p>サーバ側で、SSHでログインされるユーザのホームディレクトリに.sshディレクトリを作る。次にそのディレクトリ内にauthorized_keysというファイルを作る。このファイルに公開鍵の中身を追記していく。</p>
+    <p>.sshディレクトリのパーミッションは700にする。authorized_keysのパーミッションは600にする。
+    <pre><code>server$ mkdir ~/.ssh
+server$ chmod 700 ~/.ssh
+server$ cat id_ed25519 >> ~/.ssh/authorized_keys
+server$ chmod 600 ~/.ssh/authorized_keys</code></pre>クライアント側から再度ssh(1)でログインし、公開鍵認証でログインできるか（パスワードは聞かれないか？パスフレーズの入力を求められるか？）を確認する。<pre><code>server$ exit
+client$ ssh uki@xxx.xxx.xxx.xxx</code></pre></p>
+    <h3>サーバ側でパスワード認証を禁止する</h3>
+    <p>SSHデーモンの設定ファイル/etc/ssh/sshd_config（pkgsrc(7)からインストールした場合は/usr/pkg/etc/ssh/sshd_config）を編集し、以下の項目を確認する。<pre><code>PermitRootLogin no
+PermitEmptyPasswords no
+PasswordAuthentication yes</code></pre>設定後SSHデーモンをservice(8)のrestartかonerestartアクションで再起動する。
+    <pre><code>server# service sshd onerestart</code></pre></p>
+    <hr>
+    <footer>
+      <address>
+        Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>
+      </address>
+      <p><small>Copyright (C) 2015,2016,2017,2018 Yuuki Enomoto</small></p>
+    </footer>
+  </body>
+</html>
