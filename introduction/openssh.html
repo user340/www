@@ -7,8 +7,25 @@
 <title>e-yuuki.org</title>
 </head>
 <body>
-<h1>OpenSSH</h1>
+<h1>リモートログイン&mdash;&mdash;OpenSSH</h1>
 <hr>
+<h2>目次</h2>
+<ol>
+  <li>インストール</li>
+  <li>SSHサーバ
+    <ol>
+      <li>サーバ側でSSHデーモンを実行する</li>
+      <li>クライアント側から接続テストをする</li>
+      <li>クライアント側で公開鍵と秘密鍵を作る</li>
+      <li>クライアント側の公開鍵をサーバ側にコピーする</li>
+      <li>サーバ側のホームディレクトリに認証用のファイルを作る</li>
+      <li>サーバ側でパスワード認証を禁止する</li>
+    </ol>
+  </li>
+  <li>どうしてもパスワード認証を禁止できない場合</li>
+  <li>その他SSHログインの認証として使えるもの</li>
+  <li>参考文献</li>
+</ol>
 <h2>インストール</h2>
 <p>NetBSD 8.0ではベースシステム（base.tgz）に含まれている。</p>
 
@@ -98,7 +115,7 @@ PasswordAuthentication yes</code></pre>
 <pre><code>server# service sshd onerestart</code></pre>
 
 <h2>どうしてもパスワード認証を禁止できない場合</h2>
-<p>レンタルサーバのような/etcの下のファイルに書き込む権限がないサービスを使うとき、公開鍵認証でログインできてもパスワード認証までは禁止できないこともある。どうしようもないので、そのサービスで利用できる最大の長さまでパスワードを長くするしかない。パスワードマネージャは調べればいろいろなものが見つかる。僕はBashとGnuPGで実装されたパスワードマネージャ<a href="https://github.com/drduh/pwd.sh">pwd.sh</a>を使っている。</p>
+<p>レンタルサーバのような/etcの下のファイルに書き込む権限がないサービスを使うとき、公開鍵認証でログインできてもパスワード認証までは禁止できないこともある。どうしようもないので、そのサービスで利用できる最大の長さまでパスワードを長くするしかない。パスワードマネージャは調べればいろいろなものが見つかる。僕はBashとGnuPGで実装されたパスワードマネージャ<a href="https://github.com/drduh/pwd.sh">pwd.sh</a>を使っている。最近同じ作者による<a href="https://github.com/drduh/Parse">Parse</a>に乗り換えた。</p>
 
 <h2>その他SSHログインの認証として使えるもの</h2>
 <p><a href="https://gnupg.org">GnuPG</a>や<a href="https://web.mit.edu/kerberos/kfw-4.1/kfw-4.1/kfw-4.1-help/html/kerberos.htm">Kerberos</a>がある。</p>
@@ -106,7 +123,9 @@ PasswordAuthentication yes</code></pre>
 <h2>参考文献</h2>
 <dl>
 <dt>Ken'ichi Fukamachi, <a href="http://www.fml.org/home/fukachan/ja/netbsd.build.pkg.openssh.html">パッケージ: openssh (Secure SHell)</a></dt>
-<dd>本稿のオリジナルはこれ。デーモンの死活確認にservice(8)を使ったり、ed25519鍵の記述などを追加した。オリジナルのようにサーバ構築のいち手順として書いていないので記述が省略されている箇所もある。</dd>
+<dd>本ページのオリジナル。デーモンの死活確認にservice(8)を使ったり、ed25519鍵の記述などを追加した。オリジナルのようにサーバ構築のいち手順として書いていないので記述が省略されている箇所もある。</dd>
+<dt>stribika, <a href="https://stribika.github.io/2015/01/04/secure-secure-shell.html">Secure Secure Shell</a>, 2015</dt>
+<dd>鍵交換の説明からどのアルゴリズムをSSHデーモンに使わせるか、どの鍵を使うか、Torとどう連携させるかなどについて書かれている。本ページの鍵生成のコマンドはこのページから引用した。OpenSSH 6.7でのみテストされており、2015年のブログ記事なのでやや古めに感じるかもしれないが、一読の価値は十分にあると思う。</dd>
 </dl>
 <hr>
 <footer>
