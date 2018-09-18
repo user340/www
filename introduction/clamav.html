@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="../css/typesetting.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<h1>アンチウイルス&mdash;&mdash;ClamAV&reg;</h1>
+<hr>
+<p>ClamAV&reg;はオープンソースのアンチウイルスエンジン。WindowsやmacOS・GNU/Linux・BSD Unixで動作する。</p>
+
+<h2>目次</h2>
+<ol>
+  <li><a href="#install">インストール</a></li>
+  <li><a href="#config">設定ファイル&mdash;&mdash;/usr/pkg/etc/clamd.conf</a></li>
+  <li><a href="#ref">参考文献</a></li>
+</ol>
+
+<h2 id="install">インストール</h2>
+<p>pkgsrc(7)ではsecurity/clamavパッケージで提供されている。</p>
+
+<pre><code># cd /usr/pkgsrc/security/clamav
+# make install clean clean-depends</code></pre>
+
+<p>ウイルスデータベースを更新するfreshclamdと、アンチウイルスデーモンclamd(8)の自動起動を設定し、それぞれをservice(8)経由で実行する。</p>
+
+<pre><code># cp /usr/pkg/share/examples/rc.d/freshclamd /etc/rc.d
+# cp /usr/pkg/share/examples/rc.d/clamd /etc/rc.d</code></pre>
+
+
+<pre><code># echo "freshclamd=YES" >> /etc/rc.conf
+# echo "clamd=YES" >> /etc/rc.conf</code></pre>
+
+<pre><code># service freshclamd start
+# service clamd start</code></pre>
+
+<h2 id="config">設定ファイル&mdash;&mdash;/usr/pkg/etc/clamd.conf</h2>
+<p>clamd(8)の設定ファイルはclamd.conf(5)。以下にデフォルトとの差分を示す。</p>
+
+<pre><code>
+--- /usr/pkg/share/examples/clamav/clamd.conf	2018-09-16 17:34:32.000000000 +0900
++++ /usr/pkg/etc/clamd.conf	2018-09-18 18:20:49.323386782 +0900
+@@ -11,7 +11,7 @@
+ # LogFile must be writable for the user running daemon.
+ # A full path is required.
+ # Default: disabled
+-#LogFile /tmp/clamd.log
++LogFile /var/log/clamd.log
+ 
+ # By default the log file is locked for writing - the lock protects against
+ # running clamd multiple times (if want to run another clamd, please
+@@ -28,11 +28,11 @@
+ # in bytes just don't use modifiers. If LogFileMaxSize is enabled, log
+ # rotation (the LogRotate option) will always be enabled.
+ # Default: 1M
+-#LogFileMaxSize 2M
++LogFileMaxSize 2M
+ 
+ # Log time with each message.
+ # Default: no
+-#LogTime yes
++LogTime yes
+ 
+ # Also log clean files. Useful in debugging but drastically increases the
+ # log size.
+@@ -54,7 +54,7 @@
+ 
+ # Enable log rotation. Always enabled when LogFileMaxSize is enabled.
+ # Default: no
+-#LogRotate yes
++LogRotate yes
+ 
+ # Log additional information about the infected file, such as its
+ # size and hash, together with the virus name.
+@@ -67,7 +67,7 @@
+ 
+ # Optional path to the global temporary directory.
+ # Default: system specific (usually /tmp or /var/tmp).
+-#TemporaryDirectory /var/tmp
++TemporaryDirectory /var/shm
+ 
+ # Path to the database directory.
+ # Default: hardcoded (depends on installation options)
+@@ -75,7 +75,7 @@
+ 
+ # Only load the official signatures published by the ClamAV project.
+ # Default: no
+-#OfficialDatabaseOnly no
++OfficialDatabaseOnly yes
+ 
+ # The daemon can work in local mode, network mode or both. 
+ # Due to security reasons we recommend the local mode.</code></pre>
+
+<p>/usr/pkg/etc/clamd.conf内にコメントで設定項目の説明が書かれているのでそこまで難しくはない。</p>
+
+<p>設定ファイルを変更したならservice(8)からclamd(8)を再起動し設定をデーモンに反映させる。</p>
+
+<pre><code># service clamd restart</code></pre>
+
+<h2 id="ref">参考文献</h2>
+<dl>
+<dt><a href="https://www.clamav.net">ClamavNet</a></dt>
+<dd>ClamAV&reg;公式Webページ。</dd>
+</dl>
+<hr>
+<footer>
+<address>
+Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>
+</address>
+<p><small>Copyright (C) 2015,2016,2017,2018 Yuuki Enomoto</small></p>
+</footer>
+</body>
+</html>
+
