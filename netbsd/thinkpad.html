@@ -1,59 +1,56 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../css/typesetting.css">
-    <title>e-yuuki.org</title>
-  </head>
-  <body>
-    <h1>NetBSD on ThinkPad</h1>
-    <hr>
-    <ol>
-      <li><a href="#X60s">X60s</a></li>
-      <li><a href="#X201i">X201i</a></li>
-      <li><a href="#X230i">X230i</a></li>
-      <ol>
-        <li><a href="#X230i/display">ディスプレイ拡張</a></li>
-        <li><a href="#X230i/trackpoint">トラックポイント</a></li>
-        <li><a href="#X230i/touchpad">タッチパッド</a></li>
-        <li><a href="#X230i/if">ネットワークインタフェース</a></li>
-      </ol>
-    </ol>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="../css/typesetting.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<h1>NetBSD on ThinkPad</h1>
+<hr>
+<ol>
+<li><a href="#X60s">X60s</a></li>
+<li><a href="#X201i">X201i</a></li>
+<li><a href="#X230i">X230i</a></li>
+<ol>
+<li><a href="#X230i/display">ディスプレイ拡張</a></li>
+<li><a href="#X230i/trackpoint">トラックポイント</a></li>
+<li><a href="#X230i/touchpad">タッチパッド</a></li>
+<li><a href="#X230i/if">ネットワークインタフェース</a></li>
+</ol>
+</ol>
 
-    <h2 id="X60s">X60s</h2>
-    <p>ハードウェアによっては無線ネットワークインタフェースが見えない。</p>
+<h2 id="X60s">X60s</h2>
+<p>ハードウェアによっては無線ネットワークインタフェースが見えない。</p>
 
-    <h2 id="X201i">X201i</h2>
-    <p>NetBSD 7.1/amd64ではシャットダウンするときpanicしてしまうため、再起動が続き電源をオフにできない。NetBSD 7.1.1以降は未検証。</p>
+<h2 id="X201i">X201i</h2>
+<p>NetBSD 7.1/amd64ではシャットダウンするときpanicしてしまうため、再起動が続き電源をオフにできない。NetBSD 7.1.1以降は未検証。</p>
 
-    <h2 id="X230i">X230i</h2>
+<h2 id="X230i">X230i</h2>
 
-    <h3 id="X230i/display">ディスプレイ拡張</h3>
-    <p>D-Subは問題なく使える。 HDMIポートがないためMiniDisplayPortを通じておこなわなければならないが
-    <pre><code>DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
+<h3 id="X230i/display">ディスプレイ拡張</h3>
+<p>D-Subは問題なく使える。 HDMIポートがないためMiniDisplayPortを通じておこなわなければならないが、下記のようなメッセージがコンソールに出力され、ディスプレイ拡張ができない。</p>
+<pre><code>DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_complete_link_train: failed to train DP, aborting</code></pre>
-    とコンソールに出力され、ディスプレイ拡張ができない。
-    </p>
-    <h3 id="X230i/trackpoint">トラックポイント</h3>
-    <p>中クリックをしながらトラックポイントを動かしてページをスクロールするには、/etc/X11/xorg.confのInputDeviceセクションに
-    <pre><code>Option     "EmulateWheel" "true"
+    
+<h3 id="X230i/trackpoint">トラックポイント</h3>
+<p>中クリックをしながらトラックポイントを動かしてページをスクロールするには、/etc/X11/xorg.confのInputDeviceセクションに以下を書く。</p>
+<pre><code>Option     "EmulateWheel" "true"
 Option     "EmulateWheelButton" "2"
 Option     "YAxisMapping" "4 5"
 Option     "XAxisMapping" "6 7"</code></pre>
-    と書く。
-    </p>
 
-    <h3 id="X230i/touchpad">タッチパッド</h3>
-    タッチパッドを無効化するにはBIOSから設定をおこなう。
+<h3 id="X230i/touchpad">タッチパッド</h3>
+タッチパッドを無効化するにはBIOSから設定をおこなう。
 
-    <h3 id="X230i/if">ネットワークインタフェース</h3>
-      <p>ifconfig(8)の出力は以下の通り。<pre><code>wm0: flags=8802<BROADCAST,SIMPLEX,MULTICAST> mtu 1500
+<h3 id="X230i/if">ネットワークインタフェース</h3>
+<p>ifconfig(8)の出力は以下の通り。</p><pre><code>wm0: flags=8802<BROADCAST,SIMPLEX,MULTICAST> mtu 1500
 	capabilities=7ff80<TSO4,IP4CSUM_Rx,IP4CSUM_Tx,TCP4CSUM_Rx>
 	capabilities=7ff80<TCP4CSUM_Tx,UDP4CSUM_Rx,UDP4CSUM_Tx,TCP6CSUM_Rx>
 	capabilities=7ff80<TCP6CSUM_Tx,UDP6CSUM_Rx,UDP6CSUM_Tx,TSO6>
@@ -76,13 +73,12 @@ iwn0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 33624
 	inet 127.0.0.1 netmask 0xff000000
 	inet6 ::1 prefixlen 128
-	inet6 fe80::1%lo0 prefixlen 64 scopeid 0x3</code></pre></p>
-    <footer>
-      <address>
-        Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>
-      </address>
-      <p><small>Copyright (C) 2015,2016,2017,2018 Yuuki Enomoto</small></p>
-    </footer>
-  </body>
+	inet6 fe80::1%lo0 prefixlen 64 scopeid 0x3</code></pre>
+<hr>
+<footer>
+<address>Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a></address>
+<p><small>Copyright (C) 2015,2016,2017,2018 Yuuki Enomoto</small></p>
+</footer>
+</body>
 </html>
 
