@@ -6,10 +6,10 @@ code{
 font-size:90%; line-height:1.4;
 }
 body{
-margin-top:5em; margin-bottom:5em; margin-right:2em; margin-left:3em;
+margin-top:5em; margin-bottom:5em; margin-right:2em; margin-left:3em; line-height:1.5;
 }
 pre{
-padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em;
+padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0;
 border:solid 1px; border-radius:1em; white-space:pre-wrap;
 }
 }
