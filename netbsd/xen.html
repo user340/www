@@ -29,24 +29,25 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <li><a href="#bridge">ブリッヂの設定</a></li>
 <li><a href="#bootcfg">/boot.cfgの編集</a></li>
 <li><a href="#reboot">再起動</a></li>
-<li><a href="dom0">Domain-0の確認</a></li>
+<li><a href="#dom0">Domain-0の確認</a></li>
 </ol></li>
-<li><a href="create">NetBSD Domain-Uの作成</a>
+<li><a href="#create">NetBSD Domain-Uの作成</a>
 <ol>
-  <li><a href="create/disk">ディスク</a></li>
-  <li><a href="create/kernel">カーネル</a></li>
-  <li><a href="create/conf">Domain-U用設定ファイル</a></li>
-  <li><a href="create/install">Domain-Uインストール</a></li>
-  <li><a href="create/rewrite">設定ファイルの編集</a></li>
-  <li><a href="create/run">Domain-U動作確認</a></li>
+  <li><a href="#create/disk">ディスク</a></li>
+  <li><a href="#create/kernel">カーネル</a></li>
+  <li><a href="#create/conf">Domain-U用設定ファイル</a></li>
+  <li><a href="#create/install">Domain-Uインストール</a></li>
+  <li><a href="#create/rewrite">設定ファイルの編集</a></li>
+  <li><a href="#create/run">Domain-U動作確認</a></li>
 </ol></li>
+<li><a href="#ref">参考文献</a></li>
 </ol>
 
 <h2 id="xen">Xenとは</h2>
 
-<p>Xenは<a href="https://www.xenproject.org/">The Xen Project</a>が開発しているオープンソースの仮想化プラットフォーム。GNU/LinuxディストリビューションやFreeBSD・NetBSD上で動く。XenはVirtualBoxやQEMUのような完全仮想化ではなく、ハードウェアのエミュレーションをおこなわない準仮想化を提供する。「64bit用XenでもCPUが64bitに対応していさえすれば、ParaVirtualizationは<b>Intel VT-xやAMD-Vと呼ばれる仮想化支援命令を持たないCPUでも問題なく動作する</b>」（NetBSD/xen環境の構築 64bit編, <a href="http://www.yagoto-urayama.jp/~oshimaya/netbsd/xen64.html">http://www.yagoto-urayama.jp/~oshimaya/netbsd/xen64.html</a>）特徴がある。</p>
+<p>Xenは<a href="https://www.xenproject.org/">The Xen Project</a>が開発しているオープンソースの仮想化プラットフォーム。GNU/LinuxディストリビューションやFreeBSD・NetBSD上で動く。XenはVirtualBoxやQEMUのような完全仮想化ではなく、ハードウェアのエミュレーションをおこなわない準仮想化を提供する。「64bit用XenでもCPUが64bitに対応していさえすれば、ParaVirtualizationは<b>Intel VT-xやAMD-Vと呼ばれる仮想化支援命令を持たないCPUでも問題なく動作する</b>」[oshima]特徴がある。</p>
 
-<p>一方で「NetBSD/xen domain 0 kernel で multiprocessor の恩恵を受けることはできません。 NetBSD/xen domain U kernel でmultiprocessor の恩恵を受けることはできます。」「X11 と併用するなど、 domain 0 に対して資源を振り向けたいケースも多いと思います。そのような場合に限って NetBSD/xen はあまり役に立ちません。 NetBSD/xen domain 0 は domain U の I/O サービス専用と割り切ってください。」（NetBSD/xen Configuration, <a href="https://www.clarestudio.org/netbsd/xen.html">https://www.clarestudio.org/netbsd/xen.html</a>）と言われるように、Xenホスト（domain 0あるいはdom0）に対してCPUやメモリを潤沢に割り振るようなことは普通しない。仮想化用のサーバとして扱うか、SSHでX11転送してXenゲスト（domain UあるいはdomU）を主に使うことになるだろう。「NetBSDのDom0は、<a href="http://mail-index.netbsd.org/port-xen/2009/09/25/msg005390.html">マルチコアに対応していない</a>」（NetBSDでXenXen動くよ, <a href="http://www.rururu.org/fswiki/wiki.cgi?page=NetBSD%A4%C7XenXen%C6%B0%A4%AF%A4%E8">http://www.rururu.org/fswiki/wiki.cgi?page=NetBSD%A4%C7XenXen%C6%B0%A4%AF%A4%E8</a>）ため、FirefoxやLibreOfficeのような大規模ユーザアプリケーションをホストで実行するのは厳しいように思われる。</p>
+<p>一方で「NetBSD/xen domain 0 kernel で multiprocessor の恩恵を受けることはできません。 NetBSD/xen domain U kernel でmultiprocessor の恩恵を受けることはできます。」「X11 と併用するなど、 domain 0 に対して資源を振り向けたいケースも多いと思います。そのような場合に限って NetBSD/xen はあまり役に立ちません。 NetBSD/xen domain 0 は domain U の I/O サービス専用と割り切ってください。」[clare]と言われるように、Xenホスト（domain 0あるいはdom0）に対してCPUやメモリを潤沢に割り振るようなことは普通しない。仮想化用のサーバとして扱うか、SSHでX11転送してXenゲスト（domain UあるいはdomU）を主に使うことになるだろう。「NetBSDのDom0は、<a href="http://mail-index.netbsd.org/port-xen/2009/09/25/msg005390.html">マルチコアに対応していない</a>」[isihara]ため、FirefoxやLibreOfficeのような大規模ユーザアプリケーションをホストで実行するのは厳しいように思われる。</p>
 
 <h2 id="install">インストール</h2>
 
@@ -158,6 +159,13 @@ disk = [ 'file:/root/netbsd.img,0,w' ]</code></pre>
 
 <pre><code># xl create /root/xen_netbsd</code></pre>
 
+<h2 id="ref">参考文献</h2>
+<ol>
+<li><cite>The Xen Project, <a href="https://www.xenproject.org/">https://www.xenproject.org/</a></cite></li>
+<li><cite>oshima, NetBSD/xen環境の構築 64bit編, <a href="http://www.yagoto-urayama.jp/~oshimaya/netbsd/xen64.html">http://www.yagoto-urayama.jp/~oshimaya/netbsd/xen64.html</a></cite></li>
+<li><cite>clare, NetBSD/xen Configuration, <a href="https://www.clarestudio.org/netbsd/xen.html">https://www.clarestudio.org/netbsd/xen.html</a></cite></li>
+<li><cite>isihara, NetBSDでXenXen動くよ, <a href="http://www.rururu.org/fswiki/wiki.cgi?page=NetBSD%A3%C7XenXen%C6%B0%A4%AF%A4%E8">http://www.rururu.org/fswiki/wiki.cgi?page=NetBSD%A4%C7XenXen%C6%B0%A4%AF%A4%E8</a></cite></li>
+</ol>
 <hr>
 <footer>
 <address>
