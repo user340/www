@@ -1,129 +1,146 @@
-
 <!DOCTYPE html>
 <html lang="ja">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../css/typesetting.css">
-    <title>e-yuuki.org</title>
-  </head>
-  <body>
-    <h1>Xenで準仮想化環境を構築する</h1>
-    <hr>
-    <ol>
-      <li><a href="#kernel">XEN3_DOM0カーネル</a></li>
-      <li><a href="#sysutils">XenkernelとXentools</a></li>
-      <li><a href="#daemon">デーモンの設定</a></li>
-      <li><a href="#bridge">ブリッヂの設定</a></li>
-      <li><a href="#bootcfg">/boot.cfgの編集</a></li>
-      <li><a href="#reboot">再起動</a></li>
-      <li><a href="dom0">Domain-0の確認</a></li>
-      <li><a href="create">Domain-Uの作成</a></li>
-      <ol>
-        <li><a href="create/disk">ディスク</a></li>
-        <li><a href="create/kernel">カーネル</a></li>
-        <li><a href="create/conf">Domain-U用設定ファイル</a></li>
-        <li><a href="create/install">Domain-Uインストール</a></li>
-        <li><a href="create/rewrite">設定ファイルの編集</a></li>
-        <li><a href="create/run">Domain-U動作確認</a></li>
-      </ol>
-    </ol>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="../css/typesetting.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<h1>Xenで準仮想化環境を構築する</h1>
+<p>Last Update <time>2018-09-22</time></p>
+<hr>
+<ol>
+<li><a href="#kernel">XEN3_DOM0カーネル</a></li>
+<li><a href="#sysutils">XenkernelとXentools</a></li>
+<li><a href="#daemon">デーモンの設定</a></li>
+<li><a href="#bridge">ブリッヂの設定</a></li>
+<li><a href="#bootcfg">/boot.cfgの編集</a></li>
+<li><a href="#reboot">再起動</a></li>
+<li><a href="dom0">Domain-0の確認</a></li>
+<li><a href="create">Domain-Uの作成</a>
+<ol>
+  <li><a href="create/disk">ディスク</a></li>
+  <li><a href="create/kernel">カーネル</a></li>
+  <li><a href="create/conf">Domain-U用設定ファイル</a></li>
+  <li><a href="create/install">Domain-Uインストール</a></li>
+  <li><a href="create/rewrite">設定ファイルの編集</a></li>
+  <li><a href="create/run">Domain-U動作確認</a></li>
+</ol></li>
+</ol>
 
-    <h2 id="kernel">XEN3_DOM0カーネル</h2>
-    <p>NetBSDをインストールした直後の話とする．インストール作業については省略する．パーティションなどは特別区切っておらずFull Installationをした．まずはGENERICカーネルからXen用のXEN3_DOM0カーネルへ入れ替える作業をおこなう．
-    <pre><code># ftp ftp://ftp.jp.netbsd.org/pub/NetBSD/NetBSD-7.1/amd64/binary/sets/kern-XEN3_DOM0.tgz
+<h2 id="kernel">XEN3_DOM0カーネル</h2>
+<p>NetBSDをインストールした直後とする。インストール作業については省略する。パーティションなどは特別区切っておらずFull Installationをした。まずはGENERICカーネルからXen用のXEN3_DOM0カーネルへ入れ替える作業をおこなう。</p>
+
+<pre><code># ftp ftp://ftp.jp.netbsd.org/pub/NetBSD/NetBSD-7.1/amd64/binary/sets/kern-XEN3_DOM0.tgz
 # tar zxf kern-XEN3_DOM0.tgz
-# mv netbsd /netbsd-XEN</code></pre></p>
+# mv netbsd /netbsd-XEN</code></pre>
 
-    <h2 id="sysutils">XenkernelとXentools</h2>
-    <p>pkgsrcからsysutils/xenkernel48とsysutils/xentools48をインストールする。</p>
+<p>ここで、<code>/netbsd</code>を<code>mv(1)</code>で上書きしていないことに注意せよ。XEN3_DOM0カーネルの起動が失敗したときに備えて普通のGENERICカーネルでいつでも起動できるようにしておく。</p>
 
-    <h2 id="daemon">デーモンの設定</h2>
-    <p>ここではXenに最低限必要なデーモンの設定について述べる。/usr/pkg/share/examplesディレクトリ以下にあるRCスクリプトを/etc/rc.dディレクトリにコピーし、自動起動の設定を/etc/rc.confに書く。</p>
-    <pre><code># cp /usr/pkg/share/examples/rc.d/xencommons /etc/rc.d
+<h2 id="sysutils">XenkernelとXentools</h2>
+<p>pkgsrcからsysutils/xenkernel48とsysutils/xentools48をインストールする。</p>
+
+<pre><code># cd /usr/pkgsrc/sysutils/xenkernel48
+# make install clean clean-depends</code></pre>
+
+<pre><code># cd /usr/pkgsrc/sysutils/xentools48
+# make install clean clean-depends</code></pre>
+
+<h2 id="daemon">デーモンの設定</h2>
+<p>ここではXenに最低限必要なデーモンの設定について述べる。/usr/pkg/share/examplesディレクトリ以下にあるRCスクリプトを/etc/rc.dディレクトリにコピーし、自動起動の設定を<code>rc.conf(5)</code>に書く。<b>xencommonsデーモンを有効にしておかないと、XEN3_DOM0カーネルでブートする際ハングしてしまう。必ず<code>rc.conf(5)</code>に書き込んでおくこと。</b></p>
+
+<pre><code># cp /usr/pkg/share/examples/rc.d/xencommons /etc/rc.d
 # cp /usr/pkg/share/examples/rc.d/xendomains /etc/rc.d
 # cp /usr/pkg/share/examples/rc.d/xen-watchdog /etc/rc.d
 # echo "xencommons=YES" >> /etc/rc.conf
 # echo "xendomains=YES" >> /etc/rc.conf
 # echo "xen-watchdog=YES" >> /etc/rc.conf</code></pre>
 
-    <p>xencommonsデーモンを有効にしておかないと，XEN3_DOM0カーネルでブートするさいにハングしてしまう．</p>
+<h2 id="bridge">ブリッヂの作成</h2>
+<p>Domain-U用にネットワークブリッヂを作成する。/etc/ifconfig.bridge0に以下の内容を記述する。</p>
 
-    <h2 id="bridge">ブリッヂの作成</h2>
-    <p>Domain-U用にネットワークブリッヂを作成する．/etc/ifconfig.bridge0に以下の内容を記述する．</p>
-    <pre><code>create
+<pre><code>create
 up
 !brconfig bridge0 add wm0 up</code></pre>
 
-    <p>文中のwm0は，使用しているマシンのネットワークインタフェース名に適宜置き換える．</p>
+<p>文中のwm0は、使用しているマシンのネットワークインタフェース名に適宜置き換える。</p>
 
-    <h2 id="bootcfg">/boot.cfgの編集</h2>
+<h2 id="bootcfg">/boot.cfgの編集</h2>
 
-    <p>/boot.cfgに以下を追加する．</p>
-    <pre><code>menu=Boot Xen:load /netbsd-XEN console=pc; multiboot /usr/pkg/xen48-kernel/xen.gz dom0_mem=8192M</code></pre>
+<p>/boot.cfgに以下を追加する。</p>
 
-    <p>起動時に"Boot Xen"と書かれた行の番号をタイプすると，XENカーネルが使われ，標準の"Boot normally"などであればGENERICカーネルが使われる．</p>
+<pre><code>menu=Boot Xen:load /netbsd-XEN console=pc; multiboot /usr/pkg/xen48-kernel/xen.gz dom0_mem=8192M</code></pre>
 
-    <h2 id="reboot">再起動</h2>
-    <p>再起動し，XENカーネルを使うようブート時の画面で指定する．</p>
+<p>起動時に"Boot Xen"と書かれた行の番号をタイプすると、XENカーネルが使われ、標準の"Boot normally"などであればGENERICカーネルが使われる。</p>
 
-    <h2 id="dom0">Domain-0の確認</h2>
-    <p>xlコマンドを使い，ゲスト（Domain-0）とホスト（Domain-U）の状態を確認できる．</p>
-    <pre><code># xl list
+<h2 id="reboot">再起動</h2>
+<p>再起動し、XENカーネルを使うようブート時の画面で指定する。</p>
+
+<h2 id="dom0">Domain-0の確認</h2>
+<p>xlコマンドを使い、ゲスト（Domain-0）とホスト（Domain-U）の状態を確認できる。</p>
+
+<pre><code># xl list
 Name                       ID   Mem VCPUs      State    Time(s)
 Domain-0                    0  8192     1     r-----       11.3</code></pre>
 
-    <h2 id="create">Domain-Uの作成</h2>
+<h2 id="create">Domain-Uの作成</h2>
 
-    <h3 id="create/disk">ディスク</h3>
-    <p>4GBのディスクを作る。</p>
-    <pre><code># dd if=/dev/zero of=netbsd.img bs=1m count=4096</code></pre>
+<h3 id="create/disk">ディスク</h3>
+<p>4GBのディスクを作る。</p>
 
-    <h3 id="create/kernel">カーネル</h3>
-    <p>インストール用のDOMUカーネルと通常のDOMUカーネルをダウンロードする．</p>
-    <pre><code># ftp ftp://ftp.jp.netbsd.org/pub/NetBSD/NetBSD-7.1/amd64/binary/kernel/netbsd-XEN3_DOMU.gz
+<pre><code># dd if=/dev/zero of=netbsd.img bs=1m count=4096</code></pre>
+
+<h3 id="create/kernel">カーネル</h3>
+<p>インストール用のDOMUカーネルと通常のDOMUカーネルをダウンロードする。</p>
+
+<pre><code># ftp ftp://ftp.jp.netbsd.org/pub/NetBSD/NetBSD-7.1/amd64/binary/kernel/netbsd-XEN3_DOMU.gz
 # ftp ftp://ftp.jp.netbsd.org/pub/NetBSD/NetBSD-7.1/amd64/binary/kernel/netbsd-INSTALL_XEN3_DOMU.gz
 # gzip -d netbsd-INSTALL_XEN3_DOMU.gz
 # gzip -d netbsd-XEN3_DOMU.gz</code></pre>
 
-    <h3 id="create/conf">Domain-U用設定ファイル</h3>
-    <p>Domain-U用の設定ファイルを作る．ここでは"xen_netbsd"という名前で以下のように書いた．</p>
-    <pre><code>kernel = "/root/netbsd-INSTALL_XEN3_DOMU"
+<h3 id="create/conf">Domain-U用設定ファイル</h3>
+<p>Domain-U用の設定ファイルを作る。ここでは"xen_netbsd"という名前で以下のように書いた。</p>
+
+<pre><code>kernel = "/root/netbsd-INSTALL_XEN3_DOMU"
 vcpus = 2
 memory = 2048
 name = "NetBSD"
 vif = [ 'bridge=bridge0' ]
 disk = [ 'file:/root/netbsd.img,0,w' ]</code></pre>
 
-    <p>仮想コアは2つ，メモリは2GBにし，ディスクには /root/netbsd.imgを指定している．vifのMACアドレスが必要であればifconfig(8)を使い，ブリッヂしているネットワークインタフェースのMACアドレスを確認する．</p>
+<p>仮想コアは2つ、メモリは2GBにし、ディスクには /root/netbsd.imgを指定している。vifのMACアドレスが必要であればifconfig(8)を使い、ブリッヂしているネットワークインタフェースのMACアドレスを確認する。</p>
 
-    <h3 id="create/install">Domain-Uインストール</h3>
-    <pre><code># xl create -c /root/xen_netbsd</code></pre>
+<h3 id="create/install">Domain-Uインストール</h3>
+<pre><code># xl create -c /root/xen_netbsd</code></pre>
 
-    <p>sysinstの画面が出てくる．先にネットワークの設定をしてから，tarballをFTP経由でダウンロードすればよい．インストール終了後，sysinstのトップ画面から"x: Exit Install System"を選択し，halt -pで仮想マシンをシャットダウンする．</p>
+<p>sysinstの画面が出てくる。先にネットワークの設定をしてから、tarballをFTP経由でダウンロードすればよい。インストール終了後、sysinstのトップ画面から"x: Exit Install System"を選択し、halt -pで仮想マシンをシャットダウンする。</p>
 
-    <h3 id="create/rewrite">設定ファイルの編集</h3>
-    <p>kernel = 行を書き換える．</p>
-    <pre><code>kernel = "/root/netbsd-XEN3_DOMU"
+<h3 id="create/rewrite">設定ファイルの編集</h3>
+<p>kernel = 行を書き換える。</p>
+
+<pre><code>kernel = "/root/netbsd-XEN3_DOMU"
 vcpus = 2
 memory = 2048
 name = "NetBSD"
 vif = [ 'bridge=bridge0' ]
 disk = [ 'file:/root/netbsd.img,0,w' ]</code></pre>
 
-    <h3 id="create/run">Domain-U動作確認</h3>
-    <p>ふたたび起動する。</p>
-    <pre><code># xl create -c /root/xen_netbsd</code></pre>
+<h3 id="create/run">Domain-U動作確認</h3>
+<p>ふたたび起動する。</p>
 
-    <p>SSHデーモンを動かし，コンソール画面が必要でない場合は-cオプションをつけずに実行する。</p>
-    <pre><code># xl create /root/xen_netbsd</code></pre>
+<pre><code># xl create -c /root/xen_netbsd</code></pre>
 
-    <hr>
-    <footer>
-      <address>
-        Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>
-      </address>
-      <p><small>Copyright (C) 2015,2016,2017,2018 Yuuki Enomoto</small></p>
-    </footer>
-  </body>
+<p>Domain-UでSSHデーモンを動かしリモートログインができる状態にあるなど、コンソール画面が必要でない場合は-cオプションをつけずに実行する。</p>
+
+<pre><code># xl create /root/xen_netbsd</code></pre>
+
+<hr>
+<footer>
+<address>
+Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>
+</address>
+<p><small>Copyright (C) 2015,2016,2017,2018 Yuuki Enomoto</small></p>
+</footer>
+</body>
 </html>
