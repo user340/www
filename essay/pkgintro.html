@@ -20,12 +20,26 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <h2>パッケージとは</h2>
 <p>パッケージ（package）は「荷物」や「梱包」の他にソフトウェアの管理・配布形式（形態？）も意味する。しかしこの言葉がいつからソフトウェアに対して使うようになったのか分からない。確かに「ソフトウェアやその設定ファイル・マニュアルなどを含んだ単一のアーカイブ」は言われてみれば荷物っぽいし、実際にこれを作るときはまるで段ボールのような箱にデータを詰め込んでいる感覚があるので「パッケージ」という言葉はまさにぴったりだ。ただ、最初にそれを言い始めたのはいつ・誰なんだろうか。</p>
 
-<p>パッケージはよく「ソフトウェア・ライブラリ・設定ファイル・マニュアルなどをアーカイブにしたもの」というような説明がされる。僕は「パッケージ自身の情報（メタデータ）」をこの説明に付け加えたい。たとえばDebian GNU/Linux上で<code>dpkg(1)</code>や<code>apt(8)</code>といったパッケージマネージャを実行してなんらかのパッケージをインストールするとき、インストール対象のパッケージが依存している別のパッケージも自動でインストールされたりあるいはサジェストされたりするのはすべてメタデータのおかげだ。</p>
+<p>パッケージはよく「ソフトウェア・ライブラリ・設定ファイル・マニュアルなどをアーカイブにしたもの」というような説明がされる。僕は「パッケージ自身の情報（メタデータ）」をこの説明に付け加えたいといつも考えてしまう。たとえばDebian GNU/Linux上で<code>dpkg(1)</code>や<code>apt(8)</code>といったパッケージマネージャを実行してなんらかのパッケージをインストールするとき、インストール対象のパッケージが依存している別のパッケージも自動でインストールされたりあるいはサジェストされたりするのはすべてメタデータのおかげだ。</p>
+
+<p>おそらく、テープやCD-ROMの形態でソフトウェアを「梱包」して販売する企業が初めに「パッケージ」をソフトウェアに対しても使い始めたのだと予想している。しかし、このような配布形態にはパッケージマネージャが読み取り可能なメタデータはおそらく含まれていないだろう。パッケージをソフトウェア＋メタデータのアーカイブという観点からすると、起源であるにせよこれではまだ機能が不足している。現在僕たちが何気なく<code>apt(8)</code>から操作するパッケージの形式はいつ成立したのだろう。</p>
+
+<p>パッケージ主体のGNU/LinuxディストリビューションはDebian GNU/Linuxが先陣を切った。Debian 0.01から0.90までのリリースについては不明だが、1994年1月のDebian 0.91は「このリリースは、パッケージのインストールおよび削除ができる単純なパッケージシステムを備えていました」[<a href="#debian-project-history">Debian, 2017</a>]とされ、1995年3月のDebian 0.93R5では「基本システムのインストール後は、パッケージマネージャ (dpkg) がパッケージのインストールに使われました」[<a href="#debian-project-history">Debian, 2017</a>]とある。</p>
+
+<p>しかしDebian GNU/Linuxがパッケージに関して独占的であったかというと、そうではなかったようだ。GNU/LinuxディストリビューションをCD-ROMの形態で販売したRed Hat社が提供したRed Hat Linuxは、1994年の夏にRed Hat LinuxとそのパッケージマネージャRPPの展示のためにプレビュー版（バージョン0.8）がリリースされ、1994年10月31日にバージョン0.9となるHalloweenがリリースされた[<a href="#redhat-20-year">Red Hat, 2014</a>][<a href="#smoogespace">Stephen, 2006</a>]。Debian GNU/Linux 0.91のリリースと同じ年だ。「Fully "packagized" system for fine-grained installation control, easy upgrades, and simple distribution mechanism for your applications」[<a href="#redhat-commercial">Red Hat, 1995</a>]とアピールされたのは1995年のバージョン1.1なので、Halloweenの時点でOS全体がパッケージ管理されていたのかは定かではない。</p>
 
 <h2>Debian GNU/Linux</h2>
 <h2>Red Hat Enterprise Linux</h2>
 <h2>FreeBSD ports</h2>
 <h2>NetBSD pkgsrc</h2>
+
+<h2>参考文献</h2>
+<ol>
+<li id="debian-project-history">Debian Documentation Team, <i>Debian 小史</i>, <a href="https://www.debian.org/doc/manuals/project-history/">https://www.debian.org/doc/manuals/project-history</a>, 2.22 (last revised 17th June 2017)</li>
+<li id="redhat-20-year">Red Hat Enterprise Linux Team, <i>20 Years of “Halloween:” Celebrating the First Release of Red Hat Linux</i>, <a href="https://www.redhat.com/en/blog/20-years-%E2%80%9Challoween%E2%80%9D-celebrating-first-release-red-hat-linux">https://www.redhat.com/en/blog/20-years-%E2%80%9Challoween%E2%80%9D-celebrating-first-release-red-hat-linux</a>, 2014</li>
+<li id="smoogespace">Stephen John Smoogen, <i>The Truth Behind Red Hat/Fedora Names</i>, <a href="https://www.smoogespace.com/documents/behind_the_names.html">https://www.smoogespace.com/documents/behind_the_names.html</a>, Update 2006/06/19</li>
+<li id="redhat-commercial"><i>COMMERCIAL: Red Hat Commercial Linux 1.1, Pacific Hi-Tech CD set.</i>, <a href="https://groups.google.com/forum/#!topic/comp.os.linux.announce/Optn4pqWFsw">https://groups.google.com/forum/#!topic/comp.os.linux.announce/Optn4pqWFsw</a>, 1995/08/01</li>
+</ol>
 <hr>
 <footer>
 <address>
