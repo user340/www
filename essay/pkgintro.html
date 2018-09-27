@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){
+*{max-width:40em;}
+code{font-size:90%; line-height:1.4;}
+body{margin-top:5em; margin-bottom:5em; margin-right:2em; margin-left:3em; line-height:1.5;}
+pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}}
+@media only screen and (max-width:640px){*{max-width:100%; width:100%;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body>
+<h1>GNU/LinuxとBSD Unixのパッケージ概観</h1>
+<p>Last Update: <time>2018</time></p>
+<hr>
+<h2>パッケージとは</h2>
+<p>パッケージ（package）は「荷物」や「梱包」の他にソフトウェアの管理・配布形式（形態？）も意味する。しかしこの言葉がいつからソフトウェアに対して使うようになったのか分からない。確かに「ソフトウェアやその設定ファイル・マニュアルなどを含んだ単一のアーカイブ」は言われてみれば荷物っぽいし、実際にこれを作るときはまるで段ボールのような箱にデータを詰め込んでいる感覚があるので「パッケージ」という言葉はまさにぴったりだ。ただ、最初にそれを言い始めたのはいつ・誰なんだろうか。</p>
+
+<p>パッケージはよく「ソフトウェア・ライブラリ・設定ファイル・マニュアルなどをアーカイブにしたもの」というような説明がされる。僕は「パッケージ自身の情報（メタデータ）」をこの説明に付け加えたい。たとえばDebian GNU/Linux上で<code>dpkg(1)</code>や<code>apt(8)</code>といったパッケージマネージャを実行してなんらかのパッケージをインストールするとき、インストール対象のパッケージが依存している別のパッケージも自動でインストールされたりあるいはサジェストされたりするのはすべてメタデータのおかげだ。</p>
+
+<h2>Debian GNU/Linux</h2>
+<h2>Red Hat Enterprise Linux</h2>
+<h2>FreeBSD ports</h2>
+<h2>NetBSD pkgsrc</h2>
+<hr>
+<footer>
+<address>
+Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>
+</address>
+<p><small>Copyright (C) 2015,2016,2017,2018 Yuuki Enomoto</small></p>
+</footer>
+</body>
+</html>
+
