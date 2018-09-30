@@ -15,7 +15,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 </head>
 <body>
 <h1>GNU/LinuxとBSD Unixのパッケージ概観</h1>
-<p>Last Update: <time>2018</time></p>
+<p>Last Update: <time>2018-09-30</time></p>
 <hr>
 <h2>Unix パッケージのはじまりは？</h2>
 <p>パッケージ（package）は「荷物」や「梱包」の他にソフトウェアの管理・配布形式（形態？）も意味する。しかしこの言葉がいつからソフトウェアに対して使うようになったのか分からない。確かに「ソフトウェアやその設定ファイル・マニュアルなどを含んだ単一のアーカイブ」は言われてみれば荷物っぽいし、実際にこれを作るときはまるで段ボールのような箱にデータを詰め込んでいる感覚があるので「パッケージ」という言葉はまさにぴったりだ。ただ、最初にそれを言い始めたのはいつ・誰なんだろうか。</p>
@@ -26,7 +26,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 
 <p>おそらく、テープやCD-ROMの形態でソフトウェアを「梱包」して販売する企業が初めに「パッケージ」をソフトウェアに対しても使い始めたのだと予想している。しかしこのような配布形態にはパッケージマネージャが読み取り可能なメタデータはおそらく含まれていないだろう。パッケージをソフトウェア＋メタデータのアーカイブという観点からすると、起源であるにせよこれではまだ機能が不足している。現在僕たちが何気なく<code>apt(8)</code>から操作する、Unix上で扱われるパッケージの形式はいつ成立したのだろう。</p>
 
-<h2>GNU/Linuxとパッケージマネージャ</h2>
+<h3>GNU/Linuxとパッケージマネージャ</h3>
 
 <p>パッケージ主体のGNU/LinuxディストリビューションはDebian GNU/Linuxが先陣を切った。Debian 0.01から0.90までのリリースについては不明だが、1994年1月のDebian 0.91は「このリリースは、パッケージのインストールおよび削除ができる単純なパッケージシステムを備えていました」[<a href="#debian-project-history">Debian, 2017</a>]とされ、1995年3月のDebian 0.93R5では「基本システムのインストール後は、パッケージマネージャ (dpkg) がパッケージのインストールに使われました」[<a href="#debian-project-history">Debian, 2017</a>]とある。</p>
 
@@ -38,7 +38,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 There's a myth that's been going around ever since RedHat debuted RedHat Package Manager, that Slackware has no package management tool. This simply couldn't be further from the truth. Slackware has always included a package manager, even before RedHat existed. While not as full-featured or as ubiquitous as rpm (or for that matter deb), pkgtool and its associated programs are every bit as good at installing packages as rpm. The truth about pkgtool is not that it doesn't exist, but that it doesn't do any dependency checking.[<a href="#slackware">Slackware, 2005</a>, Chapter 18]
 </blockquote>
 
-<h2>GNU/Linux以前</h2>
+<h3>GNU/Linux以前</h3>
 
 <p>ではSlackwareがパッケージとパッケージマネージャを取り入れた最初のUnixだったのだろうか？それを確定させるにはSlackware以前のUnixについて調査する必要がある。これは難しい。386BSD（1992年2月）や4.3BSD、System Vなどの他に、4.2BSDやSystem Vの後継製品も調査しなければならないからだ。</p>
 
@@ -48,10 +48,55 @@ There's a myth that's been going around ever since RedHat debuted RedHat Package
 
 <p>これはそう簡単に調べられるものではないが、共立出版株式会社の『UNIX System V コマンド・ノート』がたまたま手に入ったので調べてみると、少なくともこの本の中にはパッケージの操作に関するコマンドは載っていなかった[<a href="#sysv">System V, 1986</a>]。</p>
 
-<h2>Debian GNU/Linux</h2>
-<h2>Red Hat Enterprise Linux</h2>
-<h2>FreeBSD ports</h2>
-<h2>NetBSD pkgsrc</h2>
+<p>FreeBSDの<code>ports(7)</code>は1993年12月にリリースされたFreeBSD 1.0から登場し、NetBSDとOpenBSDにも広まっていった[<a href="#ports">ports(7), 2014</a>][<a href="#fbsd">FreeBSD</a>]。386BSDから分岐したBSD Unixの中でFreeBSDが初めてこのようなパッケージ管理システムを実装した（NetBSDで主に使われる<code>pkgsrc(7)</code>は<code>ports(7)</code>から派生した[<a href="#pkgsrc">pkgsrc, 2018</a>]）ので、<code>ports(7)</code>の前身が分かれば自ずと答えが分かるのだろうか？</p>
+
+<h2>代表的なUnixとそのパッケージ</h2>
+
+<h3>Debian GNU/Linux</h3>
+
+<p>Debian GNU/Linuxは<code>dpkg(1)</code>を通じて<code>deb(5)</code>形式のパッケージを操作する。<code>dpkg(1)</code>のエンドユーザ向けインタフェースに<code>apt-get(8)</code>や<code>apt(8)</code>などがある。パッケージをインストールするなら、最近は後者がよく使われているようだ。</p>
+
+<h3>Red Hat Enterprise Linux</h3>
+
+<p>Red Hat Enterprise Linux（RHEL）は<code>rpm(8)</code>を通じてRPM（Red Hat package Manager）パッケージを操作する。エンドユーザ向けインタフェースにYellowdog Updater Modified（<code>yum(8)</code>）やDandified YUM（<code>dnf(8)</code>）がある。</p>
+
+<h3>FreeBSD Ports Collection</h3>
+
+<p>FreeBSDはPorts Collectionは「Makefile, 修正パッチ、 説明文などの一連のファイルのこと」[<a href="#portsc">FreeBSD</a>]で、一般的には短縮して<code>ports(7)</code>と呼ばれる。パッケージのビルドやインストールなどの一連の命令はすべてBSD Makeを使う。たとえばGNU Emacsをインストールするときはroot権限で</p>
+
+<pre><code># cd /usr/ports/editors/emacs
+# make install</code></pre>
+
+……と実行する。コンパイル時の<code>configure</code>のオプションはビルド途中に選択できる。
+
+<p>最近のFreeBSDでは、ライセンスの都合上バイナリの配布を禁じられている場合やオプションを自分で細かく制御したい場合を除き、<code>pkg(8)</code>でバイナリパッケージをインストールするのが楽だ。先ほどのEmacsの例は<code>pkg(8)</code>を使うと</p>
+
+<pre><code># pkg install emacs</code></pre>
+
+<p>……となる。この<code>pkg(8)</code>は「FreeBSD 10.X系移行で動作するように設計されて」[<a href="#fpkg">FreeBSD</a>]おり、FreeBSD 11.0では基本システムにインストールされている。</p>
+
+<p>ここで、パッケージの呼び方について述べておきたい。ここではEmacsパッケージをインストールする例を示したが、このパッケージは<code>/usr/ports</code>ディレクトリから見た相対パス名で<code>editors/emacs</code>と呼ばれるのが一般的だ。このような呼び方（書き方）をすると、どのディレクトリに当該パッケージが存在するのか一目瞭然だからだ。これは<code>ports(7)</code>でも<code>pkgsrc(7)</code>でも共通の作法となっている。</p>
+
+<h3>NetBSD pkgsrc</h3>
+
+<p>NetBSDの<code>pkgsrc(7)</code>はFreeBSDのPorts Collectionから派生したパッケージ管理システムだ。特徴としてNetBSD以外のUnixでも使える高い移植性がある。NetBSD以外のOSで初めて<code>pkgsrc(7)</code>が動いたのはSolaris 2.6だという。</p>
+
+<blockquote>
+In 1999, I was working at an investment bank in London, and needed a packaging system to manage third-party software on a fairly large network of Solaris 2.6 machines - pkgsrc fitted the bill, and so the first non-NetBSD platform was Solaris, followed closely by Linux.[<a href="#10th">Weinem</a>]
+</blockquote>
+
+<p><code>ports(7)</code>と同じく<code>pkgsrc(7)</code>上の操作はBSD Makeを使う。NetBSD以外のUnixで使うときは、はじめに<code>bootstrap/</code>ディレクトリ内の<code>bootstrap</code>スクリプトを実行すればよい。その後、<code>bootstrap</code>でインストールされた<code>bmake(1)</code>を使ってパッケージを操作する。たとえばvimをインストールするのであれば</p>
+
+<pre><code># cd /usr/pkgsrc/editors/vim
+# make install</code></pre>
+
+<p>……とする。</p>
+
+<h2>まとめ</h2>
+
+<p>GNU/LinuxとBSD Unixのパッケージについて簡単に述べた。GNU/LinuxはDebian GNU/Linux系とRHEL系以外にも多くの種類があるのでとてもじゃないが追いきれない。BSD Unixもまた然りだ。でもたかだか4種類のOSのパッケージ管理を比べただけでもかなりの差異があることに気づく。なぜそう設計したのか？祖先はなんなのか？と考えると、調べることはたくさんあるのだなと思ってしまう。</p>
+
+<p>そしてそもそも、Unixパッケージのはじまりは？という問いに答えられていない。Slackwareの簡素なパッケージか、もしくはPorts Collectionの親がいたのか。課題は残るし調べ足りないことばかりだ。</p>
 
 <h2>参考文献</h2>
 <ol>
@@ -63,6 +108,12 @@ There's a myth that's been going around ever since RedHat debuted RedHat Package
 <li id="slackware">Alan Hicks, Chris Lumens, David Cantrell, Logan Johnson, <i>Slackware Linux Essentials</i>, <a href="http://www.slackbook.org/html/introduction-slackware.html">http://www.slackbook.org/html/introduction-slackware.html</a>, 2005</li>
 <li id="century">Peter H. Salus, QUIPU LLC訳, <i>UNIXの1/4世紀</i>, 株式会社アスキー, ISBN4-7561-3659-1, 2000</li>
 <li id="sysv">ソフトウェアインフォメーションセンタ 編, <i>UNIX System V コマンド・ノート</i>, 共立出版株式会社, ISBN4-320-02284-X, 1986</li>
+<li id="ports">David O'Brien (originated by him), <i>ports(7)</i>, FreeBSD Miscellaneous Information Manual, 2014</li>
+<li id="fbsd">The FreeBSD Project, <i>FreeBSD プロジェクトについて</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/history.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/history.html</a></li>
+<li id="pkgsrc">Alistair Crooks, Hubert Feyrer, The pkgsrc Developers, <i>The pkgsrc guide</i>, <a href="http://www.netbsd.org/docs/pkgsrc/introduction.html">http://www.netbsd.org/docs/pkgsrc/introduction.html</a>, $NetBSD: index.html,v 1.144 2018/09/18 03:20:54 maya Exp $</li>
+<li id="portsc">The FreeBSD Project, <i>Ports Collection の利用</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/ports-using.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/ports-using.html</a></li>
+<li id="10th">Mark Weinem, <i>10 years of pkgsrc - pkgsrc and the concepts of package management 1997-2007 (part 1)</i>, <a href="http://www.netbsd.org/gallery/10years.html">http://www.netbsd.org/gallery/10years.html</a></li>
+<li id="fpkg">The FreeBSD Project, <i>pkg によるバイナリ package の管理</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/pkgng-intro.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/pkgng-intro.html</a></li>
 </ol>
 <hr>
 <footer>
