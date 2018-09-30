@@ -6,3 +6,25 @@
 <Files ~ ".(html|css|png|jpe?g)">
     Header set Cache-Control "public, max-age=604800"
 </Files>
+<IfModule mod_deflate.c>
+    SetOutputFilter DEFLATE
+    
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
+    
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|ico)$ no-gzip dont-vary
+    SetEnvIfNoCase Request_URI _\.utxt$ no-gzip
+    
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/atom_xml
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/x-httpd-php
+</IfModule>
+
