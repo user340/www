@@ -15,10 +15,21 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 </head>
 <body>
 <h1>GNU/LinuxとBSD Unixのパッケージ概観</h1>
-<p>Last Update: <time>2018-09-30</time></p>
+<p>Last Update: <time>2018-10-03</time></p>
 <hr>
+<h2>なぜパッケージに注目するのか</h2>
+<p>パッケージ（package）はオペレーティングシステム（OS）の重要なインフラのひとつだ。OSと聞くとプロセス管理・メモリ管理・ファイルシステムといったカーネルの機能を連想してしまいがちだが、それよりももっと高いレイヤのアプリケーションだって立派にOSの一部だ。プログラマにとって統合開発環境やテキストエディタ・バージョン管理システム・コンパイラは欠かせない。一般ユーザにとっても統合デスクトップ環境が提供する豪華なグラフィカルは欠かせない。特にWebブラウザはもうそれ無しで生活することなど考えられないような時代になっている。</p>
+
+<p>Debian GNU/LinuxやRed Hat Enterprise Linux（RHEL）のようにOS全体をパッケージで管理しているケースもあれば、NetBSDやFreeBSDのようにベースシステムに無いソフトウェアをパッケージで管理しているケースもある。システム管理という面ではパッケージはとても便利な機能なので、FreeBSDではベースシステムをパッケージ化してパッケージマネージャから管理できるようにするPkgBase[<a href="#pkgbase">FreeBSD Wiki</a>]が開発されているくらいだ（NetBSDも昔syspkgというPkgBaseと同じコンセプトの実装が進められていたが現在は停滞している[<a href="syspkg">NetBSD Wiki</a>]）。</p>
+
+<p>パッケージは、カーネルハッカーはともかく一般ユーザにとっては一種のインフラのようなものと言っても過言ではない。それをどう作りどう配布するのか？を調べると、OSはどのような構成をしているのかおおまかに眺めることができる。そしてこれをものにすれば、自分で好きなGNU/Linuxディストリビューションあるいはデスクトップ向けのBSD Unixを作ることだってできるだろう。</p>
+
+<p>OSに興味はなくても、パッケージには向き合わなければならないときもある。もしなにかコードを書いてFLOSSとして公開するなら、そしてGNU/Linux向けにそれを書いたのであれば、<code>deb(5)</code>か<code>rpm</code>をいつでも（できれば両方）作れるようにしておいたほうがいい。企業でGNU/Linux向け商用ソフトウェアを開発するときも、そのソフトウェアをパッケージにまとめる作業は恐らく必要になるはずだ。</p>
+
+<p>古典的には<code>configure</code>して<code>make</code>して<code>make install</code>が王道ではあるし、ソースパッケージをビルドしてバイナリパッケージにするときはこれがおこなわれるものの、ユーザにソフトウェアを提供するならパッケージは欠かせないものとなっている。</p>
+
 <h2>Unix パッケージのはじまりは？</h2>
-<p>パッケージ（package）は「荷物」や「梱包」の他にソフトウェアの管理・配布形式（形態？）も意味する。しかしこの言葉がいつからソフトウェアに対して使うようになったのか分からない。確かに「ソフトウェアやその設定ファイル・マニュアルなどを含んだ単一のアーカイブ」は言われてみれば荷物っぽいし、実際にこれを作るときはまるで段ボールのような箱にデータを詰め込んでいる感覚があるので「パッケージ」という言葉はまさにぴったりだ。ただ、最初にそれを言い始めたのはいつ・誰なんだろうか。</p>
+<p>パッケージは「荷物」や「梱包」の他にソフトウェアの管理・配布形式（形態？）も意味する。しかしこの言葉がいつからソフトウェアに対して使うようになったのか分からない。確かに「ソフトウェアやその設定ファイル・マニュアルなどを含んだ単一のアーカイブ」は言われてみれば荷物っぽいし、実際にこれを作るときはまるで段ボールのような箱にデータを詰め込んでいる感覚があるので「パッケージ」という言葉はまさにぴったりだ。ただ、最初にそれを言い始めたのはいつ・誰なんだろうか。</p>
 
 <p>パッケージはよく「ソフトウェア・ライブラリ・設定ファイル・マニュアルなどをアーカイブにしたもの」というような説明がされる。僕は「パッケージ自身の情報（メタデータ）」をこの説明に付け加えたいといつも考えてしまう。たとえばDebian GNU/Linux上で<code>dpkg(1)</code>や<code>apt(8)</code>といったパッケージマネージャを実行してなんらかのパッケージをインストールするとき、インストール対象のパッケージが依存している別のパッケージも自動でインストールされたりあるいはサジェストされたりするのはすべてメタデータのおかげだ。</p>
 
@@ -58,7 +69,7 @@ There's a myth that's been going around ever since RedHat debuted RedHat Package
 
 <h3>Red Hat Enterprise Linux</h3>
 
-<p>Red Hat Enterprise Linux（RHEL）は<code>rpm(8)</code>を通じてRPM（Red Hat package Manager）パッケージを操作する。エンドユーザ向けインタフェースにYellowdog Updater Modified（<code>yum(8)</code>）やDandified YUM（<code>dnf(8)</code>）がある。</p>
+<p>RHELは<code>rpm(8)</code>を通じてRPM（Red Hat package Manager）パッケージを操作する。エンドユーザ向けインタフェースにYellowdog Updater Modified（<code>yum(8)</code>）やDandified YUM（<code>dnf(8)</code>）がある。</p>
 
 <h3>FreeBSD Ports Collection</h3>
 
@@ -100,6 +111,8 @@ In 1999, I was working at an investment bank in London, and needed a packaging s
 
 <h2>参考文献</h2>
 <ol>
+<li id="pkgbase">FreeBSD Wiki, <i>PkgBase</i>, <a href="https://wiki.freebsd.org/PkgBase">https://wiki.freebsd.org/PkgBase</a>, last edited 2018-09-10 21:04:58 by BradDavis</li>
+<li id="syspkg">NetBSD Wiki, <i>syspkgs</i>, <a href="https://wiki.netbsd.org/projects/project/syspkgs/">https://wiki.netbsd.org/projects/project/syspkgs/</a>, Last edited early Thursday morning, February 27th, 2014</li>
 <li id="debian-project-history">Debian Documentation Team, <i>Debian 小史</i>, <a href="https://www.debian.org/doc/manuals/project-history/">https://www.debian.org/doc/manuals/project-history</a>, 2.22 (last revised 17th June 2017)</li>
 <li id="redhat-20-year">Red Hat Enterprise Linux Team, <i>20 Years of “Halloween:” Celebrating the First Release of Red Hat Linux</i>, <a href="https://www.redhat.com/en/blog/20-years-%E2%80%9Challoween%E2%80%9D-celebrating-first-release-red-hat-linux">https://www.redhat.com/en/blog/20-years-%E2%80%9Challoween%E2%80%9D-celebrating-first-release-red-hat-linux</a>, 2014</li>
 <li id="smoogespace">Stephen John Smoogen, <i>The Truth Behind Red Hat/Fedora Names</i>, <a href="https://www.smoogespace.com/documents/behind_the_names.html">https://www.smoogespace.com/documents/behind_the_names.html</a>, Update 2006/06/19</li>
