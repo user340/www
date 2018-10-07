@@ -67,6 +67,35 @@ There's a myth that's been going around ever since RedHat debuted RedHat Package
 
 <p>Debian GNU/Linuxは<code>dpkg(1)</code>を通じて<code>deb(5)</code>形式のパッケージを操作する。<code>dpkg(1)</code>のエンドユーザ向けインタフェースに<code>apt-get(8)</code>や<code>apt(8)</code>などがある。パッケージをインストールするなら、最近は後者がよく使われているようだ。</p>
 
+<p><code>apt(8)</code>でvimのパッケージをインストールするには以下のように実行すればいい。</p>
+
+<pre><code># apt install vim</code></pre>
+
+<p><code>dpkg(1)</code>からパッケージをインストールする方法もあるが、一般ユーザは恐らく使う機会がない。</p>
+
+<h4><code>deb(5)</code>パッケージの構造</h4>
+
+<p>Debian GNU/Linux stretchのvimパッケージ vim_8.0.0197-4+deb9u1_amd64.debを例に<code>deb(5)</code>形式のパッケージの構造を眺める。これを<code>ar(1)</code>で展開すると</p>
+
+<pre><code>vim_8.0.0197-4+deb9u1_amd64.deb/
+├── control.tar.gz
+├── data.tar.xz
+└── debian-binary</code></pre>
+
+<p>この3つのファイルが得られる。</p>
+
+<p>これらのファイルについては<code>deb(5)</code>のマニュアルが詳しい。</p>
+
+<blockquote>
+<p>The first member is named debian-binary and contains a series of lines, separated by newlines. Currently only one line is present, the format version number, 2.0 at the time this manual page was written.  Programs which read new-format archives should be prepared for the minor number to be increased and new lines to be present, and should ignore these if this is the case.</p>
+
+<p>If the major number has changed, an incompatible change has been made and the program should stop. If it has not, then the program should be able to safely continue, unless it encounters an unexpected member in the archive (except at the end), as described below.</p>
+
+<p>The second required member is named control.tar.  It is a tar archive containing the package control information, either not compressed (supported since dpkg 1.17.6), or compressed with gzip (with .gz extension) or xz (with .xz extension, supported since 1.17.6), as a series of plain files, of which the file control is mandatory and contains the core control information. The control tarball may optionally contain an entry for ‘.’, the current directory.</p>
+
+<p>The third, last required member is named data.tar.  It contains the filesystem as a tar archive, either not compressed (supported since dpkg 1.10.24), or compressed with gzip (with .gz extension), xz (with .xz extension, supported since dpkg 1.15.6), bzip2 (with .bz2 extension, supported since dpkg 1.10.24) or lzma (with .lzma extension, supported since dpkg 1.13.25). [<a href="#mandeb">Debian</a>]</p>
+</blockquote>
+
 <h3>Red Hat Enterprise Linux</h3>
 
 <p>RHELは<code>rpm(8)</code>を通じてRPM（Red Hat package Manager）パッケージを操作する。エンドユーザ向けインタフェースにYellowdog Updater Modified（<code>yum(8)</code>）やDandified YUM（<code>dnf(8)</code>）がある。</p>
@@ -86,7 +115,7 @@ There's a myth that's been going around ever since RedHat debuted RedHat Package
 
 <p>……となる。この<code>pkg(8)</code>は「FreeBSD 10.X系移行で動作するように設計されて」[<a href="#fpkg">FreeBSD</a>]おり、FreeBSD 11.0では基本システムにインストールされている。</p>
 
-<p>ここで、パッケージの呼び方について述べておきたい。ここではEmacsパッケージをインストールする例を示したが、このパッケージは<code>/usr/ports</code>ディレクトリから見た相対パス名で<code>editors/emacs</code>と呼ばれるのが一般的だ。このような呼び方（書き方）をすると、どのディレクトリに当該パッケージが存在するのか一目瞭然だからだ。これは<code>ports(7)</code>でも<code>pkgsrc(7)</code>でも共通の作法となっている。</p>
+<p>ここで、<code>ports(7)</code>あるいは<code>pkgsrc(7)</code>におけるパッケージの表記方法について述べておきたい。ここではEmacsパッケージをインストールする例を示したが、このパッケージは<code>/usr/ports</code>ディレクトリから見た相対パス名で<code>editors/emacs</code>と書かれるのが一般的だ。このような書き方をすると、どのディレクトリに当該パッケージが存在するのか一目瞭然だからだ。</p>
 
 <h3>NetBSD pkgsrc</h3>
 
@@ -126,6 +155,7 @@ In 1999, I was working at an investment bank in London, and needed a packaging s
 <li id="ports">David O'Brien (originated by him), <i>ports(7)</i>, FreeBSD Miscellaneous Information Manual, 2014</li>
 <li id="fbsd">The FreeBSD Project, <i>FreeBSD プロジェクトについて</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/history.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/history.html</a></li>
 <li id="pkgsrc">Alistair Crooks, Hubert Feyrer, The pkgsrc Developers, <i>The pkgsrc guide</i>, <a href="http://www.netbsd.org/docs/pkgsrc/introduction.html">http://www.netbsd.org/docs/pkgsrc/introduction.html</a>, $NetBSD: index.html,v 1.144 2018/09/18 03:20:54 maya Exp $</li>
+<li id="mandeb">Debian Project, <i>deb(5)</i>, dpkg suite</li>
 <li id="portsc">The FreeBSD Project, <i>Ports Collection の利用</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/ports-using.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/ports-using.html</a></li>
 <li id="10th">Mark Weinem, <i>10 years of pkgsrc - pkgsrc and the concepts of package management 1997-2007 (part 1)</i>, <a href="http://www.netbsd.org/gallery/10years.html">http://www.netbsd.org/gallery/10years.html</a></li>
 <li id="fpkg">The FreeBSD Project, <i>pkg によるバイナリ package の管理</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/pkgng-intro.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/pkgng-intro.html</a></li>
