@@ -15,7 +15,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 </head>
 <body>
 <h1>GNU/LinuxとBSD Unixのパッケージ概観</h1>
-<p>Last Update: <time>2018-10-03</time></p>
+<p>Last Update: <time>2018-10-14</time></p>
 <hr>
 <h2>なぜパッケージに注目するのか</h2>
 <p>パッケージ（package）はオペレーティングシステム（OS）の重要なインフラのひとつだ。OSと聞くとプロセス管理・メモリ管理・ファイルシステムといったカーネルの機能を連想してしまいがちだ。『4.4BSDの設計と実装』『詳解 Linuxカーネル』『オペレーティングシステム 設計と理論およびMINIXによる実装』といった分厚い書籍を思い浮かべるかもしれない。でもそれよりももっと高いレイヤのアプリケーションだって立派にOSの一部だ。プログラマにとって統合開発環境やテキストエディタ・バージョン管理システム・コンパイラは欠かせない。一般ユーザにとっても統合デスクトップ環境が提供する豪華なグラフィカルは欠かせない。特にWebブラウザはもうそれ無しで生活することなど考えられないような時代になっている。</p>
@@ -96,9 +96,17 @@ There's a myth that's been going around ever since RedHat debuted RedHat Package
 <p>The third, last required member is named data.tar.  It contains the filesystem as a tar archive, either not compressed (supported since dpkg 1.10.24), or compressed with gzip (with .gz extension), xz (with .xz extension, supported since dpkg 1.15.6), bzip2 (with .bz2 extension, supported since dpkg 1.10.24) or lzma (with .lzma extension, supported since dpkg 1.13.25). [<a href="#mandeb">Debian</a>]</p>
 </blockquote>
 
+<p>要するに<code>control.tar.gz</code>と<code>debian-binary</code>はパッケージのメタデータで、<code>data.tar.xz</code>がソフトウェアやライブラリ・マニュアルなどに相当するわけだ。</p>
+
 <h3>Red Hat Enterprise Linux</h3>
 
 <p>RHELは<code>rpm(8)</code>を通じてRPM（Red Hat package Manager）パッケージを操作する。エンドユーザ向けインタフェースにYellowdog Updater Modified（<code>yum(8)</code>）やDandified YUM（<code>dnf(8)</code>）がある。</p>
+
+<p>企業や大学のネットワークで動くGNU/Linuxは、RHELかその派生であるCentOSが採用されている場合が多い。サーバ機器製品のOSとしてRHELがあらかじめインストールされていることもある。そのため商用製品として監視ツールやWebサーバ・メールサーバといったシステムソフトウェアを配布するのであれば<code>deb(5)</code>よりむしろRPM形式が使われるだろう。Eric Raymondは開発者と共同作業するためのFLOSSのディストリビューション方法について次のように述べている。</p>
+
+<blockquote>
+RPM（Red Hat Packageマネージャ）は、Linuxのもとでインストール可能なバイナリパッケージのための事実上の標準となったフォーマットである。RPMはもっともポピュラーなLinuxディストリビューションの重要な機能であり、他のほぼすべてのLinuxディストリビューションでサポートされている（DebianとSlackwareを除く。そして、DebianはRPMからインストールできる）。そこで、プロジェクトサイトは、ソースtarボールの他に、インストール可能なRPMも提供するとよい。[<a href="#raymond">Raymond,2007</a>]
+</blockquote>
 
 <h3>FreeBSD Ports Collection</h3>
 
@@ -156,6 +164,7 @@ In 1999, I was working at an investment bank in London, and needed a packaging s
 <li id="fbsd">The FreeBSD Project, <i>FreeBSD プロジェクトについて</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/history.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/history.html</a></li>
 <li id="pkgsrc">Alistair Crooks, Hubert Feyrer, The pkgsrc Developers, <i>The pkgsrc guide</i>, <a href="http://www.netbsd.org/docs/pkgsrc/introduction.html">http://www.netbsd.org/docs/pkgsrc/introduction.html</a>, $NetBSD: index.html,v 1.144 2018/09/18 03:20:54 maya Exp $</li>
 <li id="mandeb">Debian Project, <i>deb(5)</i>, dpkg suite</li>
+<li id="raymond">Eric S. Raymond, 長尾高弘 訳, <i>The Art of UNIX Programming</i>, ASCII, 2007</li>
 <li id="portsc">The FreeBSD Project, <i>Ports Collection の利用</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/ports-using.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/ports-using.html</a></li>
 <li id="10th">Mark Weinem, <i>10 years of pkgsrc - pkgsrc and the concepts of package management 1997-2007 (part 1)</i>, <a href="http://www.netbsd.org/gallery/10years.html">http://www.netbsd.org/gallery/10years.html</a></li>
 <li id="fpkg">The FreeBSD Project, <i>pkg によるバイナリ package の管理</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/pkgng-intro.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/pkgng-intro.html</a></li>
