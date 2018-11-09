@@ -13,6 +13,8 @@
     line-height:1.75;
     letter-spacing:0.05em;
     width:38em;
+    text-align: justify;
+    text-justify: inter-ideograph;
   }
   pre{
     padding-top:1em;
@@ -35,7 +37,9 @@
     margin:auto auto;
     line-height:1.75;
     letter-spacing:0.05em;
-    width:38em;
+    width:25em;
+    text-align: justify;
+    text-justify: inter-ideograph;
   }
   pre{
     padding-top:1em;
