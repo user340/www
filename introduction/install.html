@@ -17,12 +17,63 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <hr>
 <h2>目次</h2>
 <ol>
-  <li>NetBSDのインストール</li>
-  <li>ネットワーク接続</li>
-  <li>すべて遮断する</li>
-  <li>ユーザの作成</li>
-  <li>pkgsrc(7)のインストール</li>
+  <li><a href="#intro">はじめに</a></li>
+  <li><a href="#install">NetBSDのインストール</a></li>
+  <li><a href="#network">ネットワーク接続</a></li>
+  <li><a href="#block">すべて遮断する</a></li>
+  <li><a href="#user">ユーザの作成</a></li>
+  <li><a href="#pkgsrc">pkgsrc(7)のインストール</a></li>
 </ol>
+
+<h2 id="intro">はじめに</h2>
+<p>ここではなんらかの環境（ノートPC・デスクトップPCのような物理的なものやVirtualBox・KVM・Bhyve・Xenなどの仮想マシン）にNetBSDをインストールし、日本語デスクトップ環境をインストールする前段階について説明する。なので内容についてはNetBSDに強く依存してしまうが、手順そのものはほとんどのUnix系OSに通じると思う。NetBSD以外のOSをインストールしたい場合、NetBSD以外のBSD Unixであれば<a href="#pkgsrc">pkgsrc(7)のインストール</a>を読み飛ばしてもらい、GNU/Linuxであればインストーラの時点でほぼすべての手順が完了していると思うので<a href="#block">すべて遮断する</a>だけを読んでもらえればいい（ただしSlackware系のディストリビューションは除く。しかしこれを選んだのであればこの文書自体読む必要はないだろう）。</p>
+
+<h2 id="install">NetBSDのインストール</h2>
+<p>多くの場合amd64（64bit）アーキテクチャのインストーラをFTPサーバからダウンロードしてそれをブートすることになる。http://nycdn.netbsd.org/pub/NetBSD-daily/netbsd-8/latest/images/ からISOファイルやgzip圧縮されたimgファイルをダウンロードできる。</p>
+
+<p>多くのIT技術系ブログでNetBSDのインストール手順について画像つきで詳しく解説されている。しかし僕はThe NetBSD Projectから提供されている<a href="https://www.netbsd.org/docs/guide/en/chap-exinst.html">Chapter 3. Example Installation</a>を読むことをおすすめする。これがあるのでインストール手順について改めて紙面を割く必要もない。この文書は英語だが、どのみちNetBSDのインストーラも英語なので気にしなくていい。</p>
+
+<p>仮想マシンにNetBSDをインストールするのであれば、<a href="https://legacyos.ichmy.0t0.jp/netbsd/">NetBSDで遊ぼうのこーな</a>を参考に仮想化ソフトウェアを選ぶといい。このページから引用し、さらに僕が普段使っているBhyveも加えると次のようになる。</p>
+
+<table>
+<tr>
+  <th>仮想化ソフトウェア</th>
+  <th>Addin</th>
+  <th>状況</th>
+</tr>
+<tr>
+  <td>VirtualBox</td>
+  <td>x</td>
+  <td>GuestAdditionsは未対応だが他問題なし</td>
+</tr>
+<tr>
+  <td>VMware</td>
+  <td>o</td>
+  <td>非ネット共有フォルダに失敗</td>
+</tr>
+<tr>
+  <td>クライアントHyper-V</td>
+  <td>x</td>
+  <td>SMPとACPIを無効化しないとネット不可。ネットはレガシーアダプタ要</td>
+</tr>
+<tr>
+  <td>QEMU</td>
+  <td>x</td>
+  <td>起動に失敗</td>
+</tr>
+<tr>
+  <td>Bhyve</td>
+  <td>?</td>
+  <td>vm-bhyveで確認。</td>
+</tr>
+</table>
+
+<p>物理的な環境にインストールする場合、まずは動作が確認されている機器を慎重に選ぶところから始まる。ThinkPadはだいたい動くようだ。僕が使ってきたマシンについては<a href="../netbsd/thinkpad.html">NetBSD on ThinkPad</a>を参照してほしい。</p>
+
+<h2 id="network">ネットワーク接続</h2>
+<h2 id="block">すべて遮断する</h2>
+<h2 id="user">ユーザの作成</h2>
+<h2 id="pkgsrc">pkgsrc(7)のインストール</h2>
 <hr>
 <footer>
 <address>
