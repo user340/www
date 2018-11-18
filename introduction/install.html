@@ -17,7 +17,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <hr>
 <h2>目次</h2>
 <ol>
-  <li><a href="#intro">はじめに</a></li>
+  <li><a href="#intro">このページについて</a></li>
   <li><a href="#install">NetBSDのインストール</a></li>
   <li><a href="#network">ネットワーク接続</a></li>
   <li><a href="#block">すべて遮断する</a></li>
@@ -25,7 +25,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
   <li><a href="#pkgsrc">pkgsrc(7)のインストール</a></li>
 </ol>
 
-<h2 id="intro">はじめに</h2>
+<h2 id="intro">このページについて</h2>
 <p>ここではなんらかの環境（ノートPC・デスクトップPCのような物理的なものやVirtualBox・KVM・Bhyve・Xenなどの仮想マシン）にNetBSDをインストールし、日本語デスクトップ環境をインストールする前段階について説明する。なので内容についてはNetBSDに強く依存してしまうが、手順そのものはほとんどのUnix系OSに通じると思う。NetBSD以外のOSをインストールしたい場合、NetBSD以外のBSD Unixであれば<a href="#pkgsrc">pkgsrc(7)のインストール</a>を読み飛ばしてもらい、GNU/Linuxであればインストーラの時点でほぼすべての手順が完了していると思うので<a href="#block">すべて遮断する</a>だけを読んでもらえればいい（ただしSlackware系のディストリビューションは除く。しかしこれを選んだのであればこの文書自体読む必要はないだろう）。</p>
 
 <h2 id="install">NetBSDのインストール</h2>
@@ -166,6 +166,34 @@ dhcpcd=YES
 dhcpcd_flags="iwm0"</code></pre>
 
 <h2 id="block">すべて遮断する</h2>
+<p>ネットワーク接続をしたあとはすぐに外からのあらゆるアクセスを遮断する。アクセスさせたいプロトコルやポート番号のみを開け、ユーザ認証が必要な場合はなるべくパスワード認証を避け公開鍵認証方式に切り替える。どうしてもパスワード認証を使わざるを得ないときはパスワード生成ソフトウェアを通じて可能な限り長くランダムなパスワードを使う。</p>
+
+<p>自宅で使うPCでこのポリシーは意味がないようにみえるが、これを習慣づけておくといざインターネットに公開するサーバを運用するとき役に立つ。HTTPサーバを運用するだけでも、ありもしないwp-login.phpにアクセスしようとしたりrootでSSHログインを試みた痕跡がつく。自衛のために日頃から訓練しておくのは悪いことではない。</p>
+
+<p>NetBSDでTCPアクセス制御を実現するには<code>inetd(8)</code>のlibwrapを設定する。設定ファイルは<code>hosts.allow(5)</code>と<code>hosts.deny(5)</code>だ。</p>
+
+<p>はじめに/etc/hosts.denyを次のように書く。</p>
+
+<pre><code>ALL: ALL</code></pre>
+
+<p>そして必要に応じて/etc/hosts.allowを編集する。<code>hosts.deny(5)</code>のルールが優先されるので、<code>hosts.deny(5)</code>で全て遮断したあとは<code>hosts.allow(5)</code>に書いてあるルールだけが通るようになる。たとえばSSHを通したい場合つぎのようにする。</p>
+
+<pre><code>sshd: ALL</code></pre>
+
+<p>自宅や職場のローカルネットワークの場合、たとえばこのようにすれば十分だろう。</p>
+
+<pre><code>sshd: LOCAL</code></pre>
+
+<p>サーバを外部に公開している場合<code>traceroute(8)</code>でプロバイダのドメインを調べてそこからのみアクセスできるようにすればいい。</p>
+
+<p><code>traceroute(8)</code>は次のように使う。</p>
+
+<pre><code># traceroute www.google.com</code></pre>
+
+<p>出力の中ではauやKDDI、ソフトバンクのようなプロバイダの名前が確認できるはずだ。それを指定する。</p>
+
+<pre><code>sshd: .au-net.ne.jp</code></pre>
+
 <h2 id="user">ユーザの作成</h2>
 <h2 id="pkgsrc">pkgsrc(7)のインストール</h2>
 <hr>
