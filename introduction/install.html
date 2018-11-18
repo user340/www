@@ -170,6 +170,10 @@ dhcpcd_flags="iwm0"</code></pre>
 
 <p>自宅で使うPCでこのポリシーは意味がないようにみえるが、これを習慣づけておくといざインターネットに公開するサーバを運用するとき役に立つ。HTTPサーバを運用するだけでも、ありもしないwp-login.phpにアクセスしようとしたりrootでSSHログインを試みた痕跡がつく。自衛のために日頃から訓練しておくのは悪いことではない。</p>
 
+<p>アクセス制御にはlibwrapによるものと<code>npf(7)</code>によるものがある。ここでは前者について説明する。</p>
+
+<h3>libwrapによるTCPアクセス制御</h3>
+
 <p>NetBSDでTCPアクセス制御を実現するには<code>inetd(8)</code>のlibwrapを設定する。設定ファイルは<code>hosts.allow(5)</code>と<code>hosts.deny(5)</code>だ。</p>
 
 <p>はじめに/etc/hosts.denyを次のように書く。</p>
@@ -194,8 +198,36 @@ dhcpcd_flags="iwm0"</code></pre>
 
 <pre><code>sshd: .au-net.ne.jp</code></pre>
 
+<p>設定後は許可したネットワーク以外からはアクセスできないことを確認しておく。たとえ公開用のサーバで設定が失敗してSSHログインできなくても、Webのコンソールからいつでも操作できるので問題ない。</p>
+
 <h2 id="user">ユーザの作成</h2>
+<p>特権を持ったユーザで常にシステムにログインして作業し続けるのは一見快適かもしれない。が、操作ミスで消してはいけないファイルを誤って消す/編集してしまう危険を常に抱えることでもある。また一般的に、SSHであっても直接rootユーザでログインするのは避けられる傾向にある。</p>
+
+<p>そこで普段は特権を持たない一般ユーザを作り、それでログインしてなんらかの作業をおこなう。ソフトウェアのインストールや設定ファイルの編集などで権限が必要になったときだけ<code>su(1)</code>でrootユーザになるポリシーとする。</p>
+
+<p>ユーザは<code>useradd(8)</code>を使う。作成予定のユーザ名をjohnとすると次のように実行する。NetBSDの<code>useradd(8)</code>では<code>-m</code>オプションを付けないとホームディレクトリが作られないことに注意。</p>
+
+<pre><code># useradd -m john</code></pre>
+
+<p>パスワードは<code>passwd(1)</code>にユーザ名を渡して実行する。johnに設定するパスワードを2回尋ねられる。入力した文字は画面に印字されない（エコーされない）。</p>
+
+<pre><code># passwd john</code></pre>
+
+<p><code>su(1)</code>でrootユーザになるにはwheelグループにユーザを追加すればいい。/etc/groupを編集する。wheelの行にカンマ区切りでユーザ名を追記する。</p>
+
+<pre><code>wheel:*:0:root,john</code></pre>
+
 <h2 id="pkgsrc">pkgsrc(7)のインストール</h2>
+<p>NetBSDでは第三者製ソフトウェアパッケージのビルドとインストールに<code>pkgsrc(7)</code>というビルドシステムを使う。</p>
+
+<p><code>pkgsrc(7)</code>のtarballをダウンロードする。NetBSDのFTPサーバだけでなく、国内の大学や企業が運営しているFTPサーバからもダウンロードできるだろう。たとえばftp.iij.ad.jpやftp.jaist.ac.jpなどだ。ダウンロードしたtarballを/usrの下に展開するだけでNetBSDでの<code>pkgsrc(7)</code>のインストールは完了する。</p>
+
+<pre><code># ftp ftp://ftp.iij.ad.jp/pub/pkgsrc/stable/pkgsrc.tar.gz
+# tar zxf pkgsrc.tar.gz -C /usr
+# cd /usr/pkgsrc</code></pre>
+
+<p><code>pkgsrc(7)</code>はstable版とcurrent版の2種類選べる。stable版は3ヶ月に一度更新される安定版で、current版は不安定な開発版だ。しかし一番新しいFirefoxを使いたいときなど、最新のバージョンのソフトウェアを使いたい場合は後者を選ばざるを得ない。とりあえずここではstable版で話を進めるが、用途に応じてどちらを選ぶか考えてほしい。</p>
+
 <hr>
 <footer>
 <address>
