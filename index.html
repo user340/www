@@ -8,7 +8,7 @@
 code{line-height:1.4;}
 .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph;}
 pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}}
-@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em;justify; text-justify: inter-ideograph;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}
 </style>
 <title>e-yuuki.org</title>
 </head>
@@ -17,40 +17,38 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 
 <hr>
 <ul>
-<li><a href="#articles">Web Articles</a>
-<ul>
-<li><a href="./introduction/index.html">Unix入門</a></li>
-<li><a href="#netbsd">NetBSD</a></li>
-<li><a href="#essay">Essay</a></li>
-</ul>
-</li>
-<li><a href="#papers">Papers and Presentations</a></li>
-<li><a href="#links">Links</a></li>
-<li><a href="#fingerprint">Fingerprint</a>
-<li><a href="#about">About</a></li>
-</ul>
-</li>
+  <li><a href="#articles">Web Articles</a>
+    <ul>
+      <li><a href="./introduction/index.html">Unix入門</a></li>
+      <li><a href="#netbsd">NetBSD</a></li>
+      <li><a href="#essay">Essay</a></li>
+    </ul>
+  </li>
+  <li><a href="#papers">Papers and Presentations</a></li>
+  <li><a href="#links">Links</a></li>
+  <li><a href="#fingerprint">Fingerprint</a>
+  <li><a href="#about">About</a></li>
 </ul>
 
 <h2 id="articles">Web Articles</h2>
 
 <ul>
-<li><a href="./introduction/index.html">Unix入門</a></li>
+  <li><a href="./introduction/index.html">Unix入門</a></li>
 
-<li id="netbsd">NetBSD
-<ul>
-<li><a href="./netbsd/pkg_install.html">pkg_installについて</a></li>
-<li><a href="./netbsd/thinkpad.html">NetBSD on ThinkPad</a></li>
-<li><a href="./netbsd/xen.html">Xenで準仮想化環境を構築する</a></li>
-<li><a href="./netbsd/pkgsrc-wip.html">pkgsrc-wip上での作業</a></li>
-</ul></li>
+  <li id="netbsd">NetBSD
+  <ul>
+    <li><a href="./netbsd/pkg_install.html">pkg_installについて</a></li>
+    <li><a href="./netbsd/thinkpad.html">NetBSD on ThinkPad</a></li>
+    <li><a href="./netbsd/xen.html">Xenで準仮想化環境を構築する</a></li>
+    <li><a href="./netbsd/pkgsrc-wip.html">pkgsrc-wip上での作業</a></li>
+  </ul></li>
 
-<li id="essay">Essay</li>
-<ul>
-<li><a href="./essay/webpage.html">動的Webページから静的Webページへの移行</a></li>
-<li><a href="./essay/pkgintro.html">GNU/LinuxとBSD Unixのパッケージ概観</a></li>
-</ul>
-</li></ul>
+  <li id="essay">Essay
+  <ul>
+    <li><a href="./essay/webpage.html">動的Webページから静的Webページへの移行</a></li>
+    <li><a href="./essay/pkgintro.html">GNU/LinuxとBSD Unixのパッケージ概観</a></li>
+  </ul>
+  </li></ul>
 
 <h2 id="papers">Papers and Presentations</h2>
 <ul>
@@ -78,16 +76,17 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 
 <p>このページは榎本優樹（Enomoto Yuuki）&lt;<a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>&gt;の個人的な文書である。</p>
 
-<p>このページに関する批判・議論・指摘・改善案は榎本までメールで連絡してほしい。このWebページは著作権者名を表記する限り再頒布可能だが、このWebページによって生じるあらゆる損害について一切責任はとらないものとする。</p>
+<p>このページに関する批判・議論・指摘・改善案は榎本までメールで連絡してほしい。ただし、提供したコンテンツすべてがCreative Commons 0（CC0）でライセンスされることを承知の上で。本ドメインのHTMLファイルはCC0で提供するものとする（PDFはちょっと怪しいのでいまのところHTMLファイルに限定している。再頒布や引用程度ならまったく問題なさそうだけど……）。</p>
 
 <p>内容は予告なく変更される。最終更新日が明記されているページもある。しかし最近、HTMLファイルを<a href="https://github.com/user340/www">https://github.com/user340/www</a>で管理し始めたので正確な差分や変更日時はここから確認できることもある。</p>
 
 <hr>
 <footer>
-<address>
-Yuuki Enomoto <a href="mailto:uki@e-yuuki.org">uki@e-yuuki.org</a>
-</address>
-<p><small>Copyright (C) 2015,2016,2017,2018 Yuuki Enomoto</small></p>
+<p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
+<a rel="license" href="http://creativecommons.org/publicdomain/zero/1.0/"> <div align="center"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></div></a>
+<br />
+To the extent possible under law, <a rel="dct:publisher" href="https://e-yuuki.org"> <span property="dct:title">Yuuki Enomoto</span></a> has waived all copyright and related or neighboring rights to <span property="dct:title">e-yuuki.org</span>. This work is published from: <span property="vcard:Country" datatype="dct:ISO3166" content="JP" about="https://e-yuuki.org">Japan</span>.
+</p>
 </footer>
 </div></body>
 </html>
