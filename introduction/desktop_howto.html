@@ -44,7 +44,55 @@ GNU/Linuxの上でデスクトップ環境を作りたくなったときとか�
 知っていると知っていないとでは大違いだ。
 </p>
 
-<h2>デスクトップ環境に必要な最低限のもの</h2>
+<h2>GUI環境に必要なソフトウェア</h2>
+
+<p>
+「デスクトップ環境」になにが必要であるかはユーザに強く依存する。
+Webブラウザさえあれば十分というユーザもいれば、
+動画編集ソフトウェアが不可欠なユーザもいる。
+様々なニーズをすべて包括したデスクトップ環境を用意するのは難しい。
+そこで、ここではマウスを使ってウィンドウを自在に動かせられるグラフィカルな環境
+（GUI）を用意するにはなにをインストールすればいいのかのみ説明する。
+</p>
+
+<h3>NetBSDのX</h3>
+
+<p>
+NetBSD 8.0ではベースシステムでGUI環境が提供されている。
+以下のtarballをインストール時に選択するか、FTPサーバからダウンロードして
+ルートディレクトリに展開する。
+</p>
+
+<ul>
+<li>xbase.tgz</li>
+<li>xetc.tgz</li>
+<li>xfont.tgz</li>
+<li>xserver.tgz</li>
+</ul>
+
+<h3>/etc/X11/xorg.conf</h3>
+
+<p>
+X11はサーバとクライアントが分離しており、Xサーバが動くマシン上で
+Xクライアントのソフトウェア（FirefoxやThunderbirdなど）が描画される。
+<code>xorg.conf(5)</code>はXサーバの設定ファイルだ。
+</p>
+
+<p>
+もっとも、これをゼロから書くわけではない。ユーザは<code>xorg.conf(5)</code>を
+自動で生成する<code>Xorg(1)</code>の<code>-configure</code>オプションを実行し、
+ディスプレイの拡張時やマウスの設定など、必要なときだけ設定ファイルを編集する。
+このコマンドを実行すると、rootユーザのホームディレクトリにxorg.conf.newという
+ファイルが作られているので、それを/etc/X11ディレクトリの下に移動させる。
+</p>
+
+<pre><code># X -configure
+# mv /root/xorg.conf.new /etc/X11/xorg.conf</code></pre>
+
+<h3>ウィンドウマネージャ</h3>
+
+
+<h3>$HOME/xinitrc</h3>
 <hr>
 <footer>
 <p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#">
