@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){
+code{line-height:1.4;font-size:80%;}
+.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph;}
+pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>ウィンドウマネージャ&mdash;&mdash;i3</h1>
+<hr>
+<p>ウィンドウマネージャは大きく分けてコンポジット型・スタック型・タイル型の3つに分類できる。<code>i3(1)</code>はタイル型に分類されるウィンドウマネージャである。</p>
+
+<p><code>i3(1)</code>の便利なところは、基本的にウィンドウが重ならないように配置されるので画面を効率よく使える点と、ウィンドウのフォーカスの切り替えをキーボードだけで完結できる点にある。一方でキーボード操作は覚えることが多いので、WindowsやmacOSのようなGUIの操作がしたいのであればこのページを読み飛ばし、代わりにjwmやfluxboxなどを使うといいだろう。また<code>pkgsrc(7)</code>ではウィンドウマネージャはpkgsrc/wmディレクトリに集まっているので、どれが一番好みか探すこともできる。</p>
+
+<h2>インストール</h2>
+
+<code>i3(1)</code>本体と、ターミナルを経由せずソフトウェアを実行するための<code>dmenu(1)</code>をインストールする。
+
+<pre><code># cd /usr/pkgsrc/wm/i3
+# make install clean clean-depends</code></pre>
+
+<pre><code># cd /usr/pkgsrc/sysutils/i3status
+# make install clean clean-depends</code></pre>
+
+<pre><code># cd /usr/pkgsrc/x11/dmenu
+# make install clean clean-depends</code></pre>
+
+<h2>$HOME/.xinitrc</h2>
+
+$HOME/.xinitrcの最終行に以下を追記する。
+
+<pre><code>i3</code></pre>
+
+<h2>設定ファイル $HOME/.config/i3/config</h2>
+
+$HOME/.config/i3/configの設定例は以下の通り。
+
+<pre><code># i3 config file (v4)
+#
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+
+# キーボードのWindows（WIN）キーをi3(1)のホットキー（$mod）として設定する。
+set $mod Mod4
+
+# ウィンドウタイトルに使うフォントを指定する。
+# ここではpangoとRictyを指定した。
+font pango:Ricty 12
+
+# マウスとホットキーを使うことで浮かすウィンドウを任意の箇所に持っていく。
+floating_modifier $mod
+
+# 最初からタイルに設置せず浮かすソフトウェアのウィンドウを設定する。
+# たとえばファイルマネージャやGIMPなど、
+# タイルに置かずにコンポジット型のように振る舞ったほうが
+# 扱いやすいソフトウェアもある。
+# for_window [class="Vncviewer"] floating enable
+for_window [class="ROX-Filer"] floating enable
+for_window [class="Pcmanfm"] floating enable
+for_window [class="MuPDF"] floating enable
+for_window [title="ImageMagick: *"] floating enable
+for_window [title="GIMP *"] floating enable
+
+##
+# Bindsym Configurations
+
+# タイルに設置するか浮かすかを切り替える。
+bindsym $mod+Shift+space floating toggle
+
+# 浮いているウィンドウのフォーカスを切り替える。
+bindsym $mod+space focus mode_toggle
+
+# ホットキーとエンターキーでターミナルを実行する。
+bindsym $mod+Return exec /usr/pkg/bin/urxvtc
+
+# スクリーンショットを撮る。
+# scrotを呼び出す。
+bindsym Print exec /usr/pkg/bin/scrot
+
+# ウィンドウを閉じる。
+bindsym $mod+Shift+q kill
+bindsym button2 kill
+
+# ホットキー＋dでプログラムランチャdmenuを実行する。
+# ここではi3向けのdmenuを実行している
+bindsym $mod+d exec --no-startup-id /usr/pkg/bin/i3-dmenu-desktop
+
+# ホットキー＋h/j/k/lでフォーカスを切り替える。
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# ホットキー＋H/J/K/Lでウィンドウの場所を動かす。
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# ウィンドウが作られたとき、それを横に置くか縦に置くか決める。
+bindsym $mod+v split v
+bindsym $mod+Shift+v split h
+
+# ウィンドウの大きさを変えるには、ホットキー＋rを入力したあと、
+# h/j/k/lで大きさを調整する。調整し終えたらエンターキーを入力する。
+mode "resize" {
+	bindsym h resize shrink width 10 px or 10 ppt
+	bindsym j resize grow height 10 px or 10 ppt
+	bindsym k resize shrink height 10 px or 10 ppt
+	bindsym l resize grow width 10 px or 10 ppt
+
+	bindsym Return mode "default"
+}
+
+bindsym $mod+r mode "resize"
+
+# ワークスペースの数を設定する。
+bindsym $mod+1 workspace 1
+bindsym $mod+2 workspace 2
+bindsym $mod+3 workspace 3
+
+# ホットキー＋Shift＋1/2/3でワークスペースに移動する。
+bindsym $mod+Shift+1 move container to workspace 1
+bindsym $mod+Shift+2 move container to workspace 2
+bindsym $mod+Shift+3 move container to workspace 3
+
+# i3(1)を抜け、Xのセッションを終了する。
+bindsym $mod+Shift+e exit
+
+# i3(1)の設定ファイルを再読込する。
+bindsym $mod+Shift+r restart
+
+##
+# Exec Configurations
+
+# i3(1)起動時にバックグラウンドで動かすソフトウェアを指定している。
+# dunstは通知デーモン、fehは壁紙を指定する、
+# urxvtdは仮想端末ソフトウェアrxvt-unicodeのデーモン。
+exec --no-startup-id dunst
+exec --no-startup-id feh --bg-scale ~/.wallpaper.png
+exec --no-startup-id urxvtd -q -f -o
+
+# 画面下部に表示するステータスバーの設定。なくてもいい。
+bar {
+    output              LVDS1
+    status_command      i3status
+    position            bottom
+    mode                dock
+    workspace_buttons   yes
+    tray_output         none
+    colors {
+        background #000000
+        statusline #ffffff
+
+        focused_workspace  #ffffff #285577
+        active_workspace   #ffffff #333333
+        inactive_workspace #888888 #222222
+        urgent_workspace   #ffffff #900000
+    }
+}</code></pre>
+
+<h2>操作方法</h2>
+
+<p>上記の設定ファイルどおりであれば、<code>Win+Enter</code>で仮想端末を起動できる。<code>Win+d</code>を入力すると画面上部にテキストボックスが出てくるので、実行したいソフトウェアの名前を入力する（firefox, gimpなど）。画面のフォーカスを切り替えるにはマウスカーソルをフォーカス対象のウィンドウまで移動するか、<code>Win+h/j/k/l</code>で切り替える。</p>
+
+<p>「i3wm」と検索すれば詳しい操作方法はいくらでも見つかるのでそうしてほしい。</p>
+
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
