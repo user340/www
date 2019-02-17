@@ -16,8 +16,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <h1>CC0 HTMLコードを直す</h1>
 <p>Last Update: <time>2018-12-16</time></p>
 <hr>
-<p>
-　creativecommons.orgでは任意のCCライセンス表記をHTMLコードで出力できる。WebページにCCライセンスを明記するときにとても便利だ。CC0の場合、<a href="https://creativecommons.org/choose/zero/"> https://creativecommons.org/choose/zero/</a>から権利放棄者の情報を入力していくことで以下のようなHTMLコードが得られる。
+<p>　WebページにCreative Commons（CC）ライセンスを明記したいとき、creativecommons.orgが提供しているWebページ<a href="https://creativecommons.org/choose/"> https://creativecommons.org/choose/</a>を使うことで、任意のCCライセンス表記をHTMLコードに出力できます。以下はこのページから出力したCC0のHTMLコードです。
 </p>
 
 <pre><code>&lt;p xmlns:dct="http://purl.org/dc/terms/" xmlns:vcard="http://www.w3.org/2001/vcard-rdf/3.0#"&gt;
@@ -36,41 +35,28 @@ This work is published from:
 &lt;span property="vcard:Country" datatype="dct:ISO3166"
       content="JP" about="https://e-yuuki.org"&gt;
   Japan&lt;/span&gt;.
-&lt;/p&gt;
-</code></pre>
+&lt;/p&gt;</code></pre>
 
-<p>
-　よく見るとHTMLではなくXHTMLである。ソフトウェアを使って著作物の公開者について解析できるので理にかなっているものの、僕はHTMLが欲しかった。ソースコード上でXHTMLの宣言を書いていないとw3cのvalidatorで検査したときにXHTML特有の記述が引っかかってしまう。
-</p>
+<p>　よく見るとHTMLではなくXHTMLでした。ソフトウェアを使って著作物の公開者について解析できるので理にかなっているものの、僕はHTMLが欲しかったのです。ソースコード上でXHTMLの宣言を書いていないとw3cのvalidatorで検査したときにXHTML特有の記述が引っかかってしまいます。</p>
 
-<p>
-　さらにimgタグで画像のパス指定にHTTPSを使っていないとFirefoxでは警告が出る。
-</p>
+<p>　さらにimgタグで画像のパス指定にHTTPSを使っていないと、Firefoxでは警告が出ます。</p>
 
 <img src="./img/warning.png" alt="Warning on Firefox">
 
-<p>
-　このコードの気に入らない点は、HTMLを使いたいのにXHTMLであること、画像のパスにHTTPSを使っていないこと、そして画像と文章に空白を入れる目的でbrタグを使っていることだ。これらを修正してすっきりしたコードにする。
-</p>
+<p>　このコードの気に入らない点は、HTMLを使いたいのにXHTMLであること・画像のパスにHTTPSを使っていないこと・そして画像と文章に空白を入れる目的でbrタグを使っていることです。これらを修正してすっきりしたコードにします。</p>
 
-<p>　結論、次のようにコードになった。</p>
+<p>　結論、次のようにコードになりました。</p>
 
-<pre><code>
-&lt;div style="text-align:center;padding-top:2em;padding-bottom:2em;"&gt;
+<pre><code>&lt;div style="text-align:center;padding-top:2em;padding-bottom:2em;"&gt;
   &lt;a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"&gt;&lt;img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /&gt;&lt;/a&gt;
 &lt;/div&gt;
 &lt;p&gt;
 To the extent possible under law, &lt;a href="mailto:uki@e-yuuki.org"&gt;Yuuki Enomoto&lt;/a&gt; has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.
-&lt;/p&gt;
-</code></pre>
+&lt;/p&gt;</code></pre>
 
-<p>
-　XHTMLに関係するコードはすべて削除した。次にHTTPはすべてHTTPSに置き換えた。これでブラウザからの警告が出ることはなくなった。またCSSで画像の位置とパディングを調整している。見た目の調整は基本的にCSSでおこなうべきだ。くわえて公開者の名前にaタグでmailtoを使っているので、オリジナルのコードと比べ連絡をとりやすいという点からするとわかりやすくなっている。
-</p>
+<p>　XHTMLに関係するコードはすべて削除しました。次にHTTPはすべてHTTPSに置き換えました。これでブラウザからの警告が出ることはなくなったわけです。また、見た目の調整は基本的にCSSでおこなうべきですので、CSSで画像の位置とパディングを調整しています。</p>
 
-<p>
-　このコードは本Webページにも使われている。やりたいことをすべて実現できたので満足している。
-</p>
+<p>　このコードは本Webページで使われています。</p>
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
