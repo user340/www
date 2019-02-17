@@ -13,7 +13,7 @@
 <h1>私家版HTML Coding Style</h1>
 <p style="text-align: right">Last Update <time>2018-12-22</time></p>
 <hr>
-<p>e-yuuki.orgを書くときに気をつけていることをまとめる。ベストプラクティスを集めたわけではない。W3Cの勧告やValidatorの更新によって都度変更される可能性がある。</p>
+<p>e-yuuki.orgの文書を書くときに気をつけていることをまとめます。ベストプラクティスを集めたわけではありません。W3Cの勧告やValidatorの更新によって都度変更される可能性があります。</p>
 
 <ul>
 <li><a href="#version">HTML 5</a></li>
@@ -25,23 +25,23 @@
 
 <h2 id="version">HTML 5</h2>
 
-<p>W3C Recommendationに従って書く。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第アップデートする。</p>
+<p>W3C Recommendationに従って書きます。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第ソースコードをアップデートします。</p>
 
 <h2 id="validator">Validator</h2>
 
-<p>文書を書いてWebに公開するさい<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査する。公開後は<a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>からページのスコアを確認し、速度が改善できそうな箇所を探す。</p>
+<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。公開後は<a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>からページのスコアを確認し、速度が改善できそうな箇所を探します。不要なインデントによるスペース／タブ文字の削除はその代表例です。</p>
 
 <h2 id="codestyle">一行あたりの文字数とインデント</h2>
 
-<p>一行あたりの文字数制限は無い。余計な空白が挿入されることを防ぐため、むしろ一段落（<code>p</code>タグで囲う）は一行に収める。</p>
+<p>一行あたりの文字数制限はありません。余計な空白が挿入されることを防ぐため、むしろ一段落（<code>p</code>タグで囲う）は一行に収めます。この方針はバージョン管理システムで差分を取ったとき、どこが変更されたのかが分かりづらいという明らかな欠点があります。この欠点を許容できないのであれば、改行は文単位でおこなうべきです。</p>
 
-<p>ページサイズを抑えるためにインデントは必要ない。複雑なリストを書くときはインデントを使って見やすくしてもいいが、コミットするときはインデントをすべて削除する。</p>
+<p>ページサイズを抑えるために、インデントは必要ありません。HTMLのコーディングではPythonのようにインデントが義務付けられていません。複雑なリストを書くときはインデントを使って見やすくしても構いませんが、commitするときはインデントをすべて削除します。</p>
 
 <h2 id="css">CSS</h2>
 
-<p>レイアウトを整える目的で<code>br</code>タグやテーブルを使ってはならない。レイアウトに関するコードはすべてCSSとして書く。</p>
+<p>レイアウトを整える目的で<code>br</code>タグやテーブルを使ってはいけません。レイアウトに関するコードはすべてCSSとして書きます。</p>
 
-<p>CSSはHTMLコードに直接書いてしまう。別途用意して読み込むほうが効率的なほど長いCSSを書くわけではない。この方法だとCSSを更新したときHTMLファイルひとつひとつを更新しなければならないため手間だが、CSSコードを改行せず一行にすることで<code>find(1)</code>と<code>sed(1)</code>を組み合わせて簡単に更新ができる。置換前と置換後のテキストはバージョン管理システムから取得できる（<code>git-diff(1)</code>など）。</p>
+<p>CSSはHTMLコードに直接書きます。別途用意して読み込むほうが効率的なほど長いCSSを書くわけではありませんし、レイアウトの美麗さが文章の質に影響するわけでもありません。この方法だとCSSを更新したときHTMLファイルひとつひとつを更新しなければならないので手間がかかりますが、CSSコードを改行せず一行にすることで<code>find(1)</code>と<code>sed(1)</code>を組み合わせて簡単に更新ができます。置換前と置換後のテキストはバージョン管理システムから取得できます（<code>git-diff(1)</code>など）。</p>
 
 <pre><code>$ find . -name '*.html' -exec \
 sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
@@ -50,11 +50,11 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
 
 <h3>引用の方法</h3>
 
-<p>引用の方法はそれが短いものか長いものかによって変わる。どの程度から長いと判断するかは曖昧だが、文を2~3以上引用したいのであれば長い引用の方法をとる。</p>
+<p>引用の方法はそれが短いものか長いものかによって変わります。どの程度から長いと判断するかは曖昧ですが、文を2~3以上引用したいのであれば長い引用の方法をとります。</p>
 
-<p>短い引用であれば「」で囲んで文中に書き、出典元を（）の中に明記する。たとえば「出版された情報をコンピュータを使って共有しようとする読者は、 法律上は著作権に違反しているのです」（Richard Stallman, 『自由か著作権か？』）</p>
+<p>短い引用であれば「」で囲んで文中に書き、出典元を（）の中に明記します。たとえば「出版された情報をコンピュータを使って共有しようとする読者は、 法律上は著作権に違反しているのです」（Richard Stallman, 『自由か著作権か？』）</p>
 
-<p>長い引用は<code>blockquote</code>タグを使う。コードのフォーマットは以下の通り（読みやすさを考慮し整形した）。</p>
+<p>長い引用は<code>blockquote</code>タグを使います。コードのフォーマットは以下の通りです（読みやすさを考慮し整形）。</p>
 
 <pre><code>&lt;figure&gt;
   &lt;blockquote&gt;
@@ -65,7 +65,7 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
   &lt;/footer&gt;
 &lt;/figure&gt;</code></pre>
 
-<p>これは以下のように描画される。</p>
+<p>これは以下のように描画されます。</p>
 
 <figure><blockquote><p>しかし、そこには1つの障害が立ちはだかっていました。著作権です。出版された情報をコンピュータを使って共有しようとする読者は、 法律上は著作権に違反しているのです。世界は変わり、かつては出版社にとっての産業上の規制であったものが、 本来奉仕すべき一般の人々に対しての規制となってしまいました。</p></blockquote>
 <footer>
