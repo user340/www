@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){
+code{line-height:1.4;font-size:80%;}
+.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph;}
+pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>仮想端末&mdash;&mdash;rxvt-unicode</h1>
+
+<p>rxvt-unicodeはrxvtのcloneで、Unicodeの入力・出力に対応している。2019年にNetBSDを触り始める方であればShift-JISやEUC-JPなどではなくUTF-8を環境変数LOCALEに設定するだろう。</p>
+
+<hr>
+<h2>インストール</h2>
+
+<p><code>pkgsrc(7)</code>ではx11/rxvt-unicodeパッケージで提供されている。</p>
+
+<pre><code># cd /usr/pkgsrc/x11/rxvt-unicode
+# make install clean clean-depends</code></pre>
+
+コマンド名は<code>urxvt(1)</code>である。
+
+<h2>設定ファイル $HOME/.Xdefaults</h2>
+<p><b>XXX</b>: とても情報が古いかもしれない。</p>
+
+<p>外観やフォントといった<code>urxvt(1)</code>の設定は$HOME/.Xdefaultsを編集しておこなう。</p>
+
+<p>この設定例では、フォントはRictyを使いその大きさは12ポイントである。インプットメソッドにはIBUSを使い、背景色は黒、文字色は白で背景はやや透明になっている。全体的な色合いはテキストエディタVimの拡張カラースキーム<a href="https://github.com/morhetz/gruvbox">gruvbox</a>のダークモードに合わせている。主に<code>URxvt.font</code>や<code>URxvt.background</code>、<code>URxvt.foreground</code>を好みのものに変えていくことになるだろう。</p>
+
+<pre><code>URxvt.termName: rxvt
+URxvt.font:  xft: Ricty:size=12:antialias=true
+URxvt.letterSpace: -1
+URxvt.inputMethod: ibus
+URxvt*preeditType: OverTheSpot
+Urxvt*perl-ext: xim-onthespot
+URxvt.depth: 32
+URxvt.scrollBar: false
+URxvt.cursorUnderline: true
+URxvt*transparent: true
+URxvt*shading: 30
+
+URxvt.color0:               [90]#282828
+URxvt.color1:               [90]#cc241d
+URxvt.color2:               [90]#98971a
+URxvt.color3:               [90]#d79921
+URxvt.color4:               [90]#458588
+URxvt.color5:               [90]#b16286
+URxvt.color6:               [90]#689d6a
+URxvt.color7:               [90]#a89984
+URxvt.color8:               [90]#928374
+URxvt.color9:               [90]#fb4934
+URxvt.color10:              [90]#b8bb26
+URxvt.color11:              [90]#fabd2f
+URxvt.color12:              [90]#83a598
+URxvt.color13:              [90]#d3869b
+URxvt.color14:              [90]#8ec07c
+URxvt.color15:              [90]#ebdbb2
+URxvt.foreground:           [90]#ebdbb2
+URxvt.background:           [90]#282828
+URxvt.colorIT:              [90]#8ec07c
+URxvt.colorBD:              [90]#d5c4a1
+URxvt.colorUL:              [90]#83a598
+URxvt.scrollColor:          [90]#504945</code></pre>
+
+<h2>コピーとペースト</h2>
+
+<p>Ctrl-cとCtrl-vの代わりに、Ctrl-Alt-cとCtrl-Alt-vをそれぞれ用いる。</p>
+
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
