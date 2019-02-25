@@ -3,7 +3,7 @@
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 </IfModule>
-<Files ~ ".(html|css|png|jpe?g)">
+<Files ~ ".(png|jpe?g)">
     Header set Cache-Control "public, max-age=604800"
 </Files>
 <IfModule mod_deflate.c>
