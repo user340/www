@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){
+code{line-height:1.4;font-size:80%;}
+.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph;}
+pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>NetBSD開発者になる方法</h1>
+<hr>
+<h2 id="intro">はじめに</h2>
+<p>2019年3月1日にNetBSD開発者になり、<a href="https://wiki.netbsd.org/projects/project/syspkgs/">syspkg</a>とInstallationの作業をすることになりました。大学院での研究成果について「いっそ開発者になってアップストリームをいじればいい」と言われてから半年以上が経ち、2019年1月からようやく腰を上げて開発者申請をしたという経緯がありました。</p>
+
+<p>NetBSD自体がマイナーなOSであり、その開発者になるにはどうしたらいいかという文書は日本語で書かれている印象がないのでここに残しておきます。</p>
+
+<h2>1. NetBSDを使う</h2>
+<p>まずはNetBSDを使わないと話が始まりません。用途・動機はなんでもいいと思います。</p>
+
+<h2>2. できそうなことを見つける</h2>
+<p>NetBSDを使っていく中で、少なからず不便に思った点や困った点が見つかると思います。それをメーリングリストやユーザ会に報告したり、自分でそれを解決する、あるいはしたいと思ったときにはじめてThe NetBSD Projectへ参加する動機が見つかります。</p>
+
+<h2>3. できそうなことをある程度こなす</h2>
+<p>やりたいこと・やってみたいことが見つかったら、それを実際にやってみます。そしてその成果をなんらかの形で共有します。共有する方法はなんでもいいです。SNSでシェアしてもいいですし、FLOSS系のイベントやカンファレンスで少し時間をもらって発表してもいいです。とにかく、なんらかのやりたいことがあって、それを現実に実行していると他の開発者に伝えることが重要です。</p>
+
+<h2>4. スポンサーを探す</h2>
+<p>最難関の手順です。まずこの時点で誰がNetBSDの開発者なのかを把握していないといけません。そのためにはSNSだけでなく対面して会える現実世界でのカンファレンスやイベントに出向く必要もあるでしょう。スポンサーになってくれるかどうか開発者に尋ねて、OKをもらってください。</p>
+
+<p>ここから<a href="https://www.netbsd.org/foundation/policies/application-procedure.html">New NetBSD developer application procedure</a>の流れに沿って動くことになります。この時点ではまだ"Existing members decide to sponsor a potential member."の途中です。</p>
+
+<p>この時点でスポンサーにPGP公開鍵へ署名してもらうといいでしょう。</p>
+
+<h2>5. 開発者申請する</h2>
+<p>スポンサーを最低1人、できれば2人集めたら開発者申請をします。スポンサーと相談しながら<a href="https://www.netbsd.org/foundation/policies/membership-app.txt">NetBSD Foundation Membership Application Form</a>に必要事項を記入してください。以下を記入する必要があります。</p>
+
+<ul>
+<li>氏名</li>
+<li>メールアドレス</li>
+<li>希望するログイン名</li>
+<li>作業するつもりの領域</li>
+<li>自身の技能の要約</li>
+<li>技術的な貢献と技能が分かるURLなど</li>
+<li>スポンサーのメールアドレス</li>
+</ul>
+
+<p>スポンサーと相談してすべて書き終えたら、NetBSDのMembership committeeにMembership Application Formをメールで送ります。テキストを本文に書いてしまうといいでしょう。</p>
+
+<h2>6. 事務手続きをする</h2>
+<p>Membership committeeと開発者らによる審査が通ったら事務手続きをして完了です。この事務手続きはmembership agreement formに署名をしてThe NetBSD Foundationに郵送（あるいはFAX）し、PGPの公開鍵で署名された/etc/passwdのエントリとSSH公開鍵のテキストを所定のアドレスへ送る必要があります。ここで、署名するためのPGP公開鍵は既存のメンバーによって署名されたものでなければなりません。</p>
+
+<h2>完了！</h2>
+<p>これでNetBSDの開発者申請は完了し、めでたくNetBSD開発者の一員となれました。スポンサーとのやりとり以外はすべて英語なので厳しい人には厳しいかもしれませんが、英語でのやりとりは多くのFLOSSプロジェクトで必須でしょうからこれに限った話ではありません。</p>
+
+<p>FLOSSはライセンスを守っていればアップストリームから好きにコードをもってきて自分の思うように書き直せますが、一番効率が良いのは自分自身でアップストリームのコードをいじり・保守していくことだと思います。可能であれば積極的にコミュニティやプロジェクトに自分の成果を還元していくことはFLOSSの共有の精神に則った素晴らしい行為でもありますし、積極的に挑戦していくべきでしょう。</p>
+
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>

@@ -13,7 +13,6 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 </head>
 <body><div class="inner">
 <h1>Xenで準仮想化環境を構築する</h1>
-<p>Last Update <time>2018-09-22</time></p>
 <hr>
 <ol>
 <li><a href="#xen">Xenとは</a></li>
@@ -44,23 +43,23 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 
 <h2 id="xen">Xenとは</h2>
 
-<p>Xenは<a href="https://www.xenproject.org/">The Xen Project</a>が開発しているオープンソースの仮想化プラットフォーム。GNU/LinuxディストリビューションやFreeBSD・NetBSD上で動く。XenはVirtualBoxやQEMUのような完全仮想化ではなく、ハードウェアのエミュレーションをおこなわない準仮想化を提供する。「64bit用XenでもCPUが64bitに対応していさえすれば、ParaVirtualizationは<b>Intel VT-xやAMD-Vと呼ばれる仮想化支援命令を持たないCPUでも問題なく動作する</b>」[oshima]特徴がある。</p>
+<p>Xenは<a href="https://www.xenproject.org/">The Xen Project</a>が開発しているオープンソースの仮想化プラットフォームです。GNU/LinuxディストリビューションやFreeBSD・NetBSD上で動作します。XenはVirtualBoxやQEMUのような完全仮想化ではなく、ハードウェアのエミュレーションをおこなわない準仮想化を提供してくれます。「64bit用XenでもCPUが64bitに対応していさえすれば、ParaVirtualizationは<b>Intel VT-xやAMD-Vと呼ばれる仮想化支援命令を持たないCPUでも問題なく動作する</b>」[oshima]点が特徴です。</p>
 
-<p>一方で「NetBSD/xen domain 0 kernel で multiprocessor の恩恵を受けることはできません。 NetBSD/xen domain U kernel でmultiprocessor の恩恵を受けることはできます。」「X11 と併用するなど、 domain 0 に対して資源を振り向けたいケースも多いと思います。そのような場合に限って NetBSD/xen はあまり役に立ちません。 NetBSD/xen domain 0 は domain U の I/O サービス専用と割り切ってください。」[clare]と言われるように、Xenホスト（domain 0あるいはdom0）に対してCPUやメモリを潤沢に割り振るようなことは普通しない。仮想化用のサーバとして扱うか、SSHでX11転送してXenゲスト（domain UあるいはdomU）を主に使うことになるだろう。「NetBSDのDom0は、<a href="http://mail-index.netbsd.org/port-xen/2009/09/25/msg005390.html">マルチコアに対応していない</a>」[isihara]ため、FirefoxやLibreOfficeのような大規模ユーザアプリケーションをホストで実行するのは厳しいように思われる。</p>
+<p>一方で「NetBSD/xen domain 0 kernel で multiprocessor の恩恵を受けることはできません。 NetBSD/xen domain U kernel でmultiprocessor の恩恵を受けることはできます。」「X11 と併用するなど、 domain 0 に対して資源を振り向けたいケースも多いと思います。そのような場合に限って NetBSD/xen はあまり役に立ちません。 NetBSD/xen domain 0 は domain U の I/O サービス専用と割り切ってください。」[clare]と言われるように、一般的にXenホスト（domain 0あるいはdom0と呼ばれる）に対してCPUやメモリを潤沢に割り振るようなことはしません。。仮想化用のサーバとして扱うか、SSHでX11転送してXenゲスト（domain UあるいはdomU）を主に使うことになるでしょう。「NetBSDのDom0は、<a href="http://mail-index.netbsd.org/port-xen/2009/09/25/msg005390.html">マルチコアに対応していない</a>」[isihara]ため、FirefoxやLibreOfficeのような大規模ユーザアプリケーションをホストで実行するのは厳しいように思われます。</p>
 
 <h2 id="install">インストール</h2>
 
 <h3 id="kernel">XEN3_DOM0カーネル</h3>
-<p>NetBSDをインストールした直後とする。インストール作業については省略する。パーティションなどは特別区切っておらずFull Installationをした。まずはGENERICカーネルからXen用のXEN3_DOM0カーネルへ入れ替える作業をおこなう。</p>
+<p>NetBSDをインストールした直後とします。インストール作業については省略します。パーティションなどは特別区切っておらずFull Installationをしたと仮定します。まずはGENERICカーネルからXen用のXEN3_DOM0カーネルへ入れ替える作業をおこないます。</p>
 
 <pre><code># ftp ftp://ftp.jp.netbsd.org/pub/NetBSD/NetBSD-7.1/amd64/binary/sets/kern-XEN3_DOM0.tgz
 # tar zxf kern-XEN3_DOM0.tgz
 # mv netbsd /netbsd-XEN</code></pre>
 
-<p>ここで、<code>/netbsd</code>を<code>mv(1)</code>で上書きしていないことに注意せよ。XEN3_DOM0カーネルの起動が失敗したときに備えて普通のGENERICカーネルでいつでも起動できるようにしておく。</p>
+<p>ここで、<code>/netbsd</code>を<code>mv(1)</code>で上書きしていないことに注意してください。XEN3_DOM0カーネルの起動が失敗したときに備えて普通のGENERICカーネルでいつでも起動できるようにしておきます。</p>
 
 <h3 id="sysutils">XenkernelとXentools</h3>
-<p>pkgsrcからsysutils/xenkernel48とsysutils/xentools48をインストールする。</p>
+<p>pkgsrcからsysutils/xenkernel48とsysutils/xentools48をインストールします。</p>
 
 <pre><code># cd /usr/pkgsrc/sysutils/xenkernel48
 # make install clean clean-depends</code></pre>
@@ -71,7 +70,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <h2 id="config">設定</h2>
 
 <h3 id="daemon">デーモンの設定</h3>
-<p>ここではXenに最低限必要なデーモンの設定について述べる。/usr/pkg/share/examplesディレクトリ以下にあるRCスクリプトを/etc/rc.dディレクトリにコピーし、自動起動の設定を<code>rc.conf(5)</code>に書く。<b>xencommonsデーモンを有効にしておかないと、XEN3_DOM0カーネルでブートする際ハングしてしまう。必ず<code>rc.conf(5)</code>に書き込んでおくこと。</b></p>
+<p>ここではXenに最低限必要なデーモンの設定について述べます。/usr/pkg/share/examplesディレクトリ以下にあるRCスクリプトを/etc/rc.dディレクトリにコピーし、自動起動の設定を<code>rc.conf(5)</code>に書きます。<b>xencommonsデーモンを有効にしておかないと、XEN3_DOM0カーネルでブートする際ハングしてしまいます。必ず<code>rc.conf(5)</code>に書き込んでおいてください。</b></p>
 
 <pre><code># cp /usr/pkg/share/examples/rc.d/xencommons /etc/rc.d
 # cp /usr/pkg/share/examples/rc.d/xendomains /etc/rc.d
@@ -81,27 +80,27 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 # echo "xen-watchdog=YES" >> /etc/rc.conf</code></pre>
 
 <h3 id="bridge">ブリッヂの作成</h3>
-<p>Domain-U用にネットワークブリッヂを作成する。/etc/ifconfig.bridge0に以下の内容を記述する。</p>
+<p>Domain-U用にネットワークブリッヂを作ります。/etc/ifconfig.bridge0に以下の内容を記述します。</p>
 
 <pre><code>create
 up
 !brconfig bridge0 add wm0 up</code></pre>
 
-<p>文中のwm0は、使用しているマシンのネットワークインタフェース名に適宜置き換える。</p>
+<p>文中のwm0は、使用しているマシンのネットワークインタフェース名に適宜置き換えてください。</p>
 
 <h3 id="bootcfg">/boot.cfgの編集</h3>
 
-<p>/boot.cfgに以下を追加する。</p>
+<p>/boot.cfgに以下の行を追加します。</p>
 
 <pre><code>menu=Boot Xen:load /netbsd-XEN console=pc; multiboot /usr/pkg/xen48-kernel/xen.gz dom0_mem=8192M</code></pre>
 
-<p>起動時に"Boot Xen"と書かれた行の番号をタイプすると、XENカーネルが使われ、標準の"Boot normally"などであればGENERICカーネルが使われる。</p>
+<p>起動時に"Boot Xen"と書かれた行の番号をタイプすると、XENカーネルが使われ、標準の"Boot normally"などであればGENERICカーネルが使われるようになりました。</p>
 
 <h3 id="reboot">再起動</h3>
-<p>再起動し、XENカーネルを使うようブート時の画面で指定する。</p>
+<p>再起動し、XENカーネルを使うようブート時の画面で指定します。</p>
 
 <h3 id="dom0">Domain-0の確認</h3>
-<p>xlコマンドを使い、ゲスト（Domain-0）とホスト（Domain-U）の状態を確認できる。</p>
+<p><code>xl</code>コマンドを使い、ゲスト（Domain-0）とホスト（Domain-U）の状態を確認できます。</p>
 
 <pre><code># xl list
 Name                       ID   Mem VCPUs      State    Time(s)
@@ -110,12 +109,12 @@ Domain-0                    0  8192     1     r-----       11.3</code></pre>
 <h2 id="create">NetBSD Domain-Uの作成</h2>
 
 <h3 id="create/disk">ディスク</h3>
-<p>4GBのディスクを作る。</p>
+<p>4GBのディスクを作ります。</p>
 
 <pre><code># dd if=/dev/zero of=netbsd.img bs=1m count=4096</code></pre>
 
 <h3 id="create/kernel">カーネル</h3>
-<p>インストール用のDOMUカーネルと通常のDOMUカーネルをダウンロードする。</p>
+<p>インストール用のDOMUカーネルと通常のDOMUカーネルをダウンロードします。</p>
 
 <pre><code># ftp ftp://ftp.jp.netbsd.org/pub/NetBSD/NetBSD-7.1/amd64/binary/kernel/netbsd-XEN3_DOMU.gz
 # ftp ftp://ftp.jp.netbsd.org/pub/NetBSD/NetBSD-7.1/amd64/binary/kernel/netbsd-INSTALL_XEN3_DOMU.gz
@@ -123,7 +122,7 @@ Domain-0                    0  8192     1     r-----       11.3</code></pre>
 # gzip -d netbsd-XEN3_DOMU.gz</code></pre>
 
 <h3 id="create/conf">Domain-U用設定ファイル</h3>
-<p>Domain-U用の設定ファイルを作る。ここでは"xen_netbsd"という名前で以下のように書いた。</p>
+<p>Domain-U用の設定ファイルを作ります。ここでは"xen_netbsd"という名前で以下のように書きました。</p>
 
 <pre><code>kernel = "/root/netbsd-INSTALL_XEN3_DOMU"
 vcpus = 2
@@ -132,15 +131,15 @@ name = "NetBSD"
 vif = [ 'bridge=bridge0' ]
 disk = [ 'file:/root/netbsd.img,0,w' ]</code></pre>
 
-<p>仮想コアは2つ、メモリは2GBにし、ディスクには /root/netbsd.imgを指定している。vifのMACアドレスが必要であればifconfig(8)を使い、ブリッヂしているネットワークインタフェースのMACアドレスを確認する。</p>
+<p>仮想コアは2つ、メモリは2GBにし、ディスクには /root/netbsd.imgを指定しています。vifのMACアドレスが必要であれば<code>ifconfig(8)</code>を使い、ブリッヂしているネットワークインタフェースのMACアドレスを確認してください。</p>
 
 <h3 id="create/install">Domain-Uインストール</h3>
 <pre><code># xl create -c /root/xen_netbsd</code></pre>
 
-<p>sysinstの画面が出てくる。先にネットワークの設定をしてから、tarballをFTP経由でダウンロードすればよい。インストール終了後、sysinstのトップ画面から"x: Exit Install System"を選択し、halt -pで仮想マシンをシャットダウンする。</p>
+<p>sysinstの画面が出てきます。先にネットワークの設定をしてから、tarballをFTP経由でダウンロードすればよいでしょう。インストール終了後、sysinstのトップ画面から"x: Exit Install System"を選択し、halt -pで仮想マシンをシャットダウンします。</p>
 
 <h3 id="create/rewrite">設定ファイルの編集</h3>
-<p>kernel = 行を書き換える。</p>
+<p>kernel = 行を書き換えます。</p>
 
 <pre><code>kernel = "/root/netbsd-XEN3_DOMU"
 vcpus = 2
@@ -150,11 +149,11 @@ vif = [ 'bridge=bridge0' ]
 disk = [ 'file:/root/netbsd.img,0,w' ]</code></pre>
 
 <h3 id="create/run">Domain-U動作確認</h3>
-<p>ふたたび起動する。</p>
+<p>ふたたび起動します。</p>
 
 <pre><code># xl create -c /root/xen_netbsd</code></pre>
 
-<p>Domain-UでSSHデーモンを動かしリモートログインができる状態にあるなど、コンソール画面が必要でない場合は-cオプションをつけずに実行する。</p>
+<p>Domain-UでSSHデーモンを動かしリモートログインができる状態にあるなど、コンソール画面が必要でない場合は-cオプションをつけずに実行します。</p>
 
 <pre><code># xl create /root/xen_netbsd</code></pre>
 

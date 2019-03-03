@@ -14,7 +14,6 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 </head>
 <body><div class="inner">
 <h1>pkg_installについて</h1>
-<p>Last Update <time>2018-09-22</time></p>
 <hr>
 <ol>
   <li><a href="#install">インストール</a></li>
@@ -25,10 +24,10 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 </ol>
 
 <h2 id="install">インストール</h2>
-<p>NetBSDではベースシステムに含まれている。pkgtools/pkg_installパッケージをインストールすることで、NetBSD以外のシステムにインストールしたりベースシステムのより新しいバージョンのpkg_*を使用できる。</p>
+<p>NetBSDではベースシステムに含まれています。pkgtools/pkg_installパッケージをインストールすることで、NetBSD以外のシステムにインストールしたりベースシステムのより新しいバージョンのpkg_*を利用できます。</p>
 
 <h2 id="add">pkg_add(1)</h2>
-<p>pkg_add(1)はパッケージのインストールに使われる。pkgsrcでmake installすると裏で自動的に実行されるが、たまにパッケージを手動でインストールする場面もある。man(1)のEXAMPLESにあるように、パッケージを配布しているURLを環境変数PKG_PATHに指定すると、パッケージをそのURLから探しインストールできる。</p>
+<p><code>pkg_add(1)</code>はパッケージのインストールに使われます。pkgsrcで<code>make install</code>すると自動的に実行されますが、たまにパッケージを手動でインストールする場面もあります。<code>man(1)</code>のEXAMPLESにあるように、パッケージを配布しているURLを環境変数PKG_PATHに指定すると、パッケージをそのURLから探しインストールできます。</p>
 
 <blockquote>
   <p>In all cases, <b>pkg_add</b> will try to install binary packages listed in dependencies list.</p>
@@ -43,7 +42,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 </blockquote>
 
 <h2 id="admin">pkg_admin(1)</h2>
-<p>pkg_admin(1)は主に脆弱性のあるパッケージを見つけて、更新すべきパッケージを知るために使う。root権限で以下のように実行すると、どのパッケージがどのような脆弱性を抱えているのかがわかる。</p>
+<p><code>pkg_admin(1)</code>は主に脆弱性のあるパッケージを見つけて、更新すべきパッケージを見つけるために使います。root権限で以下のように実行すると、どのパッケージがどのような脆弱性を抱えているのかがわかります。</p>
 
 <pre><code># pkg_admin fetch-pkg-vulnerabilities
 # pkg_admin audit
@@ -51,14 +50,14 @@ Package libxslt-1.1.30 has a insufficiently-random-numbers vulnerability, see ht
 Package git-base-2.14.1nb2 has a command-injection vulnerability, see https://nvd.nist.gov/vuln/detail/CVE-2017-14867
 Package libxml2-2.9.5 has a denial-of-service vulnerability, see https://nvd.nist.gov/vuln/detail/CVE-2017-8872</code></pre>
 
-<p>libxsltとgit-base、libxmlパッケージに脆弱性があるとわかる。</p>
+<p>ここではlibxsltとgit-base、libxmlパッケージに脆弱性があるとわかりました。</p>
 
-<p>脆弱性のあるパッケージはpkgsrcからインストールできないようになっているが、脆弱性があると認識した上でパッケージをインストールするには/etc/mk.confに<code>ALLOW_VULNERABLE_PACKAGES=yes</code>を追加する。</p>
+<p>脆弱性のあるパッケージはpkgsrcからインストールできないようになっていますが、脆弱性があると認識した上でパッケージをインストールするには/etc/mk.confに<code>ALLOW_VULNERABLE_PACKAGES=yes</code>を追加します。</p>
 
 <h2 id="delete">pkg_delete(1)</h2>
-<p>pkg_delete(1)は与えられたパッケージ名をデータベース（標準では/var/db/pkg）から探し、あれば削除する。pkgsrcでmake installを実行してインストールしたパッケージの場合、削除したいパッケージのディレクトリまで移動しmake deinstallを実行することもできる。</p>
+<p><code>pkg_delete(1)</code>は与えられたパッケージ名をデータベース（標準では/var/db/pkg）から探し、あれば削除します。pkgsrcで<code>make install</code>を実行してインストールしたパッケージの場合、削除したいパッケージのディレクトリまで移動し<code>make deinstall</code>を実行することもできます。</p>
 
-<p>たとえばfirefoxパッケージを削除するときは下記のどちらかを実行する。</p>
+<p>たとえばfirefoxパッケージを削除するときは下記のどちらかを実行します。</p>
 
 <pre><code># pkg_delete firefox</code></pre>
 
@@ -66,65 +65,32 @@ Package libxml2-2.9.5 has a denial-of-service vulnerability, see https://nvd.nis
 # make deinstall</code></pre>
 
 <h2 id="create">pkg_create(1)</h2>
-<p>pkg_create(1)はその名の通りパッケージを作る。/usr/pkgsrc/packages/Allにあるtarballはpkg_create(1)によって生成されている。</p>
+<p><code>pkg_create(1)</code>はその名の通りパッケージを作るためのコマンドです。/usr/pkgsrc/packages/Allにあるtarballは<code>pkg_create(1)</code>によって生成されています。</p>
 
-<p>pkg_create(1)はパッケージに関する情報を含んだファイル（メタデータ）を必要とする。</p>
+<p><code>pkg_create(1)</code>はパッケージに関する情報を含んだファイル（メタデータ）を必要とします。</p>
 <table border=1>
-<thead>
-  <tr>
-    <th>メタデータ</th>
-    <th>内容</th>
-  </tr>
-</thead>
+<thead><tr><th>メタデータ</th><th>内容</th></tr></thead>
 <tbody>
-  <tr>
-    <td>+BUILD_INFO</td>
-    <td>ビルドした日時、コンパイラの種類とバージョン、コンパイラのフラグ、ライセンス……といったビルド環境の情報</td>
-  </tr>
-  <tr>
-    <td>+BUILD_VERSION</td>
-    <td>PLIST（パッケージングされてるソフトウェアの名前やパスのリスト）やパッチファイルなどのバージョン</td>
-  </tr>
-  <tr>
-    <td>+INSTALL</td>
-    <td>pkg_add(1)がパッケージの展開前・展開後に実行するスクリプト</td>
-  </tr>
-  <tr>
-    <td>+DEINSTALL</td>
-    <td>pkg_delete(1)がパッケージの削除前・削除後に実行するスクリプト</td>
-  </tr>
-  <tr>
-    <td>+SIZE_ALL</td>
-    <td>依存しているパッケージも含め、インストールされる全ファイルの大きさの合計</td>
-  </tr>
-  <tr>
-    <td>+SIZE_PKG</td>
-    <td>インストールされる全ファイルの大きさの合計</td>
-  </tr>
-  <tr>
-    <td>+COMMENT</td>
-    <td>パッケージのコメント</td>
-  </tr>
-  <tr>
-    <td>+DESC</td>
-    <td>パッケージの詳細</td>
-  </tr>
-  <tr>
-    <td>+CONTENTS</td>
-    <td>インストールされるファイル名とそのパスのリスト</td>
-  </tr>
-</tbody>
-</table>
+<tr><td>+BUILD_INFO</td><td>ビルドした日時、コンパイラの種類とバージョン、コンパイラのフラグ、ライセンス……といったビルド環境の情報</td></tr>
+<tr><td>+BUILD_VERSION</td><td>PLIST（パッケージングされてるソフトウェアの名前やパスのリスト）やパッチファイルなどのバージョン</td></tr>
+<tr><td>+INSTALL</td><td>pkg_add(1)がパッケージの展開前・展開後に実行するスクリプト</td></tr>
+<tr><td>+DEINSTALL</td><td>pkg_delete(1)がパッケージの削除前・削除後に実行するスクリプト</td></tr>
+<tr><td>+SIZE_ALL</td><td>依存しているパッケージも含め、インストールされる全ファイルの大きさの合計</td></tr>
+<tr><td>+SIZE_PKG</td><td>インストールされる全ファイルの大きさの合計</td></tr>
+<tr><td>+COMMENT</td><td>パッケージのコメント</td></tr>
+<tr><td>+DESC</td><td>パッケージの詳細</td></tr>
+<tr><td>+CONTENTS</td><td>インストールされるファイル名とそのパスのリスト</td></tr>
+</tbody></table>
 
 <h2 id="info">pkg_info(1)</h2>
-<p>pkg_info(1)はパッケージの情報を表示する。マニュアルを読むとオプションの数が多いものの、大抵の場合はオプションを何も付けずに実行するだけで済む。</p>
+<p><code>pkg_info(1)</code>はパッケージの情報を表示します。マニュアルを読むとオプションの数が多いものの、大抵の場合はオプションを何も付けずに実行するだけで済むでしょう。</p>
 
-<p>特定のファイルがどのパッケージに格納されているのかを調べるには-Feオプションを使う。</p>
+<p>特定のファイルがどのパッケージに格納されているのかを調べるには-Feオプションを使います。</p>
 
 <pre><code>$ pkg_info -Fe /usr/pkg/bin/vim
 8.1.0216</code></pre>
 
-<p>特定のファイルを提供しているパッケージの、提供しているファイルの一覧を調べるには-LFオプションを使う。</p>
+<p>特定のファイルを提供しているパッケージの、提供しているファイルの一覧を調べるには-LFオプションを使います。</p>
 
 <pre><code>$ pkg_info -LF /usr/pkg/bin/vim
 Information for vim-8.1.0216:

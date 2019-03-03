@@ -28,15 +28,15 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 </ol>
 
 <h2 id="X60s">X60s</h2>
-<p>ハードウェアによっては無線ネットワークインタフェースが見えない。</p>
+<p>ハードウェアによっては無線ネットワークインタフェースが見えません。</p>
 
 <h2 id="X201i">X201i</h2>
-<p>NetBSD 7.1/amd64ではシャットダウンするときpanicしてしまうため、再起動が続き電源をオフにできない。NetBSD 7.1.1以降は未検証。</p>
+<p>NetBSD 7.1/amd64ではシャットダウンするときpanicしてしまうため、再起動が続き電源をオフにできませんでした。NetBSD 7.1.1以降は未検証。</p>
 
 <h2 id="X230i">X230i</h2>
 
 <h3 id="X230i/display">ディスプレイ拡張</h3>
-<p>D-Subは問題なく使える。 HDMIポートがないためMiniDisplayPortを通じておこなわなければならないが、下記のようなメッセージがコンソールに出力され、ディスプレイ拡張ができない。</p>
+<p>D-Subは問題なく使える。 HDMIポートがないためMiniDisplayPortを通じておこなわなければなりませんが、下記のようなメッセージがコンソールに出力され、ディスプレイ拡張ができません。</p>
 <pre><code>DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
@@ -46,14 +46,14 @@ DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_complete_link_train: failed to train DP, aborting</code></pre>
     
 <h3 id="X230i/trackpoint">トラックポイント</h3>
-<p>中クリックをしながらトラックポイントを動かしてページをスクロールするには、/etc/X11/xorg.confのInputDeviceセクションに以下を書く。</p>
+<p>中クリックをしながらトラックポイントを動かしてページをスクロールするには、/etc/X11/xorg.confのInputDeviceセクションに以下を書きます。</p>
 <pre><code>Option     "EmulateWheel" "true"
 Option     "EmulateWheelButton" "2"
 Option     "YAxisMapping" "4 5"
 Option     "XAxisMapping" "6 7"</code></pre>
 
 <h3 id="X230i/touchpad">タッチパッド</h3>
-タッチパッドを無効化するにはBIOSから設定をおこなう。
+タッチパッドを無効化するにはBIOSから設定をおこなってください。
 
 <h3 id="X230i/if">ネットワークインタフェース</h3>
 <p>ifconfig(8)の出力は以下の通り。</p><pre><code>wm0: flags=8802<BROADCAST,SIMPLEX,MULTICAST> mtu 1500
