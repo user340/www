@@ -15,17 +15,17 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <body><div class="inner">
 <h1>安全なpkgsrc(7)パッケージの更新</h1>
 <hr>
-<p>NetBSDではThird-partyソフトウェアのインストールに<code>pkgsrc(7)</code>を使う。このシステムを使うにあたっては、ソフトウェアをインストールするよりもむしろインストールされたソフトウェアをどう更新していくかが問題となる。なぜなら、ひとつのパッケージには複数のパッケージが依存しているのが普通であり、ユーザからすれば使いたいソフトウェアに依存したパッケージについて意識を向ける機会はほとんどないからである。</p>
+<p>NetBSDではThird-partyソフトウェアのインストールに<code>pkgsrc(7)</code>を使います。しかし'このシステムを使うにあたっては、ソフトウェアをインストールするよりもむしろインストールされたソフトウェアをどう更新していくかが大きな問題となります。なぜなら、ひとつのパッケージには複数のパッケージが依存しているのが普通であり、ソフトウェアをインストールすればするほどビルドが複雑になるからです。ユーザからすれば使いたいソフトウェアに依存したパッケージについて意識を向ける機会はほとんどありません。</p>
 
-<p>一般に<code>pkgsrc(7)</code>のパッケージを更新するには<code>make update</code>を使うとよく言われるが、これは安全ではない。<code>make update</code>は一旦インストールされているパッケージをアンインストールしてからパッケージをビルドしインストールするという挙動をするため、もしパッケージのビルドに失敗してしまうと本来動いていたソフトウェアが削除され現状復帰が難しい。</p>
+<p>一般に<code>pkgsrc(7)</code>のパッケージを更新するには<code>make update</code>を使うとよく言われますが、これは安全ではありません。<code>make update</code>は一旦インストールされているパッケージをアンインストールしてからパッケージをビルドしインストールするという挙動をするため、もしパッケージのビルドに失敗してしまうと本来動いていたソフトウェアが削除され現状復帰が難しくなります。</p>
 
-<p>そこで<code>chroot(8)</code>を基にしたサンドボックス（sandbox）環境を利用するパッケージの更新方法を紹介する。本文書の内容はJulio Merino『<a href="http://julio.meroh.net/2017/02/pkg_comp-2.0-tutorial-netbsd.html">Keeping NetBSD up-to-date with pkg_comp 2.0</a>』とほぼ同一であるが一部追加している箇所もある。</p>
+<p>そこで<code>chroot(8)</code>を基にしたサンドボックス（sandbox）環境を利用するパッケージの更新方法を紹介します。本文書の内容はJulio Merino『<a href="http://julio.meroh.net/2017/02/pkg_comp-2.0-tutorial-netbsd.html">Keeping NetBSD up-to-date with pkg_comp 2.0</a>』とほぼ同一ですが一部追加している箇所もあります。</p>
 
 <h2>目標</h2>
-<p>更新したいすべてのパッケージを<code>pkg_comp(8)</code>を使いビルドし、<code>pkgin(1)</code>からパッケージをアップデートできるようにする。</p>
+<p>更新したいすべてのパッケージを<code>pkg_comp(8)</code>を使いビルドし、<code>pkgin(1)</code>からパッケージをアップデートできるようにします。</p>
 
 <h2>必要なパッケージのインストール</h2>
-<p>以下のパッケージを<code>pkgsrc(7)</code>からインストールする。</p>
+<p>以下のパッケージを<code>pkgsrc(7)</code>からインストールします。</p>
 
 <ul>
 <li>sysutils/sysbuild-user</li>
@@ -38,11 +38,11 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <h2>準備</h2>
 
 <h3>サンドボックス用のNetBSDバイナリをダウンロードする</h3>
-<p>はじめに必要なディレクトリを作成する。</p>
+<p>はじめに必要なディレクトリを作成します。</p>
 
 <pre><code># mkdir -p /home/sysbuild/release/$(uname -m)/binary/sets</code></pre>
 
-<p>NetBSDのFTPサーバあるいはFTPミラーからNetBSDのリリースバイナリbase.tgz・comp.tgz・etc.tgz3つすべてを/home/sysbuild/release/amd64/binary/setsディレクトリにダウンロードする。バージョンは自身が動かしているNetBSDのバージョンと合わせる。</p>
+<p>NetBSDのFTPサーバあるいはFTPミラーからNetBSDのリリースバイナリbase.tgz・comp.tgz・etc.tgz3つすべてを/home/sysbuild/release/amd64/binary/setsディレクトリにダウンロードします。バージョンは自身が動かしているNetBSDのバージョンと合わせてください。</p>
 
 <pre><code># cd /home/sysbuild/release/$(uname -m)/binary/sets
 # ftp ftp://ftp.netbsd.org/pub/NetBSD/NetBSD-8.0/$(uname -m)/binary/sets/base.tgz
@@ -50,7 +50,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 # ftp ftp://ftp.netbsd.org/pub/NetBSD/NetBSD-8.0/$(uname -m)/binary/sets/etc.tgz</code></pre>
 
 <h3>pkg_compの設定ファイルを編集する</h3>
-<p><code>pkg_comp(8)</code>の設定ファイル/var/pkg_comp/pkg_comp.confを編集する。たとえば以下のようになるだろう。</p>
+<p><code>pkg_comp(8)</code>の設定ファイル/var/pkg_comp/pkg_comp.confを編集します。たとえば以下のようになるでしょう。</p>
 
 <pre><code># $NetBSD: pkg_comp.conf,v 1.1 2017/02/17 21:27:38 jmmv Exp $
 
@@ -64,7 +64,7 @@ CVS_TAG=pkgsrc-2018Q4
 #GIT_BRANCH=trunk
 
 # Host file layout.
-PKGSRCDIR="/var/pkg_comp/pkgsrc"
+PKGSRCDIR="/usr/pkgsrc"
 DISTDIR="/var/pkg_comp/distfiles"
 PACKAGES="/var/pkg_comp/packages"
 PBULK_PACKAGES="/var/pkg_comp/pbulk-packages"
@@ -73,7 +73,7 @@ SANDBOX_CONFFILE="/var/pkg_comp/sandbox.conf"
 
 # Target file layout.
 LOCALBASE="/usr/pkg"
-PKG_DBDIR="${LOCALBASE}/libdata/pkgdb"
+PKG_DBDIR="/var/db/pkg"
 SYSCONFDIR="${LOCALBASE}/etc"
 VARBASE="/var"
 
@@ -83,18 +83,16 @@ VARBASE="/var"
 AUTO_PACKAGES="$(grep -v '^#' '/var/pkg_comp/list.txt')"</code></pre>
 
 <h3>インストールされているパッケージを確認する</h3>
-<p><b>注：もっと良い方法があるかもしれない。</b></p>
-
-<p><code>pkg_chk(8)</code>の<code>-g</code>オプションを使い、インストールされているパッケージの一覧を/usr/pkgsrc/pkgchk.confに書き出す。</p>
+<p><code>pkg_chk(8)</code>の<code>-g</code>オプションを使い、インストールされているパッケージの一覧を/usr/pkgsrc/pkgchk.confに書き出します。</p>
 
 <pre><code># pkg_chk -g</code></pre>
 
-<p>pkgchk.confの内容を、<code>pkg_comp(8)</code>が解釈可能なフォーマットで/var/pkg_comp/list.txtに書き出す。</p>
+<p>pkgchk.confを/var/pkg_comp/list.txtにコピーします。</p>
 
-<pre><code># grep -v '^#' /usr/pkgsrc/pkgchk.conf | cut -f 2 -d '/' &gt; /var/pkg_comp/list.txt</code></pre>
+<pre><code># cp /usr/pkgsrc/pkgchk.conf /var/pkg_comp/list.txt</code></pre>
 
 <h2>pkg_comp(8)でパッケージをビルドする</h2>
-<p><code>pkg_comp(8)</code>の<code>auto</code>コマンドで/var/pkg_comp/list.txtに書かれているパッケージすべてをビルドする。このコマンドは以下の5つのコマンドを自動的に実行する。</p>
+<p><code>pkg_comp(8)</code>の<code>auto</code>コマンドで/var/pkg_comp/list.txtに書かれているパッケージすべてをビルドします。このコマンドは以下の5つのコマンドを自動的に実行します。</p>
 
 <ol>
 <li><code>pkg_comp -c /var/pkg_comp/pkg_comp.conf fetch</code></li>
@@ -105,18 +103,18 @@ AUTO_PACKAGES="$(grep -v '^#' '/var/pkg_comp/list.txt')"</code></pre>
 </ol>
 
 <h2>pkgin(1)リポジトリに登録する</h2>
-<p>ビルドされたパッケージは/var/pkg_comp/packages/Allに置かれる。このパスを/usr/pkg/etc/pkgin/repositories.confに書く。</p>
+<p>ビルドされたパッケージは/var/pkg_comp/packages/Allに配置されます。このパスを/usr/pkg/etc/pkgin/repositories.confに書きます。</p>
 
 <pre><code># echo 'file:///var/pkg_comp/packages/All' &gt;&gt; /etc/pkgin/repositories.conf
 # pkgin update</code></pre>
 
 <h2>pkgin(1)でパッケージをアップデートする</h2>
-<p><code>pkgin(1)</code>の<code>upgrade</code>コマンドを実行する。</p>
+<p><code>pkgin(1)</code>の<code>upgrade</code>コマンドを実行します。</p>
 
 <pre><code># pkgin upgrade -y</code></pre>
 
 <h2>おわりに</h2>
-<p><code>pkg_comp(8)</code>を使ったパッケージの更新を紹介した。<code>pkgsrc(7)</code>の最新リリースから少し時間が経ってから新しいバイナリパッケージがFTPサーバにアップロードされるので、リリースからすぐパッケージを更新したければ手元のマシンでビルドするのがもっとも速い。</p>
+<p><code>pkg_comp(8)</code>を使ったパッケージの更新を紹介しました。<code>pkgsrc(7)</code>の最新リリースから少し時間が経ってから新しいバイナリパッケージがFTPサーバにアップロードされるので、リリースからすぐパッケージを更新したければ手元のマシンでビルドするのがもっとも速いでしょう。任意のビルドオプションを付けてビルドを実行できるのも利点のひとつです。</p>
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
