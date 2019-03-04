@@ -1,0 +1,72 @@
+
+
+第45回FREEBSDワークショップ
+
+
+開催背景 佐藤広生（東京工業大学）
+
+「なんかしゃべる会」
+
+12.0 RELEASE
+
+OpenSSL
+1.1.1を入れたい。OpenSSLはバージョンが上がると互換性がなくなるので、作業の遅れの原因となっている。
+
+users-jpからkterm +
+UTF-8（ktermをUTF-8で使っているとき特殊なキーを打つと落ちる）とか、Kerberized
+NFSv4（KerberosのMIT実装は輸出規制に引っかかっている）とか。
+
+最近はメールでも絵文字がたくさん入ってくるのでEUC-JPだと文字化けしまくり。
+
+イベント
+
+-   EuroBSDCon 参加者180人くらい。
+-   MeetBSD 10月中旬くらい。
+-   AsiaBSDCon 来年3月末。
+
+
+自己紹介
+
+libeditのバグ
+
+    Q.  readlineがあるのに誰が使うの？A. readlineはGPLv3だから……。
+
+tzdiffがportsに入った。
+
+Q.  grubでVNC接続できないか？ A. 技術的にはできる。
+
+NetBSDのaarch64がclangからgccに移った。
+
+inetdからsshdを上げる。接続数に制限があるのでport scanされてもOK。
+
+JenkinsがOOM Killerにやられる。
+
+sysctlはswapが8GBを超える時は手動で設定が必要。
+
+memtester -- メモリを確保するだけのソフトウェア
+
+    UFSだと落ちないけどZFSだと負荷テストが落ちる。arc_maxの値は超える可能性がある。10GBぐらいまで抑える。
+
+
+Nano PiでFreeBSDを動かす
+
+32bit。HDMIポートとI2Cは無い。
+
+イメージがないものは自分でビルドする。Crochetのcrochet/boardをハックすると、新しいボードやサポートされていないポート用のイメージが作れる。
+
+シリアルコンソールで画面をとる。ifconfigしてもインタフェースは見えない。USBドングルでWiFiが使える。
+
+
+Intel NUCでDual Boot
+
+-   UEFIブート
+-   AtomのNUC
+
+WindowsとのDual Boot。セキュアブートは無効にしておく。
+
+WindowsのEFIパーティションとは別にFreeBSDのEFIパーティションを作ると、EFIから別のEFIを指定できるのでOSを選んで起動できる。
+
+Windowsの大型アップデートはrollbackできるようにパーティションを新しく作る。この影響を避けるため、FreeBSD側では/dev/sda0ではなく/dev/gpt/FreeBSD_rootのようなラベルにする。
+
+設定＞回復＞今すぐカスタマイズする
+からFreeBSDのEFI領域を選ぶ。Shift+「再起動」でもいい。

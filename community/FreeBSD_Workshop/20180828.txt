@@ -1,0 +1,39 @@
+
+
+第44回FREEBSDワークショップ
+
+
+開催背景 佐藤広生（東京工業大学）
+
+「オープンソースなんとか」はともかく「なんとかBSD系」という名前のイベントは人が集まらない。FreeBSD
+FoundationはBSD系以外のイベントにもプロモーション活動で出向いている。
+
+
+自己紹介タイム
+
+Q.  GnuPGのWarning insecure memoryとは？
+R.  malloc(3)してfree(3)してもメモリ内にデータが残る。free(3)してメモリ内のデータを消去する機能がサポートされていないプラットフォームではこういうメッセージが出る。仮想マシンで動かしているわけでもなければ気にしなくていい。
+
+FreeBSDではBase Systemだけでiscsiが組める。
+
+Raspberry Pi 3はHEADしか動かない（2018/08/28）。
+
+
+Xen Dom0 <--> bhyve on FreeBSD
+
+MACアドレスとディスクへのパスをbhyveとXenで一緒にする。
+
+
+PostgreSQLとsetproctitle(3) 内藤祐一郎（創夢）
+
+setproctitle(3)はBSDの独自実装。sysctl(3)とgetpid(2)の2回システムコールが発行される。
+
+FreeBSDのPostgreSQLでは update_process_title
+が標準でoffになっている。GNU/Linuxではargv[0]を書き換えているだけ。システムコールは発行しないので高速。
+
+setproctitle(3)を高速化した。HEADとstable 11では変更済み。
+次期リリースでは update_process_title = on にしても遅くならない。
+
+> bhyveはcapability modeで動作する（FreeBSD 11.2）が、capability
+modeではsysctl(3)を使えない。capability modeはGlobal
+Stateへのアクセスを許さないという思想。一方、OpenBSDのpledgeは必要なリソースはあらかじめ確保しておけという思想。

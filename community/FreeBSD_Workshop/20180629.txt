@@ -1,0 +1,145 @@
+
+
+第42回FREEBSDワークショップ
+
+
+https://freebsd-workshop.connpass.com/event/90121/
+
+
+はじまりの挨拶, 佐藤 広生（東京工業大学）
+
+資料: https://people.allbsd.org/~hrs/FreeBSD/sato-FBSDW20180629.pdf
+
+コアメンバの半分くらいは企業の人。FreeBSDを製品として使うプロジェクトのリーダなど。
+
+FreeBSD
+Foundationは開発よりもプロモーションがおもな仕事。寄付を募る（過去最高は1億円）。
+
+
+自己紹介タイム
+
+-   数年ぶりにFreeBSD-7.2をリブートしたらsudoが使えなくなった。
+
+      -   ABI？違うライブラリをみている？
+
+-   カナダのBSD Can最終日のBoFでTheo de Raadtが暴れてた（平常運転）。
+
+      -   https://www.youtube.com/watch?v=_E873DaCLN4
+
+-   ktermの日本語フォントの表示がおかしい。
+-   FreeBSD-11.2でVirtualBoxのカーネルモジュール周りでpanicする。
+-   jail上で任意のプログラムを2秒間だけ動かしてあげるサービスを運営している。
+-   Ansibleをシェルで置き換えるプロジェクトをやっている。
+-   IIJ水 枯渇
+
+
+FreeBSD 11.2 RELEASE!, 内藤祐一郎（創夢）
+
+資料: https://www.slideshare.net/YuichiroNaito/freebsd-112-release
+
+グラフィックス
+
+Intel, radeon系のグラフィックドライバが新しくなった。ドライバ本体はLinux
+4.11からの移植。
+
+Linux互換レイヤ（LinuxKPI）が新しくなった。ドライバ本体はFreeBSDのソースツリーにない。portsにある。
+
+1.  drm-next-kmodを入れる。
+2.  /boot/modules/i915kms.koをロードする。/boot/kernel//i915kms.koではない。
+3.  /etc/rc.conf: kld_list="/boot/modules/i915kms.ko"
+
+最近はXorg.confを書かない風潮になっている。HDMI経由でサウンドも鳴らせる。
+
+ディスプレイサスペンド後のレジュームでサウンドだけ復帰しない。
+
+ZFSにCheckpointとDevice
+removalという機能が追加された。ZFSをアップグレードすると使える。
+
+ZFS Checkpoint
+
+プールに対するスナップショットのようなもの（１つしかとれない）。
+
+プール全体に対しておこなった操作を取り消せる。
+
+チェックポイント中はプールの構成を変えるようなことはできない。
+
+サービスを止めたうえでプールに対する破壊的な変更をおこなうときの保険。
+
+運用中のディスクに対してはおこなえない。
+
+チェックポイント後に書き込まれたデータもすべてロールバックされる（消される）。
+
+ZFS device removal
+
+プールの中の構成されたトップレベルのvdevを削除できる。
+
+    testpool
+        mirror-0
+            /dev/da0p1
+            /dev/da1p1
+        mirror-1
+            /dev/da2p1
+            /dev/da3p1
+
+mirror-0かmirror-1を削除できる。mirror以外はサポート外。
+
+zpool
+import時にテンポラリ名を指定できるようになった。テンポラリ名はディスクに保存されない。
+
+その他
+
+vt(4)コンソールのカラーパレットが編集できるようになった。/boot/loader.confに
+kern.vt.color.0 ~ 15.rgb="#f0f0f0" など。
+
+em(4)ドライバアップデート。Icelake/Cannonlake世代までのWake up on
+LANがサポートされた。
+
+カーネルABIの変更。virtualbox-ose-kmodとnvidia-driver340のリコンパイルが必要11.2のソースを展開したうえで当該portsをリビルド。あらかじめports/branches/2018Q2をチェックアウトしておくと便利。
+
+詳しくはリリースノートをみてね
+
+  portsから入れたものがpanicの原因になるのは地雷感つよい！
+
+nvidia-driverをpkgから入れると問題があるのでportsから入れてね
+
+カーネルモジュール系はリビルドしないとちゃんと動かない。
+
+開発の中心は12.0。11系はメンテナンス中心になる。12.0のリリースは11月か12月。
+
+
+90年代の設定ファイル管理, 佐藤 広生（東京工業大学）
+
+-   テキストファイルをコピー＆ファイル名に日付。
+-   昔懐かしRCS
+-   CVS・Subversion・git
+
+設定ファイルのコピーは？
+
+-   rdist
+-   tar, rsync
+-   puppet, chef, ansible?
+
+なにができればいいのか
+
+-   バージョン管理
+-   今の設定との差分を摂る
+-   設定ファイルを更新したときの再起動などの定型処理 --> Makefile
+-   /usr/share/mk に便利なMakefileがたくさんある。
+-   .include <bsd.prog.mk>
+-   .include <bsd.conf.mk>
+
+yash（シェルスクリプトのテストには素晴らしい）
+
+
+30分で分かるKerberos, 佐藤 広生（東京工業大学）
+
+/etc/{shadow,master.passwd}のパスワード部分の一元管理が主目的ではない。サービスパスワード（暗号鍵
+== パスワードそのもの）の管理をする。
+
+利点
+
+1.  信用できなくなったユーザ・マシンからのアクセスをすぐに遮断できる
+2.  tmuxとssh-agent問題もkinitなら無問題
+3.  パケット交換がpubkeyよりも少ない。
+
+PK-INIT
