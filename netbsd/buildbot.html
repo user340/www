@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){
+code{line-height:1.4;font-size:80%;}
+.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph;}
+pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>Buildbot on NetBSD</h1>
+<hr>
+<h2>インストール</h2>
+<p><code>pkgsrc(7)</code>から以下のパッケージをインストールします。ここではPythonのバージョンは<b>3.7.0</b>とします。したがって<code>make(1)</code>の実行時か/etc/mk.confに<code>PYTHON_VERSION_DEFAULT</code>変数を定義しておきます。</p>
+
+<pre><code>PYTHON_VERSION_DEAULT=37</code></pre>
+
+<ul>
+<li>database/py-sqlite3</li>
+<li>devel/py-buildbot</li>
+<li>devel/py-buildbot-console-view</li>
+<li>devel/py-buildbot-waterfall-view</li>
+<li>devel/py-buildbot-grid-view</li>
+<li>devel/py-buildbot-www</li>
+</ul>
+
+<h3>pip?</h3>
+<p><code>pkgsrc(7)</code>では<b>py-XXX</b>というパッケージを提供しています。<code>pkgsrc(7)</code>からPythonのパッケージをインストールする場合<code>pip</code>を使うことはありません。Pythonのバージョンは変数<code>PYTHON_VERSION_DEAULT</code>で決定されますが、標準ではPython 2.7が使われます。パッケージは/usr/pkg/lib/pythonX.Y/site-packagesディレクトリ下にインストールされます。</p>
+
+<p>BuildBotのインストールは公式文書では<code>pip</code>による手順が紹介されています。しかしここでは<code>pip</code>ではなく<code>pkgsrc(7)</code>を採用します。パッケージの管理インタフェースをむやみに増やしたくないからです。</p>
+
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
