@@ -6,6 +6,10 @@
 <Files ~ ".(png|jpe?g)">
     Header set Cache-Control "public, max-age=604800"
 </Files>
+<Files ~ "\.(html|txt)">
+    Header add Pragma "no-cache"
+    Header set Cache-Control no-cache
+</Files>
 <IfModule mod_deflate.c>
     SetOutputFilter DEFLATE
     
