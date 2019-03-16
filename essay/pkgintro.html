@@ -7,7 +7,7 @@
 @media print, screen and (min-width:640px){
 code{line-height:1.4;}
 .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph;}
-pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}}
+pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
 @media only screen and (max-width:640px){.inner{font-size:90%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em;justify; text-justify: inter-ideograph;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:80%; line-height:1.4;}}
 </style>
 <title>e-yuuki.org</title>
@@ -18,13 +18,13 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <p>Last Update: <time>2018-12-15</time></p>
 <hr>
 <h2>なぜパッケージに注目するのか</h2>
-<p>　パッケージ（package）はオペレーティングシステム（OS, operating system）の重要なインフラのひとつです。OSと聞くとプロセス管理・メモリ管理・ファイルシステムといったカーネルの機能を連想してしまいがちです。『4.4BSDの設計と実装』『詳解 Linuxカーネル』『オペレーティングシステム 設計と理論およびMINIXによる実装』といった分厚い書籍を思い浮かべるかもしれません。でもそれよりももっと高いレイヤのアプリケーションだって立派にOSの一部です。プログラマにとって統合開発環境やテキストエディタ・バージョン管理システム・コンパイラは欠かせなですし、一般ユーザにとっても統合デスクトップ環境が提供する豪華なグラフィカルは欠かせません。特にWebブラウザはもうそれ無しで生活することなど考えられないような時代になっています。</p>
+<p>パッケージ（package）はオペレーティングシステム（OS, operating system）の重要なインフラのひとつです。OSと聞くとプロセス管理・メモリ管理・ファイルシステムといったカーネルの機能を連想してしまいがちです。『4.4BSDの設計と実装』『詳解 Linuxカーネル』『オペレーティングシステム 設計と理論およびMINIXによる実装』といった分厚い書籍を思い浮かべるかもしれません。でもそれよりももっと高いレイヤのアプリケーションだって立派にOSの一部です。プログラマにとって統合開発環境やテキストエディタ・バージョン管理システム・コンパイラは欠かせなですし、一般ユーザにとっても統合デスクトップ環境が提供する豪華なグラフィカルは欠かせません。特にWebブラウザはもうそれ無しで生活することなど考えられないような時代になっています。</p>
 
-<p>　Debian GNU/LinuxやRed Hat Enterprise Linux（RHEL）のようにOS全体をパッケージで管理しているケースもあれば、NetBSDやFreeBSDのようにベースシステム（base system）に無いソフトウェアをパッケージで管理しているケースもあります。システム管理という面ではパッケージはとても便利な機能なので、FreeBSDではベースシステムをパッケージ化してパッケージマネージャから管理できるようにするPkgBase[<a href="#pkgbase">FreeBSD Wiki</a>]が開発されています（NetBSDも昔syspkgというPkgBaseと同じコンセプトの実装が進められていたが現在は停滞している[<a href="syspkg">NetBSD Wiki</a>]）。</p>
+<p>Debian GNU/LinuxやRed Hat Enterprise Linux（RHEL）のようにOS全体をパッケージで管理しているケースもあれば、NetBSDやFreeBSDのようにベースシステム（base system）に無いソフトウェアをパッケージで管理しているケースもあります。システム管理という面ではパッケージはとても便利な機能なので、FreeBSDではベースシステムをパッケージ化してパッケージマネージャから管理できるようにするPkgBase[<a href="#pkgbase">FreeBSD Wiki</a>]が開発されています（NetBSDも昔syspkgというPkgBaseと同じコンセプトの実装が進められていたが現在は停滞している[<a href="syspkg">NetBSD Wiki</a>]）。</p>
 
-<p>　このようにパッケージはカーネルハッカーはともかく一般ユーザにとっては一種のインフラのようなものと言っても過言ではないでしょう。そして、それをどう作りどう配布するのか？を調べると、OSはどのような構成をしているのかおおまかに眺めることもできます。そしてこれをものにすれば、自分で好きなGNU/Linuxディストリビューションあるいはデスクトップ向けのBSD Unixを作ることだってできます。</p>
+<p>このようにパッケージはカーネルハッカーはともかく一般ユーザにとっては一種のインフラのようなものと言っても過言ではないでしょう。そして、それをどう作りどう配布するのか？を調べると、OSはどのような構成をしているのかおおまかに眺めることもできます。そしてこれをものにすれば、自分で好きなGNU/Linuxディストリビューションあるいはデスクトップ向けのBSD Unixを作ることだってできます。</p>
 
-<p>　OSに興味はなくても、パッケージには向き合わなければならないときがあります。もしなにかコードを書いてFLOSSとして公開するなら、そしてGNU/Linux向けにそれを書いたのであれば、<code>deb(5)</code>か<code>rpm</code>をいつでも（できれば両方）作れるようにしておくとそのソフトウェアを使いたいユーザにとって便利です。企業でGNU/Linux向け商用ソフトウェアを開発するときも、そのソフトウェアをパッケージにまとめ頒布する作業は必要です。</p>
+<p>OSに興味はなくても、パッケージには向き合わなければならないときがあります。もしなにかコードを書いてFLOSSとして公開するなら、そしてGNU/Linux向けにそれを書いたのであれば、<code>deb(5)</code>か<code>rpm</code>をいつでも（できれば両方）作れるようにしておくとそのソフトウェアを使いたいユーザにとって便利です。企業でGNU/Linux向け商用ソフトウェアを開発するときも、そのソフトウェアをパッケージにまとめ頒布する作業は必要です。</p>
 
 <h2>Unix パッケージのはじまりは？</h2>
 <p>パッケージは「荷物」や「梱包」の他にソフトウェアの管理・配布形式（形態？）も意味します。しかしこの言葉がいつからソフトウェアに対して使うようになったのか分かりません。確かに「ソフトウェアやその設定ファイル・マニュアルなどを含んだ単一のアーカイブ」は言われてみれば荷物のようであるし、実際にこれを作るときはまるで段ボールのような箱にデータを詰め込んでいる感覚があるので「パッケージ」という言葉はまさにぴったりです。</p>
