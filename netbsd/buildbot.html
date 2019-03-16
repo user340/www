@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){
-code{line-height:1.4;font-size:80%;}
-.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph;}
-pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}}
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}}
 @media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}
 </style>
 <title>e-yuuki.org</title>
@@ -15,6 +12,11 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <body><div class="inner">
 <h1>Buildbot on NetBSD</h1>
 <hr>
+<h2>Buildbotとは</h2>
+<p>Buildbotはソフトウェアのビルド・テスト・リリース作業の自動化のためのFLOSS（GPLv2）フレームワークです。Pythonで実装されており継続的インテグレーション（Continuous Integration）を実現するためのシステムの一つと言えます。</p>
+
+<p>このシステムのアーキテクチャはMaster-Worker方式、つまりBuildbot MasterがBuildbot Workerにソースコードのチェックアウトやビルドのコマンドなどの指示を投げるかたちになっています（詳細は<a href="https://buildbot.net/index.html#basics">Buildbot Basics</a>を参照）。当然Woker側にBuildbotのWokerプログラムやPythonなどをインストールする必要がありますが、GNU/Linux distributionの中には標準でPythonがインストールされているものも少なくはない（特にRHEL系）のでWokerを構築するのはそこまで大変ではありません。</p>
+
 <h2>インストール</h2>
 <p><code>pkgsrc(7)</code>から以下のパッケージをインストールします。ここではPythonのバージョンは<b>3.7.0</b>とします。したがって<code>make(1)</code>の実行時か/etc/mk.confに<code>PYTHON_VERSION_DEFAULT</code>変数を定義しておきます。</p>
 
@@ -33,6 +35,8 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <p><code>pkgsrc(7)</code>では<b>py-XXX</b>というパッケージを提供しています。<code>pkgsrc(7)</code>からPythonのパッケージをインストールする場合<code>pip</code>を使うことはありません。Pythonのバージョンは変数<code>PYTHON_VERSION_DEAULT</code>で決定されますが、標準ではPython 2.7が使われます。パッケージは/usr/pkg/lib/pythonX.Y/site-packagesディレクトリ下にインストールされます。</p>
 
 <p>BuildBotのインストールは公式文書では<code>pip</code>による手順が紹介されています。しかしここでは<code>pip</code>ではなく<code>pkgsrc(7)</code>を採用します。パッケージの管理インタフェースをむやみに増やしたくないからです。</p>
+
+<p><b>しかし</b><code>pkgsrc(7)</code>のStable版から提供されるソフトウェアは、そのリリース頻度に影響してアップストリームの最新版より古い可能性があります。最新のBuildbotを使いたいのであれば、<code>pkgsrc(7)</code>ではなく<code>pip</code>を使うべきです。</p>
 
 <hr>
 <footer>
