@@ -10,9 +10,6 @@
     Header add Pragma "no-cache"
     Header set Cache-Control no-cache
 </Files>
-<Directory "/community">
-    Options Indexes
-</Directory>
 <IfModule mod_deflate.c>
     SetOutputFilter DEFLATE
     
