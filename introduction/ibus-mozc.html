@@ -23,6 +23,15 @@
 <pre><code># cd /usr/pkgsrc/inputmethod/ibus-mozc
 # make PYTHON_VERSION_DEFAULT=27 install clean clean-depends</code></pre>
 
+<h2>$HOME/.xinitrc</h2>
+<p>X11起動時にibus-mozcを動かすには$HOME/.xinitrc内のウィンドウマネージャを動かす行の前に以下を加えてください。</p>
+
+<pre><code>export XMODIFIERS="@im=ibus"
+export GTK_IM_MODULE="ibus"
+export QT_IM_MODULE="ibus"
+export DefaultIMModule="ibus"
+ibus-daemon -drx</code></pre>
+
 <h2>設定</h2>
 <p>以下の設定をそのまま使うといいでしょう。コピーして使うなり、<a href="./keymap.txt">keymap.txt</a>をダウンロードしてください。<code>ibus-setup(1)</code>を実行し、mozcの設定に移り、キーマップをインポートしてください。設定適用後はCtrl+Spaceで日本語入力を切り替えられます。</p>
 
