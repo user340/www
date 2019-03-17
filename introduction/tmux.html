@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>端末多重化&mdash;&mdash;tmux</h1>
+<hr>
+<h2>tmuxとは</h2>
+<p>tmuxは英語で"terminal multiplexer"と呼ばれるソフトウェアです。ここでは訳を「端末多重化」としているがどのように動作するのかピンとこないかもしれません。以下はパッケージのDescriptionからの引用です。</p>
+
+<blockquote> Tmux is a "terminal multiplexer", it enables a number of terminals (or windows) to be accessed and controlled from a single terminal.  Tmux is intended to be a simple, modern, BSD-licensed alternative to programs such as GNU screen.</blockquote>
+
+<p>要するにひとつの端末から複数の端末を扱うことができるようになるソフトウェアです。tmuxが起動したとき新しい<b>セッション</b>（session）が作成されます。セッションは<b>疑似端末</b>（pseudo terminals）の集まりで、<b>ペイン</b>（pane）単位で四角く区切られています。ひとつのセッションで複数のペインを作れば、ひとつの端末から任意の数の端末を操作できるようになるわけです。</p>
+
+<p>tmuxはペインを作るたびに端末の画面を分割していくため、端末を全画面で利用していれば<a href="./i3.html">i3wm</a>と同様にディスプレイを有効に活用できます。しかしtmuxを使う最も大きな利点は、セッションそのものが削除（destroy）されない限りセッション内の疑似端末上で動くソフトウェアが中断されないことにあります。よく「サーバ構築時にtmux上で作業していれば、ネットワークの問題で接続が途切れても安心」と言われるのはこれが所以です。</p>
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
