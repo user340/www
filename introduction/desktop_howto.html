@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){
-code{line-height:1.4;}
-.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;}
-pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
+@media print, screen and (min-width:640px){ code{line-height:1.4;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
 @media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}p{text-indent:1em;}
 </style>
 <title>e-yuuki.org</title>
@@ -16,19 +13,17 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <h1>デスクトップ環境の作り方</h1>
 <hr>
 <h2>なぜ作り方を知っておくと良いのか</h2>
-<p>雑な言い方をしてしまえば、GNOMEやKDEまたはXfce4のような統合デスクトップ環境を使うのが一番手っ取り早いし機能も豊富だと思う。一方でこれらの「てんこ盛り」な環境をインストールしても、たいしてUnixの訓練にはならないとも思う。なぜならインストール方法も使い方も簡単すぎて特にこれといって知識やノウハウを入出力できないからだ（当然、使い方が簡単すぎるというのは技術やUIの偉大な進歩の結果である）。</p>
+<p>雑な言い方をしてしまえば、GNOMEやKDEまたはXfce4のような統合デスクトップ環境を使うのが一番手っ取り早いし機能も豊富だと思われます。一方でこれらの「てんこ盛り」な環境をインストールしても、たいしてUnixの訓練にはなりません。なぜならインストール方法も使い方も簡単すぎて特にこれといって知識やノウハウを習得できないからです（当然、使い方が簡単すぎるというのは技術やUIの偉大な進歩の結果であります）。</p>
 
-<p>だから日常生活で使うに耐えるデスクトップ環境を作るには何をインストールしてどう設定すればいいのかを覚えるには、統合デスクトップ環境を使うよりもひとつひとつパッケージをインストールして設定する他ない。また稀なケースとして、マシンスペックがあまりにも低すぎてXfce4ですらまともに動かないこともあるだろう。こんな事態に直面したとき統合デスクトップ環境以外知らなければ話にならない（こんなケースそのものが話にならない極限環境ではあるけれど）。</p>
+<p>日常生活で使うに耐えうるデスクトップ環境を作る方法を学ぶには、統合デスクトップ環境をインストールするよりも、ひとつひとつパッケージをインストールして設定する他ありません。また稀なケースとして、マシンスペックがあまりにも低すぎてXfce4ですらまともに動かないケースも無くはないでしょう。そのような事態に直面したとき、統合デスクトップ環境以外を知らなければ話になりません。</p>
 
-<p>ある程度デスクトップ環境の作り方を把握し、デスクトップ環境の要素を抑えておけばいざというときに役に立つ。そのいざというときは前述したような極限環境下で作業せざるを得ないときかもしれないし、最小構成でインストールされたGNU/Linuxの上でデスクトップ環境を作りたくなったときとか、そもそもインストーラがデスクトップ環境を提供していないOSを使うときかもしれない。知っていると知っていないとでは大違いだ。</p>
+<p>ある程度デスクトップ環境の作り方を把握し、デスクトップ環境の要素を抑えておけばいざというときに役に立ちます。そのいざというときは前述したような極限環境下で作業せざるを得ないときかもしれませんし、最小構成でインストールされたGNU/Linuxの上でデスクトップ環境を作りたくなったときとか、そもそもインストーラがデスクトップ環境を提供していないOSを使うときかもしれません。</p>
 
 <h2>GUI環境に必要なソフトウェア</h2>
-
-<p>デスクトップ環境」になにが必要であるかはユーザに強く依存する。Webブラウザさえあれば十分というユーザもいれば、動画編集ソフトウェアが不可欠なユーザもいる。様々なニーズをすべて包括したデスクトップ環境を用意するのは難しい。そこで、ここではマウスを使ってウィンドウを自在に動かせられるグラフィカルな環境（GUI）を用意するにはなにをインストールすればいいのかのみ説明する。</p>
+<p>「デスクトップ環境」になにが必要であるかはユーザに強く依存します。Webブラウザさえあれば十分というユーザもいれば、動画編集ソフトウェアが不可欠なユーザも考えられます。様々なニーズをすべて包括したデスクトップ環境を用意するのは難しいので、ここではマウスを使ってウィンドウを自在に動かせられるグラフィカルな環境（GUI）を用意するには、なにをどのようにインストールすればいいのかのみ説明する。</p>
 
 <h3>NetBSDのX</h3>
-
-<p>NetBSDではGUI環境のために"X11"と呼ばれるソフトウェアを使う。FreeBSDと違いNetBSD 8.0ではベースシステムでX11が提供されている。以下のtarballをインストール時に選択するか、FTPサーバからダウンロードしてルートディレクトリに展開する。</p>
+<p>NetBSDではGUI環境のために"X11"と呼ばれるソフトウェアを使います。FreeBSDと違いNetBSD 8.0ではベースシステムでX11が提供されています。以下のtarballをインストール時に選択するか、FTPサーバからダウンロードしてルートディレクトリに展開してください。</p>
 
 <ul>
 <li>xbase.tgz</li>
@@ -37,15 +32,14 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <li>xserver.tgz</li>
 </ul>
 
-<p>X11はサーバとクライアントが分離しており、Xサーバが動くマシン上でXクライアントのソフトウェア（FirefoxやThunderbirdなど）が描画される。ここではクライアントとサーバ両方をインストールしていることになる。デスクトップ用途ではX11のサーバ・クライアントモデルを特別に意識することはない。</p>
+<p>X11はサーバとクライアントが分離しており、Xサーバが動くマシン上でXクライアントのソフトウェア（FirefoxやThunderbirdなど）が描画されるシステムになっています。ここではクライアントとサーバ両方をインストールしていることになります。デスクトップ用途ではX11のサーバ・クライアントモデルを特別に意識することはありません。</p>
 
 <h3>/etc/X11/xorg.conf</h3>
+<p><code>xorg.conf(5)</code>はXサーバの設定ファイルです。</p>
 
-<p><code>xorg.conf(5)</code>はXサーバの設定ファイルだ。</p>
+<p>もっとも、これをゼロから書くわけではありません。ユーザは<code>xorg.conf(5)</code>を自動で生成する<code>Xorg(1)</code>の<code>-configure</code>オプションを実行して、必要なときだけ設定ファイルを編集します。ディスプレイの拡張やマウスの設定を細かくしたいときに初めてエディタで開くことになるでしょう。</p>
 
-<p>もっとも、これをゼロから書くわけではない。ユーザは<code>xorg.conf(5)</code>を自動で生成する<code>Xorg(1)</code>の<code>-configure</code>オプションを実行し、必要なときだけ設定ファイルを編集する。ディスプレイの拡張やマウスの設定を細かくしたいときに初めてエディタで開くことになるだろう。</p>
-
-<p>このコマンドを実行すると、rootユーザのホームディレクトリにxorg.conf.newというファイルが作られるので、それを/etc/X11ディレクトリの下に移動させる。</p>
+<p>このコマンドを実行するとrootユーザのホームディレクトリにxorg.conf.newというファイルが作られます。それを/etc/X11ディレクトリの下に移動させます。</p>
 
 <pre><code># X -configure
 # mv /root/xorg.conf.new /etc/X11/xorg.conf</code></pre>
@@ -57,13 +51,13 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <footer>&mdash; <cite>FreeBSD徹底入門 [改訂版]</cite>, p296</footer>
 </figure>
 
-<p>ウィンドウマネージャは数え切れないほど多くの実装がありすべてを紹介するのは不可能だ。本ページでは"i3"というタイル型ウィンドウマネージャをおすすめするが、これは操作方法を覚えるのに少し時間がかかる。多くの人にとっては"JWM"や"Window Maker"といったスタック型ウィンドウマネージャが扱いやすいだろう。ウィンドウマネージャのパッケージをひとつずつ試していって好みのものを模索するのがいいだろう。</p>
+<p>ウィンドウマネージャは数え切れないほど多くの実装がありすべてを紹介するのは不可能です。本ページでは"i3"というタイル型ウィンドウマネージャをおすすめしますが、これは操作方法を覚えるのに少し時間がかかります。多くの人にとっては"JWM"や"Window Maker"といったスタック型ウィンドウマネージャが扱いやすいでしょう。ウィンドウマネージャのパッケージをひとつずつ試していって好みのものを模索してください。</p>
 
 <h3>$HOME/.xinitrc</h3>
 
-<p><code>xinitrc</code>は<code>xinit(1)</code>が読み込むスクリプトだ。<code>xinit(1)</code>はXサーバを動かし、<code>xinitrc</code>で指定されているクライアントプログラムを実行する。これは各ユーザのホームディレクトリに隠しファイルとして置いておく。<code>xinitrc</code>の内容はユーザがなにを使いたいかによって左右されるので、クライアントソフトウェアの解説をするとき設定方法のいち手順として<code>xinitrc</code>になにを書くべきか説明されるのが一般的だ。</p>
+<p><code>xinitrc</code>は<code>xinit(1)</code>が読み込むスクリプトです。<code>xinit(1)</code>はXサーバを動かし、<code>xinitrc</code>で指定されているクライアントプログラムを実行します。これは各ユーザのホームディレクトリに隠しファイルとして置いておきます。<code>xinitrc</code>の内容はユーザがなにを使いたいかによって左右されるので、クライアントソフトウェアの解説をするとき設定方法のいち手順として<code>xinitrc</code>になにを書くべきか説明されるのが一般的です。</p>
 
-<p>たとえば僕が普段使っているデスクトップ環境の<code>$HOME/.xinitrc</code>は次の通り。</p>
+<p>たとえば僕が普段使っているデスクトップ環境の<code>$HOME/.xinitrc</code>は次の通りです。</p>
 
 <pre><code>#!/bin/sh
 
@@ -94,7 +88,7 @@ xmodmap $HOME/.Xmodmap
 
 <h2>まとめ</h2>
 
-<p>グラフィカルな環境を用意するには最低限以下のものを用意する。</p>
+<p>グラフィカルな環境を用意するには最低限以下のものを用意します。</p>
 
 <ul>
   <li>X11</li>
@@ -102,7 +96,7 @@ xmodmap $HOME/.Xmodmap
   <li><code>$HOME/.xinitrc</code></li>
 </ul>
 
-<p>あとは必要に応じてソフトウェアをインストールし<code>xinitrc</code>を編集すればいい。</p>
+<p>あとは必要に応じてソフトウェアをインストールし<code>xinitrc</code>を編集すればいいわけです。</p>
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>

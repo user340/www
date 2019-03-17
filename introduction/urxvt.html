@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){
-code{line-height:1.4;font-size:80%;}
-.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;}
-pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
 @media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}p{text-indent:1em;}
 </style>
 <title>e-yuuki.org</title>
@@ -15,24 +12,24 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <body><div class="inner">
 <h1>仮想端末&mdash;&mdash;rxvt-unicode</h1>
 
-<p>rxvt-unicodeはrxvtのcloneで、Unicodeの入力・出力に対応している。2019年にNetBSDを触り始める方であればShift-JISやEUC-JPなどではなくUTF-8を環境変数LOCALEに設定するだろう。</p>
+<p>rxvt-unicodeはrxvtのcloneで、Unicodeの入力・出力に対応しています。2019年にNetBSDを触り始める方であればShift-JISやEUC-JPなどではなくUTF-8を環境変数LOCALEに設定するでしょう。</p>
 
 <hr>
 <h2>インストール</h2>
 
-<p><code>pkgsrc(7)</code>ではx11/rxvt-unicodeパッケージで提供されている。</p>
+<p><code>pkgsrc(7)</code>ではx11/rxvt-unicodeパッケージで提供されています。</p>
 
 <pre><code># cd /usr/pkgsrc/x11/rxvt-unicode
 # make install clean clean-depends</code></pre>
 
-コマンド名は<code>urxvt(1)</code>である。
+コマンド名は<code>urxvt(1)</code>です。
 
 <h2>設定ファイル $HOME/.Xdefaults</h2>
 <p><b>XXX</b>: とても情報が古いかもしれない。</p>
 
-<p>外観やフォントといった<code>urxvt(1)</code>の設定は$HOME/.Xdefaultsを編集しておこなう。</p>
+<p>外観やフォントといった<code>urxvt(1)</code>の設定は$HOME/.Xdefaultsを編集しておこないます。</p>
 
-<p>この設定例では、フォントはRictyを使いその大きさは12ポイントである。インプットメソッドにはIBUSを使い、背景色は黒、文字色は白で背景はやや透明になっている。全体的な色合いはテキストエディタVimの拡張カラースキーム<a href="https://github.com/morhetz/gruvbox">gruvbox</a>のダークモードに合わせている。主に<code>URxvt.font</code>や<code>URxvt.background</code>、<code>URxvt.foreground</code>を好みのものに変えていくことになるだろう。</p>
+<p>この設定例では、フォントはRictyを使いその大きさは12ポイントです。インプットメソッドにはIBUSを使い、背景色は黒、文字色は白で背景はやや透明になっています。全体的な色合いはテキストエディタVimの拡張カラースキーム<a href="https://github.com/morhetz/gruvbox">gruvbox</a>のダークモードに合わせています。主に<code>URxvt.font</code>や<code>URxvt.background</code>、<code>URxvt.foreground</code>を好みのものに変えていくことになるでしょう。</p>
 
 <pre><code>URxvt.termName: rxvt
 URxvt.font:  xft: Ricty:size=12:antialias=true
@@ -71,7 +68,7 @@ URxvt.scrollColor:          [90]#504945</code></pre>
 
 <h2>コピーとペースト</h2>
 
-<p>Ctrl-cとCtrl-vの代わりに、Ctrl-Alt-cとCtrl-Alt-vをそれぞれ用いる。</p>
+<p>Ctrl-cとCtrl-vの代わりに、Ctrl-Alt-cとCtrl-Alt-vを使います。</p>
 
 <hr>
 <footer>

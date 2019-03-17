@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){
-code{line-height:1.4;}
-.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;}
-pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
+@media print, screen and (min-width:640px){ code{line-height:1.4;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
 @media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}p{text-indent:1em;}
 </style>
 <title>e-yuuki.org</title>
@@ -33,54 +30,54 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
   <li>参考文献</li>
 </ol>
 <h2>インストール</h2>
-<p>NetBSD 8.0ではベースシステム（base.tgz）に含まれている。</p>
+<p>NetBSD 8.0ではベースシステム（base.tgz）に含まれています。</p>
 
 <pre><code>$ /usr/bin/ssh -V
 OpenSSH_7.6 NetBSD_Secure_Shell-20171007, OpenSSL 1.0.2k  26 Jan 2017</code></pre>
 
-<p>pkgsrc(7)ではsecurity/opensshパッケージで提供されている。インストールするにはpkgsrc(7)のsecurity/opensshディレクトリでmake(1)を実行する。</p>
+<p>pkgsrc(7)ではsecurity/opensshパッケージで提供されています。インストールするにはpkgsrc(7)のsecurity/opensshディレクトリでmake(1)を実行します。</p>
 
 <pre><code># cd /usr/pkgsrc/security/openssh
 # make install clean clean-depends</code></pre>
     
-<p>pkgsrc(7)からインストールした場合、RCスクリプトは/usr/pkg/share/examples/rc.d/sshdを使う。これを/etc/rc.dディレクトリにコピーする。</p>
+<p>pkgsrc(7)からインストールした場合、RCスクリプトは/usr/pkg/share/examples/rc.d/sshdを使います。これを/etc/rc.dディレクトリにコピーします。</p>
 
 <pre><code># cp /usr/pkg/share/examples/rc.d/sshd /etc/sshd</code></pre>
 
 <h2>SSHサーバ</h2>
-<p>SSHサーバとはSSHプロトコルで外部からのログインを受け付けるサーバを意味する。SSHデーモンはクライアントからの接続を受け付ける。外部からログインさせたくなければSSHデーモンは動かさない。</p>
+<p>SSHサーバとはSSHプロトコルで外部からのログインを受け付けるサーバを意味します。SSHデーモンはクライアントからの接続を受け付けます。外部からログインさせたくなければSSHデーモンは動かさないでください。</p>
 
-<p>デスクトップ用途のマシンではリモートログインする機会が少ないだろう。しかしデスクトップ環境でもSSHデーモンを動かしておくことで、たとえばX Window Systemに異常が起こったときに他の端末からSSHログインをして救出作業できる場合がある。あるいは会社でデスクトップPCとノートPCを一台ずつ貸与されそれらが同一ネットワークに接続しているとして、自席のデスクトップPCでSSHデーモンを動かしノートPCからログインすることで自席でなくともデスクトップPCをCUI上またはX11転送を使って操作できる。会議室にいるとき、自宅から会社へVPN接続をするときなどに有効な手だ。</p>
+<p>デスクトップ用途のマシンではリモートログインする機会が少ないと思われます。しかしデスクトップ環境でもSSHデーモンを動かしておくことで、たとえばX Window Systemに異常が起こったときに他の端末からSSHログインをして救出作業できる場合があります。あるいは、会社でデスクトップPCとノートPCを一台ずつ貸与され、それらが同一ネットワークに接続しているとします。自席のデスクトップPCでSSHデーモンを動かしノートPCからログインすることで、自席でなくともデスクトップPCを操作できます。会議室にいるとき、自宅から会社へVPN接続をするときなどに有効な手です。</p>
 
-<p>外部からのログインを受け付けるということは、自分以外の悪意ある第三者がログインを試みるケースも考慮しなければならない。パスワード認証では総当たり攻撃で突破される可能性が高いため、ここでは公開鍵を使った認証の設定方法について述べる。</p>
+<p>外部からのログインを受け付けるということは、悪意ある第三者がログインを試みるケースも考慮しなければなりません。パスワード認証では総当たり攻撃で突破される可能性があるので、ここでは公開鍵を使った認証の設定方法について述べます。</p>
 
 <h3>サーバ側でSSHデーモンを実行する</h3>
-<p>はじめにSSHサーバ側でSSHデーモンを実行する。</p>
+<p>はじめにSSHサーバ側でSSHデーモンを実行します。</p>
 
 <pre><code>server# service sshd onestart</code></pre>
 
-<p>OS起動時にSSHデーモンを自動で実行するよう設定するには<code>sshd=YES</code>をrc.conf(5)に書き込む。</p>
+<p>OS起動時にSSHデーモンを自動で実行するよう設定するには<code>sshd=YES</code>をrc.conf(5)に書き込みます。</p>
 
 <pre><code>server# echo "sshd=YES" >> /etc/rc.conf</code></pre>
 
-<p>SSHデーモンが動いているか確認するにはservice(8)のstatusもしくはonestatusアクションを使う。たとえば正常に動作していれば以下のような出力が得られるだろう。</p>
+<p>SSHデーモンが動いているか確認するにはservice(8)のstatusもしくはonestatusアクションを使います。たとえば正常に動作していれば以下のような出力が得られるでしょう。</p>
 
 <pre><code>server# service sshd onestatus
  is running as pid 12864. </code></pre>
 
 <h3>クライアント側から接続テストをする</h3>
-<p>クライアントがサーバへSSHログインできるかを確認する。サーバ側のユーザが"uki"だとすると、クライアント側からログインするにはssh(1)を実行する。"xxx.xxx.xxx.xxx"はサーバのIPアドレスに適宜置き換えてほしい。</p>
+<p>クライアントがサーバへSSHログインできるかを確認します。サーバ側のユーザが"uki"だとすると、クライアント側からログインするにはssh(1)を実行します。"xxx.xxx.xxx.xxx"はサーバのIPアドレスに適宜置き換えてください。</p>
 
 <pre><code>client$ ssh uki@xxx.xxx.xxx.xxx</code></pre>
 
-<p>これを実行すると、ukiのパスワードを聞かれ、入力したものが正しければログインできる。接続を切るには<code>exit</code>を実行する。</p>
+<p>これを実行すると、ukiのパスワードを聞かれ、入力したものが正しければログインできます。接続を切るには<code>exit</code>を実行します。</p>
 
 <pre><code>server$ exit</code></pre>
 
 <h3>クライアント側で公開鍵と秘密鍵を作る</h3>
-<p>SSHサーバへ接続する側にて公開鍵と秘密鍵をssh-keygen(1)で作る。鍵のタイプにはrsaやdsa・ecdsa・ed25519があり、SSHデーモンのバージョンによってはサポートされていないものもある。古いバージョンのSSHデーモンを使っている場合は注意が必要。</p>
+<p>SSHサーバへ接続する側にて公開鍵と秘密鍵をssh-keygen(1)で作ります。鍵のタイプにはrsaやdsa・ecdsa・ed25519があり、SSHデーモンのバージョンによってはサポートされていないものもあります。古いバージョンのSSHデーモンを使っている場合は注意が必要です。</p>
 
-<p>ここでは4096 bitのRSA鍵か、ed25519鍵の2通りを紹介する。ssh-keygen(1)でこれらを作るには</p>
+<p>ここでは4096 bitのRSA鍵か、ed25519鍵の2通りを紹介します。ssh-keygen(1)でこれらを作るには</p>
 
 <pre><code>client$ ssh-keygen -t ed25519 -o -a 100</code></pre>
 
@@ -88,50 +85,50 @@ OpenSSH_7.6 NetBSD_Secure_Shell-20171007, OpenSSL 1.0.2k  26 Jan 2017</code></pr
 
 <pre><code>client$ ssh-keygen -t rsa -b 4096 -o -a 100</code></pre>
 
-<p>のどちらかを実行する。前者ではed25519鍵が、後者では4096 bit長のRSA鍵が作られる。これらを実行したときウィザード形式で鍵の生成が始まる。Enter file in which to save the keyでは鍵をどこに作るか、Enter passphraseでは鍵のパスフレーズを、Enter same passphrase againでは直前に入力したものと同じパスフレーズを入力する。パスフレーズの入力のさい、入力した文字は画面にエコーされないので注意すること。</p>
+<p>のどちらかを実行します。前者ではed25519鍵が、後者では4096 bit長のRSA鍵が作られます。これらを実行したときウィザード形式で鍵の生成が始まります。Enter file in which to save the keyでは鍵をどこに作るか、Enter passphraseでは鍵のパスフレーズを、Enter same passphrase againでは直前に入力したものと同じパスフレーズを入力します。パスフレーズの入力のさい、入力した文字は画面にエコーされないので注意してください。</p>
 
 <h3>クライアント側の公開鍵をサーバ側にコピーする</h3>
-<p>ファイル名が.pubで終わるものが公開鍵。これをサーバ側になんらかの方法でコピーする。たとえばscp(1)を使う。CentOSのようなGNU/Linuxではssh-copy-id(1)という公開鍵コピー用のユーティリティが用意されているが、NetBSD 8.0およびpkgsrc(7)では提供されていないので手動でおこなわなければならない。</p>
+<p>ファイル名が.pubで終わるものが公開鍵で、これをサーバ側になんらかの方法でコピーします。たとえばscp(1)を使います。CentOSのようなGNU/Linuxではssh-copy-id(1)という公開鍵コピー用のユーティリティが用意されていますが、NetBSD 8.0およびpkgsrc(7)では提供されていないので手動でおこなわなければなりません。</p>
 
 <pre><code>client$ scp ~/.ssh/id_ed25519.pub uki@xxx.xxx.xxx.xxx:~/</code></pre>
 
 <h3>サーバ側のホームディレクトリに認証用のファイルを作る</h3>
-<p>サーバ側で、SSHでログインされるユーザのホームディレクトリに.sshディレクトリを作る。次にそのディレクトリ内にauthorized_keysというファイルを作る。このファイルに公開鍵の中身を追記していく。</p>
+<p>サーバ側で、SSHでログインされるユーザのホームディレクトリに.sshディレクトリを作ります。次にそのディレクトリ内にauthorized_keysというファイルを作ります。このファイルに公開鍵の中身を追記していきます。</p>
 
-<p>.sshディレクトリのパーミッションは700にする。authorized_keysのパーミッションは600にする。</p>
+<p>.sshディレクトリのパーミッションは700、authorized_keysのパーミッションは600にします。</p>
 <pre><code>server$ mkdir ~/.ssh
 server$ chmod 700 ~/.ssh
 server$ cat id_ed25519 >> ~/.ssh/authorized_keys
 server$ chmod 600 ~/.ssh/authorized_keys</code></pre>
     
-<p>クライアント側から再度ssh(1)でログインし、公開鍵認証でログインできるか（パスワードは聞かれないか？パスフレーズの入力を求められるか？）を確認する。</p>
+<p>クライアント側から再度ssh(1)でログインし、公開鍵認証でログインできるか（パスワードは聞かれないか？パスフレーズの入力を求められるか？）を確認します。</p>
       
 <pre><code>server$ exit
 client$ ssh uki@xxx.xxx.xxx.xxx</code></pre>
 
 <h3>サーバ側でパスワード認証を禁止する</h3>
-<p>SSHデーモンの設定ファイル/etc/ssh/sshd_config（pkgsrc(7)からインストールした場合は/usr/pkg/etc/ssh/sshd_config）を編集し、以下の項目を確認する。</p>
+<p>SSHデーモンの設定ファイル/etc/ssh/sshd_config（pkgsrc(7)からインストールした場合は/usr/pkg/etc/ssh/sshd_config）を編集し、以下の項目を確認します。</p>
       
 <pre><code>PermitRootLogin no
 PermitEmptyPasswords no
 PasswordAuthentication yes</code></pre>
     
-<p>設定後SSHデーモンをservice(8)のrestartかonerestartアクションで再起動する。</p>
+<p>設定後SSHデーモンをservice(8)のrestartかonerestartアクションで再起動します。</p>
 
 <pre><code>server# service sshd onerestart</code></pre>
 
 <h2>どうしてもパスワード認証を禁止できない場合</h2>
-<p>レンタルサーバのような/etcの下のファイルに書き込む権限がないサービスを使うとき、公開鍵認証でログインできてもパスワード認証までは禁止できないこともある。どうしようもないので、そのサービスで利用できる最大の長さまでパスワードを長くするしかない。パスワードマネージャは調べればいろいろなものが見つかる。僕はBashとGnuPGで実装されたパスワードマネージャ<a href="https://github.com/drduh/pwd.sh">pwd.sh</a>を使っている。最近同じ作者による<a href="https://github.com/drduh/Parse">Parse</a>に乗り換えた。</p>
+<p>レンタルサーバのような/etcの下のファイルに書き込む権限がないサービスを使うとき、公開鍵認証でログインできてもパスワード認証までは禁止できないこともあります。どうしようもないので、そのサービスで利用できる最大の長さまでパスワードを長くするしかありません。パスワードマネージャは調べればいろいろなものが見つかるでしょう。僕はBashとGnuPGで実装されたパスワードマネージャ<a href="https://github.com/drduh/pwd.sh">pwd.sh</a>を使っていましたが、最近同じ作者による<a href="https://github.com/drduh/Parse">Parse</a>に乗り換えました。</p>
 
 <h2>その他SSHログインの認証として使えるもの</h2>
-<p><a href="https://gnupg.org">GnuPG</a>や<a href="https://web.mit.edu/kerberos/kfw-4.1/kfw-4.1/kfw-4.1-help/html/kerberos.htm">Kerberos</a>がある。</p>
+<p><a href="https://gnupg.org">GnuPG</a>や<a href="https://web.mit.edu/kerberos/kfw-4.1/kfw-4.1/kfw-4.1-help/html/kerberos.htm">Kerberos</a>があります。</p>
 
 <h2>参考文献</h2>
 <dl>
 <dt>Ken'ichi Fukamachi, <a href="http://www.fml.org/home/fukachan/ja/netbsd.build.pkg.openssh.html">パッケージ: openssh (Secure SHell)</a></dt>
-<dd>本ページのオリジナル。デーモンの死活確認にservice(8)を使ったり、ed25519鍵の記述などを追加した。オリジナルのようにサーバ構築のいち手順として書いていないので記述が省略されている箇所もある。</dd>
+<dd>本ページのオリジナル。デーモンの死活確認にservice(8)を使ったり、ed25519鍵の記述などを追加しました。オリジナルのようにサーバ構築のいち手順として書いていないので記述が省略されている箇所もあります。</dd>
 <dt>stribika, <a href="https://stribika.github.io/2015/01/04/secure-secure-shell.html">Secure Secure Shell</a>, 2015</dt>
-<dd>鍵交換の説明からどのアルゴリズムをSSHデーモンに使わせるか、どの鍵を使うか、Torとどう連携させるかなどについて書かれている。本ページの鍵生成のコマンドはこのページから引用した。OpenSSH 6.7でのみテストされており、2015年のブログ記事なのでやや古めに感じるかもしれないが、一読の価値は十分にあると思う。</dd>
+<dd>鍵交換の説明からどのアルゴリズムをSSHデーモンに使わせるか、どの鍵を使うか、Torとどう連携させるかなどについて書かれています。本ページの鍵生成のコマンドはこのページから引用しました。OpenSSH 6.7でのみテストされており、2015年のブログ記事なのでやや古めに感じるかもしれませんが、一読の価値は十分にあります。</dd>
 </dl>
 <hr>
 <footer>
