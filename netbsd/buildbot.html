@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
-@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}p{text-indent:1em;}
+@media print, screen and (min-width:640px){code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;} img{max-width:100%;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}p{text-indent:1em;} img{max-width:100%;}}
 </style>
 <title>e-yuuki.org</title>
 </head>
@@ -18,7 +18,13 @@
 <p>このシステムのアーキテクチャはMaster-Worker方式、つまりBuildbot MasterがBuildbot Workerにソースコードのチェックアウトやビルドのコマンドなどの指示を投げるかたちになっています（詳細は<a href="https://buildbot.net/index.html#basics">Buildbot Basics</a>を参照）。当然Woker側にBuildbotのWokerプログラムやPythonなどをインストールする必要がありますが、GNU/Linux distributionの中には標準でPythonがインストールされているものも少なくはない（特にRHEL系）のでWokerを構築するのはそこまで大変ではありません。</p>
 
 <h2>インストール</h2>
-<p><code>pkgsrc(7)</code>から以下のパッケージをインストールします。ここではPythonのバージョンは<b>3.7.0</b>とします。したがって<code>make(1)</code>の実行時か/etc/mk.confに<code>PYTHON_VERSION_DEFAULT</code>変数を定義しておきます。</p>
+<p>はじめに、システムにインストールされているPythonのバージョンと<code>pkgsrc(7)</code>で提供されているPythonのバージョンが一致しているか確認してください。lang/pythonXX（XXは任意のバージョン番号）を<code>make package</code>してパッケージを作り、<code>pkg_add -uu</code>コマンドでアップデートすると安全です。</p>
+
+<pre><code># cd /usr/pkgsrc/lang/python37
+# make package
+# pkg_add -uu /usr/pkgsrc/packages/All/python37-3.7.1.tgz</code></pre>
+
+<p><code>pkgsrc(7)</code>から以下のパッケージをインストールします。ここではPythonのバージョンは<b>3.7.1</b>とします。したがって<code>make(1)</code>の実行時か/etc/mk.confに<code>PYTHON_VERSION_DEFAULT</code>変数を定義しておきます。</p>
 
 <pre><code>PYTHON_VERSION_DEAULT=37</code></pre>
 
@@ -37,6 +43,98 @@
 <p>BuildBotのインストールは公式文書では<code>pip</code>による手順が紹介されています。しかしここでは<code>pip</code>ではなく<code>pkgsrc(7)</code>を採用します。パッケージの管理インタフェースをむやみに増やしたくないからです。</p>
 
 <p><b>しかし</b><code>pkgsrc(7)</code>のStable版から提供されるソフトウェアは、そのリリース頻度に影響してアップストリームの最新版より古い可能性があります。最新のBuildbotを使いたいのであれば、<code>pkgsrc(7)</code>ではなく<code>pip</code>を使うべきです。</p>
+
+<h2>First Run</h2>
+<p>本節は<a href="http://docs.buildbot.net/current/tutorial/firstrun.html#first-run-label">1.1. First Run</a>に従います。</p>
+
+<h3>Buildbot Master</h3>
+
+<p>はじめに任意のディレクトリにmasterディレクトリを作成します。これがBuildbot Masterの親ディレクトリになります。ここでは$HOME/buildbotディレクトリを作成します。</p>
+
+<pre><code>$ mkdir -p $HOME/buildbot</code></pre>
+
+<p>Buildbot Masterを作ります。</p>
+
+<pre><code>$ buildbot-3.7 create-master $HOME/buildbot/master</code></pre>
+
+<p>$HOME/buildbotディレクトリにmasterディレクトリができ、さらにそのディレクトリ内にmaster.cfg.sampleファイルが生成されています。これをmaster.cfgに名前変更します。</p>
+
+<pre><code>$ mv $HOME/buildbot/master/master.cfg.sample $HOME/buildbot/master/master.cfg</code></pre>
+
+<p>ここで、master.cfgの中身を確認します。master.cfgはPythonスクリプトで、このスクリプトの中にWorkerのタスクやMasterの情報を書き加えます。Buildbotは標準ではなにも提供しません。すべてユーザがPythonを書いてMasterとWorkerを設定しなければなりません。</p>
+
+<pre><code>####### PROJECT IDENTITY
+
+# the 'title' string will appear at the top of this buildbot installation's
+# home pages (linked to the 'titleURL').
+
+c['title'] = "Hello World CI"
+c['titleURL'] = "https://buildbot.github.io/hello-world/"
+
+# the 'buildbotURL' string should point to the location where the buildbot's
+# internal web server is visible. This typically uses the port number set in
+# the 'www' entry below, but with an externally-visible host name which the
+# buildbot cannot figure out without some help.
+
+c['buildbotURL'] = "http://localhost:8010/"
+
+# minimalistic config to activate new web UI
+c['www'] = dict(port=8010,
+                plugins=dict(waterfall_view={}, console_view={}, grid_view={}))</code></pre>
+
+<p>master.cfgの一部を抜粋しました。この記述から、プロジェクトのタイトルは「Hello World CI」で、BuildbotのURLは「http://localhost:8010」であるとわかります。MasterのWebフロントエンドの情報を編集したければ、これらのエントリを変更すればいいわけです。</p>
+
+<p>Buildbot Masterを動かします。</p>
+
+<pre><code>$ buildbot-3.7 start $HOME/buildbot/master</code></pre>
+
+<p>master.cfgで指定されたURLにWebブラウザからアクセスします。ここでは「localhost:8010」です。HTTPデーモンを別途動かす必要はありません。また、ブラウザ側でJavascriptを有効にしておかなければなりません。</p>
+
+<img src="./images/buildbot_001.png" alt="Buildbot Home">
+
+<h3>Buildbot Worker</h3>
+<p><code>buildbot-worker</code>コマンドのcreate-workerオペレーションを実行し、$HOME/buildbotディレクトリを親ディレクトリとしてBuildbot Workerを作成します。このコマンドの書式は次の通りです。</p>
+
+<pre><code>buildbot-worker create-worker &lt;wokerのディレクトリ&gt; &lt;MasterのIPアドレス&gt; &lt;Wokerの名前&gt; &lt;Workerのパスワード&gt;</code></pre>
+
+<p>たとえば次のように実行します。</p>
+
+<pre><code>$ buildbot-worker-3.7 create-worker $HOME/buildbot/worker localhost NetBSD 'netbsd'</code></pre>
+
+<p>Woker作成後、Buildbot Master側の設定ファイルmaster.cfgを編集し、作成したWorkerと同じ情報を書きます。上記のように「NetBSD」というWorkerをパスワード「netbsd」で作成したのであれば、以下のようにmaster.cfgを編集します。</p>
+
+<pre><code>--- master/master.cfg.sample    2019-03-19 08:50:16.915754634 +0900
++++ master/master.cfg   2019-03-19 10:36:09.132270759 +0900
+@@ -15,7 +15,7 @@
+ # The 'workers' list defines the set of recognized workers. Each element is
+ # a Worker object, specifying a unique worker name and password.  The same
+ # worker name and password must be configured on the worker.
+-c['workers'] = [worker.Worker("example-worker", "pass")]
++c['workers'] = [worker.Worker("NetBSD", "netbsd")]
+
+ # 'protocols' contains information about protocols which master will use for
+ # communicating with workers. You must define at least 'port' option that workers
+@@ -66,7 +66,7 @@
+ c['builders'] = []
+ c['builders'].append(
+     util.BuilderConfig(name="runtests",
+-      workernames=["example-worker"],
++      workernames=["NetBSD"],
+       factory=factory))
+
+ ####### BUILDBOT SERVICES</code></pre>
+
+<p>Masterが既に動いているのであれば、再起動します。</p>
+
+<pre><code>$ buildbot-3.7 restart $HOME/buildbot/master</code></pre>
+
+<p>Workerを動かします。</p>
+
+<pre><code>$ buildbot-worker-3.7 start $HOME/buildbot/worker</code></pre>
+
+<p>MasterのWebフロントエンドからNAVIGATION&gt;Builds&gt;Workersを選ぶと、先ほど作成したWorkerがMasterに登録されていることがわかります。</p>
+
+<img src="./images/buildbot_002.png" alt="Buildbot Workers">
 
 <hr>
 <footer>
