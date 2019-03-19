@@ -23,7 +23,7 @@
 <li><a href="#master">Buildbot Master</a></li>
 <li><a href="#worker">Buildbot Worker</a></li>
 </ol></li>
-<li><a href="#example1">事例1: Webページを自動でデプロイする</a></li>
+<li><a href="#example1">事例1: Webページを自動でデプロイする（Gitpoller）</a></li>
 <li><a href="#"></a></li>
 <li><a href="#"></a></li>
 </ol>
@@ -151,8 +151,66 @@ c['www'] = dict(port=8010,
 
 <img src="./images/buildbot_002.png" alt="Buildbot Workers">
 
-<h2 id="example1">事例1: Webページを自動でデプロイする</h2>
+<h2 id="example1">事例1: Webページを自動でデプロイする（Gitpoller）</h2>
 <p>このページはhttps://github.com/user340/wwwリポジトリで管理されています。この例ではBuildbotを使い、リポジトリ内のコードに変更があったときに特定のコマンドをWorkerに実行させるように設定します。</p>
+
+<p>次の画像はシステムのおおまかな全体像です。Buildbot Master/Worker両方が動く開発環境（Local Computer）からGitHubのリポジトリへコードをpushします。Buildbot Workerは定期的にリポジトリの変更を確認します。もし変更があれば、開発環境内のデプロイ用コマンドを実行してサーバ（Web Server）のコンテンツを更新します。</p>
+
+<img src="./images/buildbot_example01.png" alt="System Archtecture">
+
+<h3>デプロイ用コマンドを書く</h3>
+
+<p>master.cfgを変更し、Workerがなにをすべきかをプログラミングしていきます。まずはWorkerが実行するデプロイ用コマンドを書きます。これはシェルスクリプトです。</p>
+
+<pre><code>#!/bin/sh
+ssh USERNAME@www.servername.org "cd /path/to/html &amp;&amp; git pull"</code></pre>
+
+<p>このスクリプトを<b>web_deploy.sh</b>として保存し、<code>chmod +x</code>コマンドを実行して実行権限を付与します。</p>
+
+<h3>[master.cfg] change_source</h3>
+<p>master.cfgの<code>change_source</code>設定を変更します。600秒に1回、指定したリポジトリのmasterブランチに変更がないかを確認するようにしました。</p>
+
+<pre><code>c['change_source'].append(changes.GitPoller(
+    'git://github.com/user340/www.git',
+    workdir='www',
+    branch='master',
+    project='www',
+    pollInterval=600))</code></pre>
+
+<h3>[master.cfg] schedulers</h3>
+<p><code>schedulers</code>設定を変更します。ここではWeb Deployというスケジューラを作成し、wwwプロジェクトのmasterブランチに変更があったときにWebDeployビルダが実行されるようになっています。WebDeployビルダは後ほど定義します。<code>schedulers.ForceScheduler</code>クラスにWebDeployビルダを指定したインスタンスを<code>schedulers</code>に加えることで、Buildbot MasterのWebフロントエンドからビルダを実行できるようになります。</p>
+
+<pre><code>c['schedulers'].append(schedulers.SingleBranchScheduler(
+    name="Web Deploy",
+    change_filter=util.ChangeFilter(branch='master',
+                                    project='www'),
+    treeStableTimer=None,
+    builderNames=["WebDeploy"]))
+c['schedulers'].append(schedulers.ForceScheduler(
+    name="force",
+    builderNames=["WebDeploy"]))</code></pre>
+
+<h3>[master.cfg] util.BuildFactory()</h3>
+<p><code>util.BuildFactory</code>クラスをインスタンス化し、<code>addStep()</code>メソッドを用いてビルド手順をひとつひとつ定義します。この例ではデプロイコマンドを実行するだけですので、1回しか使いません。</p>
+
+<pre><code>web_deploy = util.BuildFactory()
+web_deploy.addStep(steps.ShellCommand(command=['/usr/local/bin/webdeploy']))</code></pre>
+
+<p><code>ShellCommand</code>以外のBuild Stepsについては<a href="http://docs.buildbot.net/latest/manual/configuration/buildsteps.html">2.5.10. Build Steps</a>を参照してください。</p>
+
+<h3>[master.cfg] builders</h3>
+<p>WebDeployビルダを作成します。<a href="#worker">「NetBSD」Worker</a>が、web_deployインスタンスで定義されたビルド手順を実行するようにビルダを設定しています。</p>
+
+<pre><code>
+c['builders'].append(
+    util.BuilderConfig(name="WebDeploy",
+                       workernames=["NetBSD"],
+                       factory=web_deploy))</code></pre>
+
+<h3>再起動</h3>
+<p>Buildbot Masterを再起動し、master.cfgへの変更が反映されているかをWebフロントエンドから確認してください。NAVIGATION&gt;Builds&gt;Buldersに移ると、WebDeployビルダが見えます。画面右上の<b>Force</b>からビルダを強制的に実行できます。</p>
+
+<img src="./images/buildbot_003.png" alt="Builders">
 
 <hr>
 <footer>
