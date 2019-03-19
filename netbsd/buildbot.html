@@ -12,12 +12,27 @@
 <body><div class="inner">
 <h1>Buildbot on NetBSD</h1>
 <hr>
-<h2>Buildbotとは</h2>
+<ol>
+<li><a href="#buildbot">Buildbotとは</a></li>
+<li><a href="#install">インストール</a>
+<ol>
+<li><a href="#pip">pip?</a></li>
+</ol></li>
+<li><a href="#firstrun">First Run</a>
+<ol>
+<li><a href="#master">Buildbot Master</a></li>
+<li><a href="#worker">Buildbot Worker</a></li>
+</ol></li>
+<li><a href="#example1">事例1: Webページを自動でデプロイする</a></li>
+<li><a href="#"></a></li>
+<li><a href="#"></a></li>
+</ol>
+<h2 id="buildbot">Buildbotとは</h2>
 <p>Buildbotはソフトウェアのビルド・テスト・リリース作業の自動化のためのFLOSS（GPLv2）フレームワークです。Pythonで実装されており継続的インテグレーション（Continuous Integration）を実現するためのシステムの一つと言えます。</p>
 
 <p>このシステムのアーキテクチャはMaster-Worker方式、つまりBuildbot MasterがBuildbot Workerにソースコードのチェックアウトやビルドのコマンドなどの指示を投げるかたちになっています（詳細は<a href="https://buildbot.net/index.html#basics">Buildbot Basics</a>を参照）。当然Woker側にBuildbotのWokerプログラムやPythonなどをインストールする必要がありますが、GNU/Linux distributionの中には標準でPythonがインストールされているものも少なくはない（特にRHEL系）のでWokerを構築するのはそこまで大変ではありません。</p>
 
-<h2>インストール</h2>
+<h2 id="install">インストール</h2>
 <p>はじめに、システムにインストールされているPythonのバージョンと<code>pkgsrc(7)</code>で提供されているPythonのバージョンが一致しているか確認してください。lang/pythonXX（XXは任意のバージョン番号）を<code>make package</code>してパッケージを作り、<code>pkg_add -uu</code>コマンドでアップデートすると安全です。</p>
 
 <pre><code># cd /usr/pkgsrc/lang/python37
@@ -37,17 +52,17 @@
 <li>devel/py-buildbot-www</li>
 </ul>
 
-<h3>pip?</h3>
+<h3 id="pip">pip?</h3>
 <p><code>pkgsrc(7)</code>では<b>py-XXX</b>というパッケージを提供しています。<code>pkgsrc(7)</code>からPythonのパッケージをインストールする場合<code>pip</code>を使うことはありません。Pythonのバージョンは変数<code>PYTHON_VERSION_DEAULT</code>で決定されますが、標準ではPython 2.7が使われます。パッケージは/usr/pkg/lib/pythonX.Y/site-packagesディレクトリ下にインストールされます。</p>
 
 <p>BuildBotのインストールは公式文書では<code>pip</code>による手順が紹介されています。しかしここでは<code>pip</code>ではなく<code>pkgsrc(7)</code>を採用します。パッケージの管理インタフェースをむやみに増やしたくないからです。</p>
 
 <p><b>しかし</b><code>pkgsrc(7)</code>のStable版から提供されるソフトウェアは、そのリリース頻度に影響してアップストリームの最新版より古い可能性があります。最新のBuildbotを使いたいのであれば、<code>pkgsrc(7)</code>ではなく<code>pip</code>を使うべきです。</p>
 
-<h2>First Run</h2>
+<h2 id="firstrun">First Run</h2>
 <p>本節は<a href="http://docs.buildbot.net/current/tutorial/firstrun.html#first-run-label">1.1. First Run</a>に従います。</p>
 
-<h3>Buildbot Master</h3>
+<h3 id="master">Buildbot Master</h3>
 
 <p>はじめに任意のディレクトリにmasterディレクトリを作成します。これがBuildbot Masterの親ディレクトリになります。ここでは$HOME/buildbotディレクトリを作成します。</p>
 
@@ -92,7 +107,7 @@ c['www'] = dict(port=8010,
 
 <img src="./images/buildbot_001.png" alt="Buildbot Home">
 
-<h3>Buildbot Worker</h3>
+<h3 id="worker">Buildbot Worker</h3>
 <p><code>buildbot-worker</code>コマンドのcreate-workerオペレーションを実行し、$HOME/buildbotディレクトリを親ディレクトリとしてBuildbot Workerを作成します。このコマンドの書式は次の通りです。</p>
 
 <pre><code>buildbot-worker create-worker &lt;wokerのディレクトリ&gt; &lt;MasterのIPアドレス&gt; &lt;Wokerの名前&gt; &lt;Workerのパスワード&gt;</code></pre>
@@ -135,6 +150,8 @@ c['www'] = dict(port=8010,
 <p>MasterのWebフロントエンドからNAVIGATION&gt;Builds&gt;Workersを選ぶと、先ほど作成したWorkerがMasterに登録されていることがわかります。</p>
 
 <img src="./images/buildbot_002.png" alt="Buildbot Workers">
+
+<h2 id="example1">事例1: Webページを自動でデプロイする</h2>
 
 <hr>
 <footer>
