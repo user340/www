@@ -4,41 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){code{line-height:1.4;font-size:80%;}.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
-@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}p{text-indent:1em;}
+@media print, screen and (min-width:640px){code{line-height:1.4;font-size:80%;}.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;} img{max-width:100%}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} img{max-width:100%}p{text-indent:1em;}}
 </style>
 <title>e-yuuki.org</title>
 </head>
 <body><div class="inner">
 <h1>私家版HTML Coding Style</h1>
-<p style="text-align: right">Last Update <time>2018-12-22</time></p>
 <hr>
-<p>e-yuuki.orgの文書を書くときに気をつけていることをまとめます。ベストプラクティスを集めたわけではありません。W3Cの勧告やValidatorの更新によって都度変更される可能性があります。</p>
+<p>e-yuuki.orgの文書を書くときに気をつけていることをまとめます。したがってHTML5の範疇を超える話題も含まれます。ベストプラクティスを集めたわけではありません。W3Cの勧告やValidatorの更新によって都度変更される可能性があります。</p>
 
 <ul>
 <li><a href="#version">HTML 5</a></li>
 <li><a href="#validator">Validator</a></li>
 <li><a href="#codestyle">一行あたりの文字数とインデント</a></li>
 <li><a href="#css">CSS</a></li>
+<li><a href="#javascript">JavaScript</a></li>
+<li><a href="#cache">キャッシュ（cache）</a></li>
+<li><a href="#gzip">gzip圧縮</a></li>
+<li><a href="#compression">画像圧縮</a></li>
 <li><a href="#tips">Tips</a></li>
 </ul>
 
 <h2 id="version">HTML 5</h2>
-
 <p>W3C Recommendationに従って書きます。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第ソースコードをアップデートします。</p>
 
 <h2 id="validator">Validator</h2>
-
 <p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。公開後は<a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>からページのスコアを確認し、速度が改善できそうな箇所を探します。不要なインデントによるスペース／タブ文字の削除はその代表例です。</p>
 
 <h2 id="codestyle">一行あたりの文字数とインデント</h2>
-
 <p>一行あたりの文字数制限はありません。余計な空白が挿入されることを防ぐため、むしろ一段落（<code>p</code>タグで囲う）は一行に収めます。この方針はバージョン管理システムで差分を取ったとき、どこが変更されたのかが分かりづらいという明らかな欠点があります。この欠点を許容できないのであれば、改行は文単位でおこなうべきです。</p>
 
 <p>ページサイズを抑えるために、インデントは必要ありません。HTMLのコーディングではPythonのようにインデントが義務付けられていません。複雑なリストを書くときはインデントを使って見やすくしても構いませんが、commitするときはインデントをすべて削除します。</p>
 
 <h2 id="css">CSS</h2>
-
 <p>レイアウトを整える目的で<code>br</code>タグやテーブルを使ってはいけません。レイアウトに関するコードはすべてCSSとして書きます。</p>
 
 <p>CSSはHTMLコードに直接書きます。別途用意して読み込むほうが効率的なほど長いCSSを書くわけではありませんし、レイアウトの美麗さが文章の質に影響するわけでもありません。この方法だとCSSを更新したときHTMLファイルひとつひとつを更新しなければならないので手間がかかりますが、CSSコードを改行せず一行にすることで<code>find(1)</code>と<code>sed(1)</code>を組み合わせて簡単に更新ができます。置換前と置換後のテキストはバージョン管理システムから取得できます（<code>git-diff(1)</code>など）。</p>
@@ -46,10 +45,81 @@
 <pre><code>$ find . -name '*.html' -exec \
 sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
 
+<p><a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>によってHTML5とCSSの分離を提案された場合はもちろんそれに従います。</p>
+
+<h2 id="javascript">JavaScript</h2>
+<p>僕のWebページではJavaScriptは使いません。TwitterやFacebook, Instagramといったユーザインタラクションが重要視されるようなWebページならともかく、テキスト中心の静的な技術文書はHTML5とCSSのみで書くことができるはずです。</p>
+
+<p>必ずしもユーザがJavaScriptを有効にしているとは限らないという点に注意してください。セキュリティ意識が高いユーザはJavaScriptを標準で無効にする拡張機能をブラウザにインストールしていることもあります（NoScriptなど）。またCUI Webブラウザ（w3m, lynxなど）ではJavaScriptを実行できません。見栄え・組版・収益化などの都合でJavaScriptがどうしても欠かせないときは、JavaScriptがなくてもレイアウトの崩れが最小限になるようCSSで工夫したり、最低限テキストは読めるようにしておくと良いでしょう。</p>
+
+<h2 id="cache">キャッシュ（cache）</h2>
+<p>キャッシュはできる限り活用しますが、運用について少し考えなければなりません。画像ファイル（png, jpeg）は滅多に上書き変更する機会はないでしょう。論文や発表資料のPDFもそうだと考えられます。つまり一度サーバに公開したらそれっきりな拡張子のファイルはキャッシュの有効期間を長めにします。一方でHTMLファイルやテキストファイルは常に変更される可能性があります。そのためキャッシュは使わないか、使うにしても有効期間を短めにします。</p>
+
+<p>キャッシュの設定はWebサーバのプロバイダに依存します。もしWebサーバがレンタルサーバであれば、/etc/httpdディレクトリ以下にあるファイルを編集したりhttpdデーモンを再起動する権限は与えられていないと思われます。したがってこの場合には.htaccessを編集してキャッシュn設定をする必要があります。たとえば以下のように.htaccessに追記します。</p>
+
+<pre><code>&lt;Files ~ ".(png|jpe?g)"&gt;
+    Header set Cache-Control "public, max-age=604800"
+&lt;/Files&gt;
+</code></pre>
+
+<p>VPSやクラウドを契約してWebサーバを運用している場合は自由に/etcディレクトリ以下のファイルを編集できるので、NginxやApacheの設定ファイルを適宜変更してください。</p>
+
+<h2 id="gzip">gzip圧縮</h2>
+<p>転送速度向上を目的にテキストファイルをサーバ側で圧縮することができます。サーバ側で<code>mod_deflate</code>モジュールが有効になっている必要があります。.htaccessに以下を追記します。</p>
+
+<pre><code>&lt;IfModule mod_deflate.c&gt;
+    SetOutputFilter DEFLATE
+
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip
+    BrowserMatch ^Mozilla/4 gzip-only-text/html
+    BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
+
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|ico)$ no-gzip dont-vary
+    SetEnvIfNoCase Request_URI _\.utxt$ no-gzip
+
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/atom_xml
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/x-httpd-php
+&lt;/IfModule&gt;</code></pre>
+
+<h2 id="compression">画像圧縮</h2>
+<p><b>This topic was suggested by Andrea Morrys. Thank you.</b></p>
+
+<p>キャッシュやgzip圧縮の他に、公開している画像そのものをあらかじめ圧縮しておくことも有効な手段です。ここでは<a href="https://commons.wikimedia.org/wiki/File:Andromeda_galaxy.jpg">https://commons.wikimedia.org/wiki/File:Andromeda_galaxy.jpg</a>からアンドロメダ銀河の画像をダウンロードし、どの手法でどの程度圧縮できるか確認します。ファイルサイズは4.1MBです。</p>
+
+<p><a href="https://www.websiteplanet.com/ja/webtools/imagecompressor/">WebsitePlanet.com</a>ではPNG, JPEG形式の画像を圧縮できるツールを公開しています。ひとつ50MB以内で最大40個の画像を一度に圧縮できるようです。</p>
+
+<img src="./images/html_001.png">
+
+<p>結果、43%圧縮できたようです。</p>
+
+<p>他にも、graphics/optipngやgraphics/jpegoptimなど<code>pkgsrc(7)</code>で提供されているパッケージをインストールすることで、コマンドラインから画像を圧縮することもできます。<code>optipng(1)</code>で上の画像を圧縮した結果、15%の圧縮ができました。</p>
+
+<pre><code>$ optipng html_001.png
+** Processing: html_001.png
+1350x646 pixels, 4x8 bits/pixel, RGB+alpha
+Reducing image to 3x8 bits/pixel, RGB
+Input IDAT size = 116635 bytes
+Input file size = 116860 bytes
+
+Trying:
+  zc = 9  zm = 8  zs = 0  f = 0         IDAT size = 98513
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 0         IDAT size = 98513
+
+Output IDAT size = 98513 bytes (18122 bytes decrease)
+Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
+
 <h2 id="tips">Tips</h2>
-
 <h3>引用の方法</h3>
-
 <p>引用の方法はそれが短いものか長いものかによって変わります。どの程度から長いと判断するかは曖昧ですが、文を2~3以上引用したいのであれば長い引用の方法をとります。</p>
 
 <p>短い引用であれば「」で囲んで文中に書き、出典元を（）の中に明記します。たとえば「出版された情報をコンピュータを使って共有しようとする読者は、 法律上は著作権に違反しているのです」（Richard Stallman, 『自由か著作権か？』）</p>
@@ -71,6 +141,16 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
 <footer>
 &mdash; <cite>Richard Stallman</cite>, <cite>結城浩 訳</cite>, <cite>自由か著作権か？</cite>
 </footer></figure>
+
+<h3>HTML5コーディングのための$HOME/.vimrc その1</h3>
+<p>「&lt;/」と入力した時点で、対となるタグを自動で閉じるようにします。そのためには$HOME/.vimrcに以下を追記します。</p>
+
+<pre><code>augroup CloseTag
+    autocmd!
+    autocmd Filetype xml inoremap &lt;buffer&gt; &lt;/ &lt;/&lt;C-x&gt;&lt;C-o&gt;
+    autocmd Filetype html inoremap &lt;buffer&gt; &lt;/ &lt;/&lt;C-x&gt;&lt;C-o&gt;
+augroup END</code></pre>
+
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
