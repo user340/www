@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>CUI Webブラウザ&mdash;&mdash;w3m</h1>
+<hr>
+<h2>w3mとは</h2>
+<p><a href="http://w3m.sourceforge.net/index.ja.html">w3m</a>はCUIのWebブラウザです。JavaScript を動かさず画像も描画しないためGUIのWebブラウザに比べて省メモリ・高速にブラウジングできます。文章だけを読みたいときに<code>tmux(1)</code>上で動かすと便利です。</p>
+
+<h2>インストール</h2>
+<p><code>pkgsrc(7)</code>ではwww/w3mパッケージが提供されています。www/w3m-imgパッケージを代わりにインストールすることで画像表示もできるようになるらしいです。しかし画像を見たいときはもっぱらFirefoxを使うので僕は使っていません。</p>
+
+<pre><code># cd /usr/pkgsrc/www/w3m
+# make install clean clean-depends</code></pre>
+
+<h2>使い方</h2>
+<p>マニュアルは/usr/pkg/share/w3m/w3mhelp-w3m_ja.htmlを参照してください。2019年3月23日の時点ではこのファイルはEUC-JPでエンコーディングされているため、環境によっては<code>w3m(1)</code>に<code>-I EUC-JP</code>オプションを渡して実行しないと文字化けするかもしれません。ちなみに英語版のマニュアルはUTF-8のようです。</p>
+
+<pre><code>$ w3m -I EUC-JP /usr/pkg/share/w3m/w3mhelp-w3m_ja.html</code></pre>
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
