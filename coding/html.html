@@ -40,6 +40,8 @@ validator_dir="$gitdir/validator/validator"
 
 git diff --cached --name-only --diff-filter=AM HEAD | xargs $java -jar $validator_dir/build/dist/vnu.jar</code></pre>
 
+<p>個人的には後者のThe Nu HTML Checkerの利用を推奨します。逐一Webブラウザ経由でコードをチェックするのは面倒ですし、commit前にコードを検査することで正しくないコードがpushされるのを予防でき自信を持ってデプロイできます。</p>
+
 <p>公開後は<a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>からページのスコアを確認し、速度が改善できそうな箇所を探します。不要なインデントによるスペース／タブ文字の削除はその代表例です。</p>
 
 <h2 id="codestyle">一行あたりの文字数とインデント</h2>
