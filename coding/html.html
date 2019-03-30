@@ -30,7 +30,17 @@
 <p>W3C Recommendationに従って書きます。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第ソースコードをアップデートします。</p>
 
 <h2 id="validator">Validator</h2>
-<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。公開後は<a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>からページのスコアを確認し、速度が改善できそうな箇所を探します。不要なインデントによるスペース／タブ文字の削除はその代表例です。</p>
+<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。Gitを使っているのであれば、Gitフックのpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下は.git/hooks/pre-commitスクリプトの一例です。変数の値は適宜変更してください。</p>
+
+<pre><code>#!/bin/sh
+
+java="/usr/pkg/bin/openjdk8-java"
+gitdir="/home/uki/src/github.com"
+validator_dir="$gitdir/validator/validator"
+
+git diff --cached --name-only --diff-filter=AM HEAD | xargs $java -jar $validator_dir/build/dist/vnu.jar</code></pre>
+
+<p>公開後は<a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>からページのスコアを確認し、速度が改善できそうな箇所を探します。不要なインデントによるスペース／タブ文字の削除はその代表例です。</p>
 
 <h2 id="codestyle">一行あたりの文字数とインデント</h2>
 <p>一行あたりの文字数制限はありません。余計な空白が挿入されることを防ぐため、むしろ一段落（<code>p</code>タグで囲う）は一行に収めます。この方針はバージョン管理システムで差分を取ったとき、どこが変更されたのかが分かりづらいという明らかな欠点があります。この欠点を許容できないのであれば、改行は文単位でおこなうべきです。</p>
