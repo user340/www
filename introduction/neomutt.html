@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-ideograph; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>CUIメーラ&mdash;&mdash;NeoMutt</h1>
+<hr>
+<h2>NeoMuttとは</h2>
+<p><code>neomutt(1)</code>はコマンドラインで利用できるメールクライアントです。名前の通り、メールクライアントmuttからforkしたソフトウェアです。</p>
+
+<p>CUIでメールクライアントを使う利点として省メモリ・省スペースが挙げられます。特に<code>tmux(1)</code>と組み合わせて使うと、ひとつの画面でメールを見ながら作業したり、メールを書いている途中で調べものをするのが楽になります。Thunderbirdではメールへの署名や暗号化にプラグインが別途必要ですが、<code>neomutt(1)</code>では標準でその機能が提供されています。</p>
+
+<h2>インストール</h2>
+<p><code>pkgsrc(7)</code>ではmail/neomuttパッケージとして提供されています。SNTPサーバへの認証にsecurity/cy2-plainパッケージも必要です。</p>
+
+<pre><code># cd /usr/pkgsrc/mail/neomutt
+# make install clean clean-depends
+# cd /usr/pkgsrc/security/cy2-plain
+# make install clean clean-depends</code></pre>
+
+<h2>設定ファイル $HOME/.muttrc</h2>
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
