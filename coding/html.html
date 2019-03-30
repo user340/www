@@ -30,7 +30,7 @@
 <p>W3C Recommendationに従って書きます。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第ソースコードをアップデートします。</p>
 
 <h2 id="validator">Validator</h2>
-<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。Gitを使っているのであれば、Gitフックのpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下は.git/hooks/pre-commitスクリプトの一例です。変数の値は適宜変更してください。</p>
+<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。Gitを使っているのであれば、Gitフックのpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下は.git/hooks/pre-commitスクリプトの一例です。<code>chmod +x</code>コマンドで実行権限を与え、変数の値は適宜変更してください。</p>
 
 <pre><code>#!/bin/sh
 
