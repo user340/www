@@ -18,13 +18,13 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <ol>
 <li><a href="#X60s">X60s</a></li>
 <li><a href="#X201i">X201i</a></li>
-<li><a href="#X230i">X230i</a></li>
+<li><a href="#X230i">X230i</a>
 <ol>
 <li><a href="#X230i/display">ディスプレイ拡張</a></li>
 <li><a href="#X230i/trackpoint">トラックポイント</a></li>
 <li><a href="#X230i/touchpad">タッチパッド</a></li>
 <li><a href="#X230i/if">ネットワークインタフェース</a></li>
-</ol>
+</ol></li>
 </ol>
 
 <h2 id="X60s">X60s</h2>
@@ -56,17 +56,19 @@ Option     "XAxisMapping" "6 7"</code></pre>
 タッチパッドを無効化するにはBIOSから設定をおこなってください。
 
 <h3 id="X230i/if">ネットワークインタフェース</h3>
-<p>ifconfig(8)の出力は以下の通り。</p><pre><code>wm0: flags=8802<BROADCAST,SIMPLEX,MULTICAST> mtu 1500
-	capabilities=7ff80<TSO4,IP4CSUM_Rx,IP4CSUM_Tx,TCP4CSUM_Rx>
-	capabilities=7ff80<TCP4CSUM_Tx,UDP4CSUM_Rx,UDP4CSUM_Tx,TCP6CSUM_Rx>
-	capabilities=7ff80<TCP6CSUM_Tx,UDP6CSUM_Rx,UDP6CSUM_Tx,TSO6>
+<p>ifconfig(8)の出力は以下の通りです。</p>
+
+<pre><code>wm0: flags=8802&lt;BROADCAST,SIMPLEX,MULTICAST&gt; mtu 1500
+	capabilities=7ff80&lt;TSO4,IP4CSUM_Rx,IP4CSUM_Tx,TCP4CSUM_Rx&gt;
+	capabilities=7ff80&lt;TCP4CSUM_Tx,UDP4CSUM_Rx,UDP4CSUM_Tx,TCP6CSUM_Rx&gt;
+	capabilities=7ff80&lt;TCP6CSUM_Tx,UDP6CSUM_Rx,UDP6CSUM_Tx,TSO6&gt;
 	enabled=0
-	ec_capabilities=7<VLAN_MTU,VLAN_HWTAGGING,JUMBO_MTU>
+	ec_capabilities=7&lt;VLAN_MTU,VLAN_HWTAGGING,JUMBO_MTU&gt;
 	ec_enabled=0
 	address: 3c:97:0e:97:cd:f8
 	media: Ethernet autoselect (none)
 	status: no carrier
-iwn0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+iwn0: flags=8843&lt;UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
 	ssid SPWH_H32_F09503 nwkey *****
 	powersave off
 	bssid 5c:c3:07:f0:95:03 chan 8
@@ -76,7 +78,7 @@ iwn0: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 	inet 192.168.100.102 netmask 0xffffff00 broadcast 192.168.100.255
 	inet6 fe80::7a4b:4c6b:8e9a:8ec8%iwn0 prefixlen 64 scopeid 0x2
 	inet6 2001:268:c142:811b:a7de:26ec:9af9:bdcb prefixlen 64
-lo0: flags=8049<UP,LOOPBACK,RUNNING,MULTICAST> mtu 33624
+lo0: flags=8049&lt;UP,LOOPBACK,RUNNING,MULTICAST&gt; mtu 33624
 	inet 127.0.0.1 netmask 0xff000000
 	inet6 ::1 prefixlen 128
 	inet6 fe80::1%lo0 prefixlen 64 scopeid 0x3</code></pre>
