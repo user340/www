@@ -30,7 +30,7 @@
 <p>W3C Recommendationに従って書きます。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第ソースコードをアップデートします。</p>
 
 <h2 id="validator">Validator</h2>
-<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。Gitを使っているのであれば、Gitフックのpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下は.git/hooks/pre-commitスクリプトの一例です。<code>chmod +x</code>コマンドで実行権限を与え、変数の値は適宜変更してください。</p>
+<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。ビルド方法は<a href="#nuhtml">NetBSDでNu HTML Checkerをビルドする</a>を参照してください。Gitを使っているのであれば、<a href="https://git-scm.com/book/ja/v1/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Gitフック</a>のpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下は.git/hooks/pre-commitスクリプトの一例です。<code>chmod +x</code>コマンドで実行権限を与え、変数の値は適宜変更してください。</p>
 
 <pre><code>#!/bin/sh
 
@@ -162,6 +162,59 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
     autocmd Filetype xml inoremap &lt;buffer&gt; &lt;/ &lt;/&lt;C-x&gt;&lt;C-o&gt;
     autocmd Filetype html inoremap &lt;buffer&gt; &lt;/ &lt;/&lt;C-x&gt;&lt;C-o&gt;
 augroup END</code></pre>
+
+<h3 id="nuhtml">NetBSDでNu HTML Checkerをビルドする</h3>
+<p><code>pkgsrc(7)</code>ではパッケージが提供されていないため、NetBSDでNu HTML Checkerを使うにはGitリポジトリからソースコードをcloneしてきてビルドしなければなりません。ビルドには以下のパッケージが必要です。</p>
+
+<ul><li>lang/python</li>
+<li>lang/openjdk8</li></ul>
+
+<p><a href="https://github.com/validator/validator">https://github.com/validator/validator</a>をcloneします。</p>
+
+<pre><code>$ git clone https://github.com/validator/validator.git
+$ cd validator</code></pre>
+
+<p>build/build.pyに以下のような変更を加えます。<code>pkgsrc(7)</code>ではPythonインタプリタがバージョン番号付きで提供されており、Javaのコマンド群にはopenjdk8-という接頭辞が付きます。また、ビルド中に<code>Exception in thread "main" java.lang.OutOfMemoryError: Java heap space</code>というエラーが出てビルドが失敗するケースもあるので、メモリを最大4GBまで使えるように変更しています。この数値はビルド環境に応じて変更してください。</p>
+
+<pre><code>diff --git a/build/build.py b/build/build.py
+index 4cfc5d0b..8cb3d4cb 100755
+--- a/build/build.py
++++ b/build/build.py
+@@ -1,4 +1,4 @@
+<font color="red">-#!/usr/bin/env python</font>
+<font color="green">+#!/usr/pkg/bin/python2.7</font>
+ # -*- coding: utf-8 -*- vim: set fileencoding=utf-8 :
+
+ # Copyright (c) 2007 Henri Sivonen
+@@ -58,10 +58,10 @@ except ImportError:
+     CAFILE = None
+
+ javaVersion = '1.8'
+<font color="red">-javacCmd = 'javac'</font>
+<font color="red">-jarCmd = 'jar'</font>
+<font color="red">-javaCmd = 'java'</font>
+<font color="red">-javadocCmd = 'javadoc'</font>
+<font color="green">+javacCmd = 'openjdk8-javac'</font>
+<font color="green">+jarCmd = 'openjdk8-jar'</font>
+<font color="green">+javaCmd = 'openjdk8-java'</font>
+<font color="green">+javadocCmd = 'openjdk8-javadoc'</font>
+ herokuCmd = 'heroku'
+ ghRelCmd = 'github-release'  # https://github.com/sideshowbarker/github-release
+ tarCmd = 'tar'
+@@ -1430,7 +1430,7 @@ def runTests():
+         jarNamesToPaths(["galimatias", "htmlparser", "validator"]) +
+         cssValidatorJarPath() +
+         jingJarPath())
+<font color="red">-    if runCmd([javaCmd, '-classpath', classPath, className] + args):</font>
+<font color="green">+    if runCmd([javaCmd, '-Xmx4g', '-classpath', classPath, className] + args):</font>
+         sys.exit(1)
+
+</code></pre>
+
+<p>ビルドスクリプトを実行します。実行可能なjarファイルはbuild/dist/vnu.jarとして生成されます。</p>
+
+<pre><code>$ python2.7 build/build.py build
+$ python2.7 build/build.py jar</code></pre>
 
 <hr>
 <footer>
