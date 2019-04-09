@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){
-code{line-height:1.4;}
-.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;}
-pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
+@media print, screen and (min-width:640px){ code{line-height:1.4;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
 @media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}p{text-indent:1em;}
 </style>
 <title>e-yuuki.org</title>
@@ -26,7 +23,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <p><a href="https://www.pkgsrc.org/wip/users/">The pkgsrc-wip project -- committer access</a>にはpkgsrc-wip開発者の登録からパッケージの作成まで様々な情報が書かれています。これを読んでおけばwipの作業は問題ないでしょう。</p>
 
 <h2 id="practice">パッケージを更新する実例</h2>
-<p>pkgsrc-wipにてwip/basepkgパッケージのバージョンを1.2から1.3に挙げたときの作業手順をここに残します。</p>
+<p>pkgsrc-wipにてwip/basepkgパッケージのバージョンを1.2から1.3に挙げたときの作業手順をここに残します。/usr/pkgsrc/distfilesへのアクセスにroot権限あるいは/usr/pkgsrcに触る権限が必要です。</p>
 
 <h3 id="makefile">Makefileを更新する</h3>
 <pre><code># diff -u Makefile.org Makefile
