@@ -38,7 +38,9 @@ java="/usr/pkg/bin/openjdk8-java"
 gitdir="/home/uki/src/github.com"
 validator_dir="$gitdir/validator/validator"
 
-git diff --cached --name-only --diff-filter=AM HEAD | xargs $java -jar $validator_dir/build/dist/vnu.jar</code></pre>
+git diff --cached --name-only --diff-filter=AM HEAD \
+  | grep 'html$' \
+  | xargs $java -jar $validator_dir/build/dist/vnu.jar</code></pre>
 
 <p>個人的には後者のThe Nu HTML Checkerの利用を推奨します。逐一Webブラウザ経由でコードをチェックするのは面倒ですし、commit前にコードを検査することで正しくないコードがpushされるのを予防でき自信を持ってデプロイできます。</p>
 
@@ -181,8 +183,8 @@ index 4cfc5d0b..8cb3d4cb 100755
 --- a/build/build.py
 +++ b/build/build.py
 @@ -1,4 +1,4 @@
-<font color="red">-#!/usr/bin/env python</font>
-<font color="green">+#!/usr/pkg/bin/python2.7</font>
+-#!/usr/bin/env python
++#!/usr/pkg/bin/python2.7
  # -*- coding: utf-8 -*- vim: set fileencoding=utf-8 :
 
  # Copyright (c) 2007 Henri Sivonen
@@ -190,14 +192,14 @@ index 4cfc5d0b..8cb3d4cb 100755
      CAFILE = None
 
  javaVersion = '1.8'
-<font color="red">-javacCmd = 'javac'</font>
-<font color="red">-jarCmd = 'jar'</font>
-<font color="red">-javaCmd = 'java'</font>
-<font color="red">-javadocCmd = 'javadoc'</font>
-<font color="green">+javacCmd = 'openjdk8-javac'</font>
-<font color="green">+jarCmd = 'openjdk8-jar'</font>
-<font color="green">+javaCmd = 'openjdk8-java'</font>
-<font color="green">+javadocCmd = 'openjdk8-javadoc'</font>
+-javacCmd = 'javac'
+-jarCmd = 'jar'
+-javaCmd = 'java'
+-javadocCmd = 'javadoc'
++javacCmd = 'openjdk8-javac'
++jarCmd = 'openjdk8-jar'
++javaCmd = 'openjdk8-java'
++javadocCmd = 'openjdk8-javadoc'
  herokuCmd = 'heroku'
  ghRelCmd = 'github-release'  # https://github.com/sideshowbarker/github-release
  tarCmd = 'tar'
@@ -205,8 +207,8 @@ index 4cfc5d0b..8cb3d4cb 100755
          jarNamesToPaths(["galimatias", "htmlparser", "validator"]) +
          cssValidatorJarPath() +
          jingJarPath())
-<font color="red">-    if runCmd([javaCmd, '-classpath', classPath, className] + args):</font>
-<font color="green">+    if runCmd([javaCmd, '-Xmx4g', '-classpath', classPath, className] + args):</font>
+-    if runCmd([javaCmd, '-classpath', classPath, className] + args):
++    if runCmd([javaCmd, '-Xmx4g', '-classpath', classPath, className] + args):
          sys.exit(1)
 
 </code></pre>
