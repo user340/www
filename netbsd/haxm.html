@@ -15,8 +15,8 @@
 <p>pkgsrc-2019Q1からemulators/haxmパッケージが提供されるようになりました。NetBSDでの仮想化環境は何のアクセラレータもないQEMUか、あるいはカーネルの入れ替えが必要なXenくらいしか選択肢がなかったように思えます。VMWareやVirtualBoxも動いていたようですがこれについてはよくわかりません。とにかく、ようやくNetBSDでもインストールしやすく高速な仮想化環境を使えるようになりました。</p>
 
 <h2>目次</h2>
-<ol><li><a href="#haxm">HAXMとは</a><ol>
-<li><a href="#upside">HAXMの利点</li>
+<ol><li><a href="#haxm">HAXMとは</a>
+<ol><li><a href="#upside">HAXMの利点</a></li>
 <li><a href="#downside">HAXMの欠点</a></li></ol></li>
 <li><a href="#install">インストール</a></li>
 <li><a href="#qemu">QEMUを使う</a>
@@ -95,9 +95,12 @@
 <h3 id="installtodisk">インストールする</h3>
 <p><code>qemu-system-x86_64</code>コマンドの<code>-boot order=d</code>オプションを使い、NetBSDインストーラを起動して先ほど作成した仮想ディスクにNetBSDをインストールします。インストール手順は省略します。</p>
 
-<pre><code># qemu-system-x86_64 -m 2048M \
+<pre><code># qemu-system-x86_64 \
+-m 2048M \
+-smp cpus=2 \
 -boot order=d -cdrom ~/qemu/iso/NetBSD-8.0-amd64.iso \
 -hda NetBSD.qcow2 \
+-net nic -net user \
 -accel hax</code></pre>
 
 <p>見てのとおり、HAXMをQEMUと一緒に使うにはQEMUに<code>-accel hax</code>オプションを渡します。</p>
@@ -109,6 +112,7 @@
 -m 2048M \
 -smp cpus=2 \
 -hda NetBSD.qcow2 \
+-net nic -net user \
 -accel hax</code></pre>
 
 <h2 id="qanda">トラブルシューティング</h2>
