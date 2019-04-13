@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>QEMUとHAXMによるハイパーバイザの利用</h1>
+<hr>
+<p>pkgsrc-2019Q1からemulators/haxmパッケージが提供されるようになりました。NetBSDでの仮想化環境は何のアクセラレータもないQEMUか、あるいはカーネルの入れ替えが必要なXenくらいしか選択肢がなかったように思えます。VMWareやVirtualBoxも動いていたようですがこれについてはよくわかりません。とにかく、ようやくNetBSDでもインストールしやすく高速な仮想化環境を使えるようになりました。</p>
+
+<h2>目次</h2>
+<ol>
+  <li><a href="#haxm">HAXMとは</a></li>
+  <li><a href="#install">インストール</a></li>
+  <li><a href="#qemu">QEMUを使う</a>
+  <ol><li><a href="#getinstaller">インストーラを取得する</a></li>
+  <li><a href="#disk">仮想ディスクを作成する</a></li>
+  <li><a href="#installtodisk">インストールする</a></li>
+  <li><a href="#boot">起動する</a></li></ol></li>
+  <li><a href="#qanda">トラブルシューティング</a><ol>
+  <li><a href="#qa001">Failed to open the hax moduleというエラーが出る</a></li></ol></li>
+</ol>
+
+<h2 id="haxm">HAXMとは</h2>
+<p><a href="https://github.com/intel/haxm">HAXM</a>（Hardware Accelerated Execution Manager）はIntel社から提供されているFLOSSのハイパーバイザです。Darwin, Linux, NetBSD, Windows上で動作します。HAXMはKamil Rytarowskiによってpkgsrc(7)に取り込まれ、pkgsrc-2019Q1でstable版として使えるようになりました。KVMやHVFと同じく、QEMUのアクセラレータとして利用します。</p>
+
+<p>HAXMはVT-xが利用可能なIntel CPU上でのみ動作します。AMDや非x86アーキテクチャ上では利用できません。</p>
+
+<h2 id="install">インストール</h2>
+<p>コンピュータのBIOSからIntel Virtualization Technology（VT-x）を有効にしてください。VT-xが有効にされていないとHAXMは動作しません。</p>
+
+<p>emulators/qemuとemulators/haxmパッケージをインストールします。</p>
+
+<pre><code># cd /usr/pkgsrc/emulators/qemu
+# make install clean clean-depends
+# cd /usr/pkgsrc/emulators/haxm
+# make install clean clean-depends</code></pre>
+
+<p>HAXM用のdevice special filesを作成します。<code>mknod(8)</code>のWrapperスクリプトがemulators/haxmパッケージで提供されているのでそれを使うと便利です。</p>
+
+<pre><code># haxm-mknod</code></pre>
+
+<p>HAXMのカーネルモジュールを<code>haxm-modload</code>コマンドでロードします。アンロードしたい場合は<code>haxm-modunload</code>コマンドを実行してください。</p>
+
+<pre><code># haxm-modload</code></pre>
+
+<p>カーネルモジュールのロードに成功すると、<code>dmesg(8)</code>から<code>haxm_warning: -------- HAXM v7.4.1 Start --------</code>というメッセージを確認できます。</p>
+
+<h2 id="qemu">QEMUを使う</h2>
+<h3 id="getinstaller">インストーラを取得する</h3>
+<p>ここではNetBSDをゲストOSとして仮想マシンにインストールします。任意のFTPサーバからNetBSDのインストーラをダウンロードしてください。</p>
+
+<h3 id="disk">仮想ディスクを作成する</h3>
+<p>qcow2フォーマットで20GBの仮想ディスクを作成します。</p>
+
+<pre><code># qemu-img create -f qcow2 NetBSD.qcow2 20G</code></pre>
+
+<h3 id="installtodisk">インストールする</h3>
+<p><code>qemu-system-x86_64</code>コマンドの<code>-boot order=d</code>オプションを使い、NetBSDインストーラを起動して先ほど作成した仮想ディスクにNetBSDをインストールします。インストール手順は省略します。</p>
+
+<pre><code># qemu-system-x86_64 -m 2048M \
+-boot order=d -cdrom ~/qemu/iso/NetBSD-8.0-amd64.iso \
+-hda NetBSD.qcow2 \
+-accel hax</code></pre>
+
+<p>見てのとおり、HAXMをQEMUと一緒に使うにはQEMUに<code>-accel hax</code>オプションを渡します。</p>
+
+<h3 id="boot">起動する</h3>
+<p>インストール後は仮想ディスクからNetBSDを起動します。</p>
+
+<pre><code># qemu-system-x86_64 \
+-m 2048M \
+-smp cpus=2 \
+-hda NetBSD.qcow2 \
+-accel hax</code></pre>
+
+<h2 id="qanda">トラブルシューティング</h2>
+<h3 id="qa001">Failed to open the hax moduleというエラーが出る</h3>
+<p>権限が足りていないと以下のようなエラーが出てHAXM付きでQEMUを使えません。</p>
+
+<pre><code>Failed to open the hax module
+No accelerator found.
+qemu-system-x86_64: failed to initialize HAX: Operation not supported by device
+</code></pre>
+
+<p>この場合、<code>su(1)</code>か<code>sudo(1)</code>を使いroot権限でQEMUを実行してください。</p>
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
