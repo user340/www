@@ -15,22 +15,53 @@
 <p>pkgsrc-2019Q1からemulators/haxmパッケージが提供されるようになりました。NetBSDでの仮想化環境は何のアクセラレータもないQEMUか、あるいはカーネルの入れ替えが必要なXenくらいしか選択肢がなかったように思えます。VMWareやVirtualBoxも動いていたようですがこれについてはよくわかりません。とにかく、ようやくNetBSDでもインストールしやすく高速な仮想化環境を使えるようになりました。</p>
 
 <h2>目次</h2>
-<ol>
-  <li><a href="#haxm">HAXMとは</a></li>
-  <li><a href="#install">インストール</a></li>
-  <li><a href="#qemu">QEMUを使う</a>
-  <ol><li><a href="#getinstaller">インストーラを取得する</a></li>
-  <li><a href="#disk">仮想ディスクを作成する</a></li>
-  <li><a href="#installtodisk">インストールする</a></li>
-  <li><a href="#boot">起動する</a></li></ol></li>
-  <li><a href="#qanda">トラブルシューティング</a><ol>
-  <li><a href="#qa001">Failed to open the hax moduleというエラーが出る</a></li></ol></li>
+<ol><li><a href="#haxm">HAXMとは</a><ol>
+<li><a href="#upside">HAXMの利点</li>
+<li><a href="#downside">HAXMの欠点</a></li></ol></li>
+<li><a href="#install">インストール</a></li>
+<li><a href="#qemu">QEMUを使う</a>
+<ol><li><a href="#getinstaller">インストーラを取得する</a></li>
+<li><a href="#disk">仮想ディスクを作成する</a></li>
+<li><a href="#installtodisk">インストールする</a></li>
+<li><a href="#boot">起動する</a></li></ol></li>
+<li><a href="#qanda">トラブルシューティング</a><ol>
+<li><a href="#qa001">Failed to open the hax moduleというエラーが出る</a></li></ol></li>
+<li><a href="#references">参考文献</a></li>
 </ol>
 
 <h2 id="haxm">HAXMとは</h2>
 <p><a href="https://github.com/intel/haxm">HAXM</a>（Hardware Accelerated Execution Manager）はIntel社から提供されているFLOSSのハイパーバイザです。Darwin, Linux, NetBSD, Windows上で動作します。HAXMはKamil Rytarowskiによってpkgsrc(7)に取り込まれ、pkgsrc-2019Q1でstable版として使えるようになりました。KVMやHVFと同じく、QEMUのアクセラレータとして利用します。</p>
 
 <p>HAXMはVT-xが利用可能なIntel CPU上でのみ動作します。AMDや非x86アーキテクチャ上では利用できません。</p>
+
+<h3 id="upside">HAXMの利点</h3>
+<p>Rytarowskiによれば、HAXMには次のような利点があります。</p>
+
+<ul>
+<li>BSDスタイルのライセンス</li>
+<li>複数のプラットフォーム（Darwin, Linux, NetBSD, Windows）に対応している</li>
+<li>Intelのハードウェア仮想化支援機能を使っている</li>
+<li>NetBSDでは最大8、他OSでは最大64の仮想マシンを同時に実行できる</li>
+<li>最大16のVCPUを仮想マシンに割り当てられる</li>
+<li><code>ioctl(2)</code>ベースのAPI</li>
+<li>独立したカーネルモジュール</li>
+<li>QEMUとの互換性が標準で提供されている</li>
+<li>Intelの支援によって開発が進められている</li>
+<li>デスクトップ環境での利用に最適化されている</li>
+<li>FLOSSで複数のOSに対応した仮想化エンジンである（おそらく、唯一）</li>
+<li>活発で熱烈なコミュニティによって開発が進められている</li>
+</ul>
+
+<h3 id="downside">HAXMの欠点</h3>
+<p>以上のような利点がある一方で、Rytarowskiは次のような欠点も指摘しています。</p>
+
+<ul>
+<li>AMD CPUに対応していない</li>
+<li>非x86アーキテクチャに対応していない</li>
+<li>新しいIntel CPUが必要（EPTが必須）</li>
+<li>KVMのように組み込みやサーバ用途として適しているわけではない</li>
+<li>KVMより動作が20%ほど遅い</li>
+</ul>
 
 <h2 id="install">インストール</h2>
 <p>コンピュータのBIOSからIntel Virtualization Technology（VT-x）を有効にしてください。VT-xが有効にされていないとHAXMは動作しません。</p>
@@ -90,6 +121,16 @@ qemu-system-x86_64: failed to initialize HAX: Operation not supported by device
 </code></pre>
 
 <p>この場合、<code>su(1)</code>か<code>sudo(1)</code>を使いroot権限でQEMUを実行してください。</p>
+
+<h2 id="references">参考文献</h2>
+<dl>
+<dt>Kamil Rytarowski, <i><a href="https://doi.asiabsdcon.org/10.25263/asiabsdcon2019/p04b">Intel HAXM &mdash; a hardware-assisted acceleration engine in the NetBSD kernel</a></i></dt>
+<dd>pkgsrc(7)にHAXMを取り込んだKamil Rytarowskiによる報告の論文です。これを読むとHAXMの概要についておおまかに理解できるのではないかと思います。</dd>
+<dt><a href="http://polprog.net/blog/netbsd-hax/">HOWTO set up QEMU with HAX acceleration on NetBSD</a></dt>
+<dd>実際にNetBSD上でQEMU-HAXMを動かすにはどのような手順を踏むのかが説明されています。カーネルにパッチを当ててビルドしたり、GitHubからHAXMのソースコードをcloneしてビルドする項目は読み飛ばして構いません。pkgsrc-wipをcloneする必要もありません。HAXMデバイスの作成は、上述した<code>haxm-mknod</code>スクリプトを一度実行すれば良いです。</dd>
+<dt><a href="https://wiki.archlinux.jp/index.php/QEMU">QEMU</a></dt>
+<dd>QEMUの操作方法はArchWikiを読めば大丈夫でしょう。</dd>
+</dl>
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
