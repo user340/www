@@ -31,7 +31,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <h2 id="install">NetBSDのインストール</h2>
 <p>多くの場合amd64（64bit）アーキテクチャのインストーラをFTPサーバからダウンロードしてそれをブートすることになります。http://nycdn.netbsd.org/pub/NetBSD-daily/netbsd-8/latest/images/ からISOファイルやgzip圧縮されたimgファイルをダウンロードできます。</p>
 
-<p>多くのIT技術系ブログでNetBSDのインストール手順について画像つきで詳しく解説されています。しかし僕はThe NetBSD Projectから提供されている<a href="https://www.netbsd.org/docs/guide/en/chap-exinst.html">Chapter 3. Example Installation</a>を読むことをおすすめします。これがあるのでインストール手順について改めて紙面を割く必要もありません。この文書は英語ですが、どのみちNetBSDのインストーラも英語なので気にしなくて結構です。</p>
+<p>多くのIT技術系ブログでNetBSDのインストール手順について画像つきで詳しく解説されています。しかし僕はThe NetBSD Projectから提供されている<a href="https://www.netbsd.org/docs/guide/en/chap-exinst.html">Chapter 3. Example Installation</a>を読むことをおすすめします。これがあるのでインストール手順についてあらためて紙面を割く必要もありません。この文書は英語ですが、どのみちNetBSDのインストーラも英語なので気にしなくて結構です。</p>
 
 <p>仮想マシンにNetBSDをインストールするのであれば、<a href="https://legacyos.ichmy.0t0.jp/netbsd/">NetBSDで遊ぼうのこーな</a>を参考に仮想化ソフトウェアを選ぶといいでしょう。このページから引用し、さらに僕が普段使っているBhyveや使ったことのあるXenも加えると次のようになります。</p>
 
@@ -111,7 +111,7 @@ lo0: flags=0x8049&lt;UP,LOOPBACK,RUNNING,MULTICAST&gt; mtu 33624
 <pre><code># service network restart</code></pre>
 
 <h3>有線接続（固定IPアドレス）</h3>
-<p>あらかじめどのIPアドレスを使うか定められており有線接続する場合、<code>ifconfig.if(5)</code>を書きます。IPアドレスが192.168.200.40/24でネットワークインタフェースがwm0だとすると/etc/ifconfig.wm0を次のように編集します。</p>
+<p>あらかじめどのIPアドレスを使うか定められており有線接続する場合、<code>ifconfig.if(5)</code>を書きます。IPアドレスが192.168.200.40/24でネットワークインタフェースがwm0のとき/etc/ifconfig.wm0を次のように編集します。</p>
 
 <pre><code>inet 192.168.200.40 netmask 255.255.255.0</code></pre>
 
@@ -168,7 +168,7 @@ dhcpcd_flags="iwm0"</code></pre>
 <h2 id="block">すべて遮断する</h2>
 <p>ネットワーク接続をしたあとはすぐに外からのあらゆるアクセスを遮断します。アクセスさせたいプロトコルやポート番号のみを開け、ユーザ認証が必要な場合はなるべくパスワード認証を避け公開鍵認証方式に切り替えます。どうしてもパスワード認証を使わざるを得ないときはパスワード生成ソフトウェアを通じて可能な限り長くランダムなパスワードを使ってください。</p>
 
-<p>自宅で使うPCでこのポリシーは意味がないようにみえますが、これを習慣づけておくといざインターネットに公開するサーバを運用するとき役に立ちます。HTTPサーバを運用するだけでも、ありもしないwp-login.phpにアクセスしようとしたりrootでSSHログインを試みた痕跡がログにつくものです。自衛のために日頃から訓練しておくのは悪いことではありません。</p>
+<p>自宅で使うPCに対してこのポリシーは意味がないようにみえますが、これを習慣づけておくといざインターネットに公開するサーバを運用するとき役に立ちます。HTTPサーバを運用するだけでも、ありもしないwp-login.phpにアクセスしようとしたりrootでSSHログインを試みたりした痕跡がログにつくものです。自衛のために日頃から訓練しておくべきです。</p>
 
 <p>アクセス制御にはlibwrapによるものと<code>npf(7)</code>によるものがあります。ここでは前者について説明します。</p>
 
@@ -226,7 +226,7 @@ dhcpcd_flags="iwm0"</code></pre>
 # tar zxf pkgsrc.tar.gz -C /usr
 # cd /usr/pkgsrc</code></pre>
 
-<p><code>pkgsrc(7)</code>はstable版とcurrent版の2種類を選ぶことができます。stable版は3ヶ月に一度更新される安定版で、current版は不安定な開発版です。しかし一番新しいFirefoxを使いたいときなど、最新のバージョンのソフトウェアを使いたい場合は後者を選ばざるを得ません。とりあえずここではstable版で話を進めますが、用途に応じてどちらを選ぶか考えてください。</p>
+<p><code>pkgsrc(7)</code>はstable版とcurrent版の2種類を選ぶことができます。stable版は3か月に一度更新される安定版で、current版は不安定な開発版です。しかし一番新しいFirefoxを使いたいときなど、最新のバージョンのソフトウェアを使いたい場合は後者を選ばざるを得ません。とりあえずここではstable版で話を進めますが、用途に応じてどちらを選ぶか考えてください。</p>
 
 <hr>
 <footer>
