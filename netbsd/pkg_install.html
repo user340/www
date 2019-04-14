@@ -24,7 +24,7 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 </ol>
 
 <h2 id="install">インストール</h2>
-<p>NetBSDではベースシステムに含まれています。pkgtools/pkg_installパッケージをインストールすることで、NetBSD以外のシステムにインストールしたりベースシステムのより新しいバージョンのpkg_*を利用できます。</p>
+<p>NetBSDではベースシステムに含まれています。pkgtools/pkg_installパッケージをインストールすることで、NetBSD以外のシステムにインストールしたりベースシステムのより新しいバージョンのpkg_*を利用したりできます。</p>
 
 <h2 id="add">pkg_add(1)</h2>
 <p><code>pkg_add(1)</code>はパッケージのインストールに使われます。pkgsrcで<code>make install</code>すると自動的に実行されますが、たまにパッケージを手動でインストールする場面もあります。<code>man(1)</code>のEXAMPLESにあるように、パッケージを配布しているURLを環境変数PKG_PATHに指定すると、パッケージをそのURLから探しインストールできます。</p>
@@ -52,10 +52,10 @@ Package libxml2-2.9.5 has a denial-of-service vulnerability, see https://nvd.nis
 
 <p>ここではlibxsltとgit-base、libxmlパッケージに脆弱性があるとわかりました。</p>
 
-<p>脆弱性のあるパッケージはpkgsrcからインストールできないようになっていますが、脆弱性があると認識した上でパッケージをインストールするには/etc/mk.confに<code>ALLOW_VULNERABLE_PACKAGES=yes</code>を追加します。</p>
+<p>脆弱性のあるパッケージはpkgsrcからインストールできないようになっていますが、脆弱性があると認識したうえでパッケージをインストールするには/etc/mk.confに<code>ALLOW_VULNERABLE_PACKAGES=yes</code>を追加します。</p>
 
 <h2 id="delete">pkg_delete(1)</h2>
-<p><code>pkg_delete(1)</code>は与えられたパッケージ名をデータベース（標準では/var/db/pkg）から探し、あれば削除します。pkgsrcで<code>make install</code>を実行してインストールしたパッケージの場合、削除したいパッケージのディレクトリまで移動し<code>make deinstall</code>を実行することもできます。</p>
+<p><code>pkg_delete(1)</code>は与えられたパッケージ名をデータベース（標準では/var/db/pkg）から探し、あれば削除します。pkgsrcで<code>make install</code>を実行してインストールしたパッケージの場合、削除したいパッケージのディレクトリまで移動し<code>make deinstall</code>を実行できます。</p>
 
 <p>たとえばfirefoxパッケージを削除するときは下記のどちらかを実行します。</p>
 
