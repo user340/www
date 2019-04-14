@@ -17,7 +17,7 @@
 
 <blockquote> Tmux is a "terminal multiplexer", it enables a number of terminals (or windows) to be accessed and controlled from a single terminal.  Tmux is intended to be a simple, modern, BSD-licensed alternative to programs such as GNU screen.</blockquote>
 
-<p>要するにひとつの端末から複数の端末を扱うことができるようになるソフトウェアです。tmuxが起動したとき新しい<b>セッション</b>（session）が作成されます。セッションは<b>疑似端末</b>（pseudo terminals）の集まりで、<b>ペイン</b>（pane）単位で四角く区切られています。ひとつのセッションで複数のペインを作れば、ひとつの端末から任意の数の端末を操作できるようになるわけです。</p>
+<p>要するにひとつの端末から複数の端末を扱うことができるようになるソフトウェアです。tmuxを起動したとき、新しい<b>セッション</b>（session）が作成されます。セッションは<b>疑似端末</b>（pseudo terminals）の集まりで、<b>ペイン</b>（pane）単位で四角く区切られています。ひとつのセッションで複数のペインを作れば、ひとつの端末から任意の数の端末を操作できるようになるわけです。</p>
 
 <p>tmuxはペインを作るたびに端末の画面を分割していくため、端末を全画面で利用していれば<a href="./i3.html">i3wm</a>と同様にディスプレイを有効に活用できます。しかしtmuxを使う最も大きな利点は、セッションそのものが削除（destroy）されない限りセッション内の疑似端末上で動くソフトウェアが中断されないことにあります。よく「サーバ構築時にtmux上で作業していれば、ネットワークの問題で接続が途切れても安心」と言われるのはこれが所以です。</p>
 

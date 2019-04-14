@@ -16,7 +16,7 @@ code{line-height:1.4;}
 <p>Last Update: <time>2018-12-15</time></p>
 <hr>
 <h2>なぜパッケージに注目するのか</h2>
-<p>パッケージ（package）はオペレーティングシステム（OS, operating system）の重要なインフラのひとつです。OSといえばプロセス管理・メモリ管理・ファイルシステムといったカーネルの機能を連想してしまいがちです。『4.4BSDの設計と実装』『詳解Linuxカーネル』『オペレーティングシステム設計と理論およびMINIXによる実装』などの分厚い書籍を思い浮かべるかもしれません。でもそれよりももっと高いレイヤのアプリケーションだって立派にOSの一部です。プログラマにとって統合開発環境やテキストエディタ・バージョン管理システム・コンパイラは欠かせなですし、一般ユーザにとっても統合デスクトップ環境が提供する豪華なグラフィカルは欠かせません。特にWebブラウザはもうそれ無しで生活することなど考えられないような時代になっています。</p>
+<p>パッケージ（package）はオペレーティングシステム（OS, operating system）の重要なインフラのひとつです。OSといえばプロセス管理・メモリ管理・ファイルシステムのようなカーネルの機能を連想してしまいがちです。『4.4BSDの設計と実装』『詳解Linuxカーネル』『オペレーティングシステム設計と理論およびMINIXによる実装』などの分厚い書籍を思い浮かべるかもしれません。でもそれよりももっと高いレイヤのアプリケーションだって立派にOSの一部です。プログラマにとって統合開発環境やテキストエディタ・バージョン管理システム・コンパイラは欠かせなですし、一般ユーザにとっても統合デスクトップ環境が提供する豪華なグラフィカルは欠かせません。特にWebブラウザはもうそれ無しで生活することなど考えられないような時代になっています。</p>
 
 <p>Debian GNU/LinuxやRed Hat Enterprise Linux（RHEL）のようにOS全体をパッケージで管理しているケースもあれば、NetBSDやFreeBSDのようにベースシステム（base system）に無いソフトウェアをパッケージで管理しているケースもあります。システム管理という面ではパッケージはとても便利な機能なので、FreeBSDではベースシステムをパッケージ化してパッケージマネージャから管理できるようにするPkgBase[<a href="#pkgbase">FreeBSD Wiki</a>]が開発されています（NetBSDも昔syspkgというPkgBaseと同じコンセプトの実装が進められていましたが現在は停滞しています[<a href="syspkg">NetBSD Wiki</a>]）。</p>
 
@@ -153,12 +153,12 @@ In 1999, I was working at an investment bank in London, and needed a packaging s
 <li id="linus">Linus Benedict Torvalds, <i>What would you like to see most in minix?</i>, comp.os.minix, <a href="https://groups.google.com/forum/#!topic/comp.os.minix/dlNtH7RRrGA">https://groups.google.com/forum/#!topic/comp.os.minix/dlNtH7RRrGA</a>, 1991/08/26</li>
 <li id="slackware">Alan Hicks, Chris Lumens, David Cantrell, Logan Johnson, <i>Slackware Linux Essentials</i>, <a href="http://www.slackbook.org/html/introduction-slackware.html">http://www.slackbook.org/html/introduction-slackware.html</a>, 2005</li>
 <li id="century">Peter H. Salus, QUIPU LLC訳, <i>UNIXの1/4世紀</i>, 株式会社アスキー, ISBN4-7561-3659-1, 2000</li>
-<li id="sysv">ソフトウェアインフォメーションセンタ 編, <i>UNIX System V コマンド・ノート</i>, 共立出版株式会社, ISBN4-320-02284-X, 1986</li>
+<li id="sysv">ソフトウェアインフォメーションセンタ編, <i>UNIX System V コマンド・ノート</i>, 共立出版株式会社, ISBN4-320-02284-X, 1986</li>
 <li id="ports">David O'Brien (originated by him), <i>ports(7)</i>, FreeBSD Miscellaneous Information Manual, 2014</li>
 <li id="fbsd">The FreeBSD Project, <i>FreeBSD プロジェクトについて</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/history.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/history.html</a></li>
 <li id="pkgsrc">Alistair Crooks, Hubert Feyrer, The pkgsrc Developers, <i>The pkgsrc guide</i>, <a href="http://www.netbsd.org/docs/pkgsrc/introduction.html">http://www.netbsd.org/docs/pkgsrc/introduction.html</a>, $NetBSD: index.html,v 1.144 2018/09/18 03:20:54 maya Exp $</li>
 <li id="mandeb">Debian Project, <i>deb(5)</i>, dpkg suite</li>
-<li id="raymond">Eric S. Raymond, 長尾高弘 訳, <i>The Art of UNIX Programming</i>, ASCII, 2007</li>
+<li id="raymond">Eric S. Raymond, 長尾高弘訳, <i>The Art of UNIX Programming</i>, ASCII, 2007</li>
 <li id="portsc">The FreeBSD Project, <i>Ports Collection の利用</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/ports-using.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/ports-using.html</a></li>
 <li id="10th">Mark Weinem, <i>10 years of pkgsrc - pkgsrc and the concepts of package management 1997-2007 (part 1)</i>, <a href="http://www.netbsd.org/gallery/10years.html">http://www.netbsd.org/gallery/10years.html</a></li>
 <li id="fpkg">The FreeBSD Project, <i>pkg によるバイナリ package の管理</i>, <a href="https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/pkgng-intro.html">https://www.freebsd.org/doc/ja_JP.eucJP/books/handbook/pkgng-intro.html</a></li>
