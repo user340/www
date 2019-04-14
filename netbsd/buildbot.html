@@ -26,7 +26,7 @@
 <li><a href="#example1">事例1: Webページを自動でデプロイする（Gitpoller）</a></li>
 </ol>
 <h2 id="buildbot">Buildbotとは</h2>
-<p>Buildbotはソフトウェアのビルド・テスト・リリース作業の自動化のためのFLOSS（GPLv2）フレームワークです。Pythonで実装されており継続的インテグレーション（Continuous Integration）を実現するためのシステムの一つと言えます。</p>
+<p>Buildbotはソフトウェアのビルド・テスト・リリース作業の自動化のためのFLOSS（GPLv2）フレームワークです。Pythonで実装されており継続的インテグレーション（Continuous Integration）を実現するためのシステムのひとつと言えます。</p>
 
 <p>このシステムのアーキテクチャはMaster-Worker方式、つまりBuildbot MasterがBuildbot Workerにソースコードのチェックアウトやビルドのコマンドなどの指示を投げるかたちになっています（詳細は<a href="https://buildbot.net/index.html#basics">Buildbot Basics</a>を参照）。当然Woker側にBuildbotのWokerプログラムやPythonなどをインストールする必要がありますが、GNU/Linux distributionの中には標準でPythonがインストールされているものも少なくはない（特にRHEL系）のでWokerを構築するのはそこまで大変ではありません。</p>
 
@@ -106,7 +106,7 @@ c['www'] = dict(port=8010,
 <img src="./images/buildbot_001.png" alt="Buildbot Home">
 
 <h3 id="worker">Buildbot Worker</h3>
-<p><code>buildbot-worker</code>コマンドのcreate-workerオペレーションを実行し、$HOME/buildbotディレクトリを親ディレクトリとしてBuildbot Workerを作成します。このコマンドの書式は次の通りです。</p>
+<p><code>buildbot-worker</code>コマンドのcreate-workerを実行し、$HOME/buildbotディレクトリを親ディレクトリとしてBuildbot Workerを作成します。このコマンドの書式は次の通りです。</p>
 
 <pre><code>buildbot-worker create-worker &lt;wokerのディレクトリ&gt; &lt;MasterのIPアドレス&gt; &lt;Wokerの名前&gt; &lt;Workerのパスワード&gt;</code></pre>
 
@@ -165,7 +165,7 @@ ssh USERNAME@www.servername.org "cd /path/to/html &amp;&amp; git pull"</code></p
 
 <p>このスクリプトを<b>web_deploy.sh</b>として保存し、<code>chmod +x</code>コマンドを実行して実行権限を付与します。</p>
 
-<h3>[master.cfg] change_source</h3>
+<h3>change_source</h3>
 <p>master.cfgの<code>change_source</code>設定を変更します。600秒に1回、指定したリポジトリのmasterブランチに変更がないかを確認するようにしました。</p>
 
 <pre><code>c['change_source'].append(changes.GitPoller(
@@ -175,7 +175,7 @@ ssh USERNAME@www.servername.org "cd /path/to/html &amp;&amp; git pull"</code></p
     project='www',
     pollInterval=600))</code></pre>
 
-<h3>[master.cfg] schedulers</h3>
+<h3>schedulers</h3>
 <p><code>schedulers</code>設定を変更します。ここではWeb Deployというスケジューラを作成し、wwwプロジェクトのmasterブランチに変更があったときにWebDeployビルダが実行されるようになっています。WebDeployビルダは後ほど定義します。<code>schedulers.ForceScheduler</code>クラスにWebDeployビルダを指定したインスタンスを<code>schedulers</code>に加えることで、Buildbot MasterのWebフロントエンドからビルダを実行できるようになります。</p>
 
 <pre><code>c['schedulers'].append(schedulers.SingleBranchScheduler(
@@ -188,7 +188,7 @@ c['schedulers'].append(schedulers.ForceScheduler(
     name="force",
     builderNames=["WebDeploy"]))</code></pre>
 
-<h3>[master.cfg] util.BuildFactory()</h3>
+<h3>util.BuildFactory()</h3>
 <p><code>util.BuildFactory</code>クラスをインスタンス化し、<code>addStep()</code>メソッドを用いてビルド手順をひとつひとつ定義します。この例ではデプロイコマンドを実行するだけですので、1回しか使いません。</p>
 
 <pre><code>web_deploy = util.BuildFactory()
@@ -196,7 +196,7 @@ web_deploy.addStep(steps.ShellCommand(command=['/usr/local/bin/webdeploy']))</co
 
 <p><code>ShellCommand</code>以外のBuild Stepsについては<a href="http://docs.buildbot.net/latest/manual/configuration/buildsteps.html">2.5.10. Build Steps</a>を参照してください。</p>
 
-<h3>[master.cfg] builders</h3>
+<h3>builders</h3>
 <p>WebDeployビルダを作成します。<a href="#worker">「NetBSD」Worker</a>が、web_deployインスタンスで定義されたビルド手順を実行するようにビルダを設定しています。</p>
 
 <pre><code>
