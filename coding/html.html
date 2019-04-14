@@ -17,6 +17,7 @@
 <ul>
 <li><a href="#version">HTML 5</a></li>
 <li><a href="#validator">Validator</a></li>
+<li><a href="#textlint">日本語校正</a></li>
 <li><a href="#codestyle">一行あたりの文字数とインデント</a></li>
 <li><a href="#css">CSS</a></li>
 <li><a href="#javascript">JavaScript</a></li>
@@ -30,7 +31,7 @@
 <p>W3C Recommendationに従って書きます。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第ソースコードをアップデートします。</p>
 
 <h2 id="validator">Validator</h2>
-<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。ビルド方法は<a href="#nuhtml">NetBSDでNu HTML Checkerをビルドする</a>を参照してください。Gitを使っているのであれば、<a href="https://git-scm.com/book/ja/v1/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Gitフック</a>のpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下は.git/hooks/pre-commitスクリプトの一例です。<code>chmod +x</code>コマンドで実行権限を与え、変数の値は適宜変更してください。</p>
+<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。ビルド方法は<a href="#nuhtml">NetBSDでNu HTML Checkerをビルドする</a>を参照してください。Gitを使っているのであれば、<a href="https://git-scm.com/book/ja/v1/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Gitフック</a>のpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下はpre-commitスクリプトの一例です。<code>chmod +x</code>コマンドで実行権限を与え、変数の値は適宜変更してください。</p>
 
 <pre><code>#!/bin/sh
 
@@ -46,6 +47,128 @@ git diff --cached --name-only --diff-filter=AM HEAD \
 
 <p>公開後は<a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>からページのスコアを確認し、速度が改善できそうな箇所を探します。不要なインデントによるスペース／タブ文字の削除はその代表例です。</p>
 
+<h2 id="textlint">日本語校正</h2>
+<p>日本語の校正には<a href="https://github.com/textlint/textlint">textlint</a>を使います。pkgsrc(7)ではtextlintがパッケージとして提供されていません。そのためlang/npmパッケージをインストールし、npm(1)経由でtextlintとそのルールセットをインストールする必要があります。pkgsrc-2018Q4ではlang/npmパッケージをビルドすると途中でSegmentation Faultが起きたのですが、pkgsrc-2019Q1からは正常にビルドできるようになりました。</p>
+
+<p>npm(1)からtextlintとそのルールセット、HTMLプラグインをインストールするには次のシェルスクリプトを実行してください。</p>
+
+<pre><code>#!/bin/sh
+
+cmd="npm"
+cmd_opt="install -g"
+targets="textlint
+textlint-rule-no-start-duplicated-conjunction
+textlint-rule-ng-word
+textlint-rule-no-dead-link
+textlint-rule-terminology
+textlint-rule-max-ten
+textlint-rule-no-doubled-joshi
+textlint-rule-no-double-negative-ja
+textlint-rule-ja-no-redundant-expression
+textlint-rule-ja-no-abusage
+textlint-rule-sentence-length
+textlint-rule-first-sentence-length
+textlint-rule-no-dropping-the-ra
+textlint-rule-no-doubled-conjunctive-particle-ga
+textlint-rule-no-doubled-conjunction
+textlint-rule-ja-hiragana-keishikimeishi
+textlint-rule-ja-hiragana-fukushi
+textlint-rule-ja-hiragana-hojodoushi
+@textlint-ja/textlint-rule-no-insert-dropping-sa
+textlint-rule-prefer-tari-tari
+textlint-rule-preset-jtf-style"
+
+for package in $targets; do
+  $cmd "$cmd_opt" "$package"
+done</code></pre>
+
+<p>textlintの設定ファイル$HOME/.textlintrcを次のように書きます。設定内容は『<a href="https://efcl.info/2015/10/19/textlint-plugin-jtf-style/">JTF日本語標準スタイルガイドのルールセットで文章をチェックできるtextlintプリセット</a>』、『<a href="https://qiita.com/azu/items/60764ed6f415d3c748bf">文書執筆の指南書で解説されている問題点を textlint で発見する</a>』、『<a href="https://www.monotalk.xyz/blog/web%E3%82%B5%E3%82%A4%E3%83%88-%E3%81%AE-html-%E3%82%92-textlint-%E3%81%A7%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%81%99%E3%82%8B/">WebサイトのHTMLをtextlintでチェックする</a>』を参考にしました。</p>
+
+<pre><code>
+{
+    // HTMLプラグインを有効にする
+    "plugins": [
+    "html"
+    ],
+    "rules": {
+        // 一文の「、」を3つに制限
+        "max-ten": {
+            "max" : 3
+        },
+        // 一文あたりの文字数を90文字に制限する
+        "sentence-length": {
+            "max": 90
+        },
+        // 連続した否定を検知
+        "no-start-duplicated-conjunction": {
+            "interval" : 2 // interval of sentences
+        },
+        // 表記ゆれの検知
+        "terminology": {
+            // Load default terms (see terms.json in the repository)
+            "defaultTerms": true,
+            // Syntax elements to skip. Overrides the default
+            "skip": ["Blockquote"],
+            // List of terms
+            "terms": [
+            // Exact spelling including the case
+            "JavaScript",
+            "ESLint",
+            "Sass",
+            "Less",
+            "npm",
+            // RegExp (case-insensitive) → replacement
+            ["front[- ]end(\\w*)", "frontend$1"],
+            ["back[- ]end(\\w*)", "backend$1"],
+            ["web[- ]?site(s?)", "site$1"],
+            ["hot[- ]key", "hotkey"],
+            ["repo\\b", "repository"],
+            ["CLI tool(s?)", "command line tool$1"],
+            ["build system(s?)", "build tool$1"],
+            ["id['’]?s", "IDs"],
+            ["(\\w+[^.?!]\\)? )webpack", "$1webpack"],
+            ["(\\w+[^.?!]\\)? )internet", "$internet"]
+            ],
+            // // OR load terms from a file
+            // "terms": "~/terms.json",
+            // // OR load terms from npm
+            // "terms": "@johnsmith/terms"
+        },
+        // 「の」の多用を検知
+        "no-doubled-joshi": {
+            "min_interval" : 1,
+            "strict": false,
+            "allow": []
+        },
+        // JTF日本語標準スタイルガイド
+        "preset-jtf-style": true,
+        // 二重否定を検知
+        "no-double-negative-ja": true,
+        // 冗長な表現を検知
+        "ja-no-redundant-expression": true,
+        // 「ら」抜き言葉を検知
+        "no-dropping-the-ra": true,
+        // 逆説の接続助詞「が」を検知
+        "no-doubled-conjunctive-particle-ga": true,
+        // 開くべき漢字を検知（形式名詞）
+        "ja-hiragana-keishikimeishi": true,
+        // 開くべき漢字を検知（副詞）
+        "ja-hiragana-fukushi": true,
+        // 開くべき漢字を検知（補助動詞）
+        "ja-hiragana-hojodoushi": true,
+        // サ抜き、サ入れ表現の誤用を検知
+        "@textlint-ja/textlint-rule-no-insert-dropping-sa": true,
+        // 例示・並列・対表現の「〜たり〜たりする」を検知
+        "prefer-tari-tari": true,
+        // よくある日本語の誤用を検知
+        "ja-no-abusage": true
+    }
+}</code></pre>
+
+<p>コマンドラインから文章校正ができます。</p>
+
+<pre><code>$ textlint html.html</code></pre>
+
 <h2 id="codestyle">一行あたりの文字数とインデント</h2>
 <p>一行あたりの文字数制限はありません。余計な空白が挿入されることを防ぐため、むしろ一段落（<code>p</code>タグで囲う）は一行に収めます。この方針はバージョン管理システムで差分を取ったとき、どこが変更されたのかが分かりづらいという明らかな欠点があります。この欠点を許容できないのであれば、改行は文単位でおこなうべきです。</p>
 
@@ -54,7 +177,7 @@ git diff --cached --name-only --diff-filter=AM HEAD \
 <h2 id="css">CSS</h2>
 <p>レイアウトを整える目的で<code>br</code>タグやテーブルを使ってはいけません。レイアウトに関するコードはすべてCSSとして書きます。</p>
 
-<p>CSSはHTMLコードに直接書きます。別途用意して読み込むほうが効率的なほど長いCSSを書くわけではありませんし、レイアウトの美麗さが文章の質に影響するわけでもありません。この方法だとCSSを更新したときHTMLファイルひとつひとつを更新しなければならないので手間がかかりますが、CSSコードを改行せず一行にすることで<code>find(1)</code>と<code>sed(1)</code>を組み合わせて簡単に更新ができます。置換前と置換後のテキストはバージョン管理システムから取得できます（<code>git-diff(1)</code>など）。</p>
+<p>CSSはHTMLコードに直接書きます。別途用意して読み込むほうが効率的なほど長いCSSを書くわけではありませんし、レイアウトの美麗さが文章の質に影響するわけでもありません。この方法だとCSSを更新したときHTMLファイルひとつひとつを更新しなければならないので手間がかかります。しかしCSSコードを改行せず一行にすることで<code>find(1)</code>と<code>sed(1)</code>を組み合わせて簡単に更新ができます。置換前と置換後のテキストはバージョン管理システムから取得できます（<code>git-diff(1)</code>など）。</p>
 
 <pre><code>$ find . -name '*.html' -exec \
 sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
@@ -62,14 +185,14 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
 <p><a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>によってHTML5とCSSの分離を提案された場合はもちろんそれに従います。</p>
 
 <h2 id="javascript">JavaScript</h2>
-<p>僕のWebページではJavaScriptは使いません。TwitterやFacebook, Instagramといったユーザインタラクションが重要視されるようなWebページならともかく、テキスト中心の静的な技術文書はHTML5とCSSのみで書くことができるはずです。</p>
+<p>僕のWebページではJavaScriptは使いません。TwitterやFacebook, Instagramといったユーザインタラクションが重要視されるサービスはともかく、テキスト中心の静的な技術文書はHTML5とCSSのみで書けます。</p>
 
-<p>必ずしもユーザがJavaScriptを有効にしているとは限らないという点に注意してください。セキュリティ意識が高いユーザはJavaScriptを標準で無効にする拡張機能をブラウザにインストールしていることもあります（NoScriptなど）。またCUI Webブラウザ（w3m, lynxなど）ではJavaScriptを実行できません。見栄え・組版・収益化などの都合でJavaScriptがどうしても欠かせないときは、JavaScriptがなくてもレイアウトの崩れが最小限になるようCSSで工夫したり、最低限テキストは読めるようにしておくと良いでしょう。</p>
+<p>必ずしもユーザがJavaScriptを有効にしているとは限らないという点に注意してください。セキュリティ意識が高いユーザはJavaScriptを標準で無効にする拡張機能をブラウザにインストールしていることもあります（NoScriptなど）。またCUI Webブラウザ（w3m, lynxなど）ではJavaScriptを実行できません。一方で見栄え・組版・収益化などの都合でJavaScriptがどうしても欠かせないときもあります。そういった場合にはJavaScriptがなくても最適ゲンテキストだけは読めるようにしてください</p>
 
 <h2 id="cache">キャッシュ（cache）</h2>
 <p>キャッシュはできる限り活用しますが、運用について少し考えなければなりません。画像ファイル（png, jpeg）は滅多に上書き変更する機会はないでしょう。論文や発表資料のPDFもそうだと考えられます。つまり一度サーバに公開したらそれっきりな拡張子のファイルはキャッシュの有効期間を長めにします。一方でHTMLファイルやテキストファイルは常に変更される可能性があります。そのためキャッシュは使わないか、使うにしても有効期間を短めにします。</p>
 
-<p>キャッシュの設定はWebサーバのプロバイダに依存します。もしWebサーバがレンタルサーバであれば、/etc/httpdディレクトリ以下にあるファイルを編集したりhttpdデーモンを再起動する権限は与えられていないと思われます。したがってこの場合には.htaccessを編集してキャッシュn設定をする必要があります。たとえば以下のように.htaccessに追記します。</p>
+<p>キャッシュの設定はWebサーバのプロバイダに依存します。もしWebサーバがレンタルサーバであれば、/etc/httpdディレクトリ以下にあるファイルを編集したりhttpdデーモンを再起動したりする権限は与えられていないと思われます。したがってこの場合には.htaccessを編集してキャッシュの設定をします。たとえば以下のように.htaccessに追記します。</p>
 
 <pre><code>&lt;Files ~ ".(png|jpe?g)"&gt;
     Header set Cache-Control "public, max-age=604800"
@@ -79,7 +202,7 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
 <p>VPSやクラウドを契約してWebサーバを運用している場合は自由に/etcディレクトリ以下のファイルを編集できるので、NginxやApacheの設定ファイルを適宜変更してください。</p>
 
 <h2 id="gzip">gzip圧縮</h2>
-<p>転送速度向上を目的にテキストファイルをサーバ側で圧縮することができます。サーバ側で<code>mod_deflate</code>モジュールが有効になっている必要があります。.htaccessに以下を追記します。</p>
+<p>転送速度向上を目的にテキストファイルをサーバ側で圧縮できます。サーバ側で<code>mod_deflate</code>モジュールが有効になっている必要があります。.htaccessに以下を追記します。</p>
 
 <pre><code>&lt;IfModule mod_deflate.c&gt;
     SetOutputFilter DEFLATE
@@ -114,7 +237,7 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
 
 <p>結果、43%圧縮できたようです。</p>
 
-<p>他にも、graphics/optipngやgraphics/jpegoptimなど<code>pkgsrc(7)</code>で提供されているパッケージをインストールすることで、コマンドラインから画像を圧縮することもできます。<code>optipng(1)</code>で上の画像を圧縮した結果、15%の圧縮ができました。</p>
+<p>他にも、graphics/optipngやgraphics/jpegoptimなど<code>pkgsrc(7)</code>で提供されているパッケージをインストールすることで、コマンドラインから画像を圧縮できます。<code>optipng(1)</code>で上の画像を圧縮した結果、15%の圧縮ができました。</p>
 
 <pre><code>$ optipng html_001.png
 ** Processing: html_001.png
@@ -134,7 +257,7 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
 
 <h2 id="tips">Tips</h2>
 <h3>引用の方法</h3>
-<p>引用の方法はそれが短いものか長いものかによって変わります。どの程度から長いと判断するかは曖昧ですが、文を2~3以上引用したいのであれば長い引用の方法をとります。</p>
+<p>引用の方法はそれが短いものか長いものかによって変わります。どの程度から長いと判断するかは曖昧ですが、文を2〜3以上引用したいのであれば長い引用の方法をとります。</p>
 
 <p>短い引用であれば「」で囲んで文中に書き、出典元を（）の中に明記します。たとえば「出版された情報をコンピュータを使って共有しようとする読者は、 法律上は著作権に違反しているのです」（Richard Stallman, 『自由か著作権か？』）</p>
 
@@ -156,8 +279,8 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
 &mdash; <cite>Richard Stallman</cite>, <cite>結城浩 訳</cite>, <cite>自由か著作権か？</cite>
 </footer></figure>
 
-<h3>HTML5コーディングのための$HOME/.vimrc その1</h3>
-<p>「&lt;/」と入力した時点で、対となるタグを自動で閉じるようにします。そのためには$HOME/.vimrcに以下を追記します。</p>
+<h3>HTML5コーディングのための$HOME/.vimrc</h3>
+<p><b>1. </b>「&lt;/」と入力した時点で、対となるタグを自動で閉じるようにします。そのためには$HOME/.vimrcに以下を追記します。</p>
 
 <pre><code>augroup CloseTag
     autocmd!
@@ -165,8 +288,12 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
     autocmd Filetype html inoremap &lt;buffer&gt; &lt;/ &lt;/&lt;C-x&gt;&lt;C-o&gt;
 augroup END</code></pre>
 
+<p><b>2. </b>ファイルへの変更を保存した時点でtextlintを自動的に実行するよう、syntasticプラグインを設定します。</p>
+
+<pre><code>let g:syntastic_html_checkers = ['textlint']</code></pre>
+
 <h3 id="nuhtml">NetBSDでNu HTML Checkerをビルドする</h3>
-<p><code>pkgsrc(7)</code>ではパッケージが提供されていないため、NetBSDでNu HTML Checkerを使うにはGitリポジトリからソースコードをcloneしてきてビルドしなければなりません。ビルドには以下のパッケージが必要です。</p>
+<p><code>pkgsrc(7)</code>ではNu HTML Checkerのパッケージが提供されていません。NetBSDでNu HTML Checkerを使うにはGitリポジトリからソースコードをcloneしてきてビルドします。ビルドには以下のパッケージが必要です。</p>
 
 <ul><li>lang/python</li>
 <li>lang/openjdk8</li></ul>
