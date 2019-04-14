@@ -13,7 +13,7 @@
 <h1>CUI Webブラウザ&mdash;&mdash;w3m</h1>
 <hr>
 <h2>w3mとは</h2>
-<p><a href="http://w3m.sourceforge.net/index.ja.html">w3m</a>はCUIのWebブラウザです。JavaScript を動かさず画像も描画しないためGUIのWebブラウザに比べて省メモリ・高速にブラウジングできます。文章だけを読みたいときに<code>tmux(1)</code>上で動かすと便利です。</p>
+<p><a href="http://w3m.sourceforge.net/index.ja.html">w3m</a>はCUIのWebブラウザです。JavaScriptを動かさず画像も描画しないためGUIのWebブラウザに比べて省メモリ・高速にブラウジングできます。文章だけを読みたいときに<code>tmux(1)</code>上で動かすと便利です。</p>
 
 <h2>インストール</h2>
 <p><code>pkgsrc(7)</code>ではwww/w3mパッケージが提供されています。www/w3m-imgパッケージを代わりにインストールすることで画像表示もできるようになるらしいです。しかし画像を見たいときはもっぱらFirefoxを使うので僕は使っていません。</p>
@@ -26,7 +26,7 @@
 
 <pre><code>$ w3m -I EUC-JP /usr/pkg/share/w3m/w3mhelp-w3m_ja.html</code></pre>
 
-<p>更に詳細な文書は/usr/pkg/share/doc/w3m/doc-jp以下にあります。</p>
+<p>さらに詳細な文書は/usr/pkg/share/doc/w3m/doc-jp以下にあります。</p>
 
 <h3>lynx風の操作にする</h3>
 <p><code>w3m(1)</code>のキー操作は$HOME/.w3m/keymapで定義されています。<code>pkgsrc(7)</code>で提供されているパッケージでは、標準で/usr/pkg/share/doc/w3m/doc-jp/keymap.default通りのキーマップですが、/usr/pkg/share/doc/w3m/doc-jp/keymap.lynxを$HOME/.w3m/keymapにコピーすることでlynx風のキーマップに変更できます。</p>
