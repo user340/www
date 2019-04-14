@@ -35,7 +35,7 @@
 <pre><code>$ /usr/bin/ssh -V
 OpenSSH_7.6 NetBSD_Secure_Shell-20171007, OpenSSL 1.0.2k  26 Jan 2017</code></pre>
 
-<p>pkgsrc(7)ではsecurity/opensshパッケージで提供されています。インストールするにはpkgsrc(7)のsecurity/opensshディレクトリでmake(1)を実行します。</p>
+<p>pkgsrc(7)ではsecurity/opensshパッケージで提供されています。インストールするにはpkgsrc(7)のsecurity/opensshディレクトリでmake(1)します。</p>
 
 <pre><code># cd /usr/pkgsrc/security/openssh
 # make install clean clean-depends</code></pre>
@@ -66,7 +66,7 @@ OpenSSH_7.6 NetBSD_Secure_Shell-20171007, OpenSSL 1.0.2k  26 Jan 2017</code></pr
  is running as pid 12864. </code></pre>
 
 <h3>クライアント側から接続テストをする</h3>
-<p>クライアントがサーバへSSHログインできるかを確認します。サーバ側のユーザが"uki"だとすると、クライアント側からログインするにはssh(1)を実行します。"xxx.xxx.xxx.xxx"はサーバのIPアドレスに適宜置き換えてください。</p>
+<p>クライアントがサーバへSSHログインできるかを確認します。サーバ側のユーザが"uki"だとすると、クライアント側からログインするにはssh(1)コマンドを実行します。"xxx.xxx.xxx.xxx"はサーバのIPアドレスに適宜置き換えてください。</p>
 
 <pre><code>client$ ssh uki@xxx.xxx.xxx.xxx</code></pre>
 
