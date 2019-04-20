@@ -42,11 +42,12 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 
 <pre><code># mkdir -p /home/sysbuild/release/$(uname -m)/binary/sets</code></pre>
 
-<p>NetBSDのFTPサーバあるいはFTPミラーからNetBSDのリリースバイナリbase.tgz・comp.tgz・etc.tgz3つすべてを/home/sysbuild/release/amd64/binary/setsディレクトリにダウンロードします。バージョンは自身が動かしているNetBSDのバージョンと合わせてください。</p>
+<p>NetBSDのFTPサーバあるいはFTPミラーからNetBSDのリリースバイナリbase.tgz・comp.tgz・etc.tgz・xcomp.tgzの4つすべてを/home/sysbuild/release/amd64/binary/setsディレクトリへダウンロードします。バージョンは自身が動かしているNetBSDのバージョンと合わせてください。</p>
 
 <pre><code># cd /home/sysbuild/release/$(uname -m)/binary/sets
 # ftp ftp://ftp.netbsd.org/pub/NetBSD/NetBSD-8.0/$(uname -m)/binary/sets/base.tgz
 # ftp ftp://ftp.netbsd.org/pub/NetBSD/NetBSD-8.0/$(uname -m)/binary/sets/comp.tgz
+# ftp ftp://ftp.netbsd.org/pub/NetBSD/NetBSD-8.0/$(uname -m)/binary/sets/xcomp.tgz
 # ftp ftp://ftp.netbsd.org/pub/NetBSD/NetBSD-8.0/$(uname -m)/binary/sets/etc.tgz</code></pre>
 
 <h3>pkg_compの設定ファイルを編集する</h3>
