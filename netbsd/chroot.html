@@ -17,9 +17,9 @@
 <p>DockerではDockerfileをビルドしたコンテナイメージが様々なFLOSSプロジェクトから公式に提供されており、<code>docker pull</code>でダウンロードしてそのまま動かせます。Jailは<a href="https://github.com/iocage/iocage">iocage</a>に代表される便利な管理マネージャが存在します。これらのような便利なツールを使っていると<code>chroot(8)</code>をそのまま使うのはとても敷居が高いように思えます。しかし、NetBSDのBase Systemの展開と<code>pkg_add(1)</code>の<code>-P</code>オプション、<code>mount_null(8)</code>の使い方を把握しておけば、思い通りに<code>chroot(8)</code>コンテナイメージを構築できます。</p>
 
 <ol>
-<li><a href="basesystem">NetBSD Base System</a></li>
-<li><a href="pkgadd">コンテナにパッケージをインストールする</a></li>
-<li><a href="mountnull">ホスト側のディレクトリをコンテナにマウントする</a></li>
+<li><a href="#basesystem">NetBSD Base System</a></li>
+<li><a href="#pkgadd">コンテナにパッケージをインストールする</a></li>
+<li><a href="#mountnull">ホスト側のディレクトリをコンテナにマウントする</a></li>
 </ol>
 
 <h2 id="basesystem">NetBSD Base System</h2>
@@ -38,7 +38,7 @@ $ tar zxf etc.tgz -C $HOME/containers/netbsd_minimal</code></pre>
 <p><code>MAKEDEV(8)</code>スクリプトを実行し、特殊ファイルを作成します。</p>
 
 <pre><code>$ cd $HOME/containers/netbsd_minimal/dev
-# sh MAKEDEV all</code</pre>
+# sh MAKEDEV all</code></pre>
 
 <p>これで最小のNetBSDコンテナを構築できました。次のように<code>chroot(8)</code>コマンドを実行して、コンテナの中に入ります。コンテナから抜けるには<code>exit</code>します。</p>
 
