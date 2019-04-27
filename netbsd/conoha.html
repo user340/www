@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;} img{max-width:100%;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;} img{max-width:100%;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>ConoHa VPS上でNetBSDを動かす</h1>
+<hr>
+<p>Google Cloud・AWS・Azure・……とクラウドの巨人を挙げればそれしかクラウドの選択肢がないようにも思えます。しかし以下の理由からNetBSDを開発・利用しているときにはあえて国内のVPSサービスを選ぶこともあります。</p>
+
+<dl>
+<dt>ビルドサーバとして運用したいのでCore数やRAMは多いほうがいい</dt>
+<dd>クラウドで下手に高性能なマシンを契約すると費用がかさみます。当然、マシンパワーが必要なときだけ高性能なマシンを契約して、作業が終われば即マシンを削除するという運用をすれば費用は比較的抑えられるでしょう。</dd>
+
+<dt>簡単な料金体系がいい</dt>
+<dd>クラウドではネットワークの通信量やストレージにもお金がかかることもあります。日曜プログラマとしては、できれば複雑な料金体系のサービスは避けて明瞭会計なサービスを使いたいところです。</dd>
+
+<dt>公式にNetBSDをサポートしているサービスがいい</dt>
+<dd>各クラウドサービスごとにマシンイメージを手元で作ったり、ドライバの非対応に悩まされたりすることなく、NetBSDが標準で提供されていると趣味として始めやすく使いやすいです。</dd>
+
+<dt>PayPalアカウントを作りたくない</dt>
+<dd>国外の格安VPSサービスは支払いがPayPal経由に限られていることもあります。国内のサービスであればクレジットカードも使えます。</dd>
+
+<dt>日本語のドキュメントやサポートが充実しててほしい</dt>
+<dd>この理由に説得力があるかどうかは別として、国外のサービスも日本語のドキュメントはかなり充実しています。一方で一部翻訳されていないドキュメントもあります。おおよその場合気にならないとは思いますが。</dd>
+</dl>
+
+<p>ここで特に難しいのは三番目の、公式にNetBSDをサポートしているサービスを探すという点です。その他の要求は国内のVPSサービスプロバイダならおおよそ揃えているでしょう。幸いにもGMOのConoHa VPSが僕の要求にぴったり合います。そこで、ConoHa VPS上でNetBSDを動かすときの勘所をまとめます。</p>
+
+<ol>
+<li><a href="#conoha">ConoHa VPS</a></li>
+<li><a href="#image">ConoHa VPSのNetBSDイメージ</a></li>
+<li><a href="#build">ビルド時間計測</a></li>
+<li><a href="#shutdown">shutdown -p nowについて</a></li>
+</ol>
+
+<h2 id="conoha">ConoHa VPS</h2>
+<p>ConoHa VPSについてはWebサイトを見ればおおよそどのようなサービスか把握できるでしょう（<a href="https://www.conoha.jp/vps">VPSならConoHa</a>）。ここで重要なのは、NetBSDがサポートされている点と、仮想マシンを停止すれば料金プランを変更できる点です。VPSとうたっていますが、仮想化基盤はOpenStackとKVMです。マシンのスケールアップ・スケールダウンは自由にできますから、ソースツリーやパッケージのビルド時には高性能なプランにして、使わないときは一番安いプランに戻す……といった運用ができます。料金プランの選択肢が少ないクラウドサービスと考えても差し支えないでしょう。なお、マシンを停止しても課金が止まるわけではありません。</p>
+
+<h2 id="image">ConoHa VPSのNetBSDイメージ</h2>
+<p>最新バージョンのみ提供されます。2019年4月27日時点では仮想マシン作成時にNetBSD 8.0を選択できます。インストールされているベースシステムはbase.tgzとetc.tgzという最小構成になっています。そのため、マシン作成後に別途comp.tgzをダウンロードしてルートに展開しないとソースツリーをビルドできません。また、パッケージビルドもおこないたいのであればX11一式も持ってくるといいでしょう。</p>
+
+<pre><code>$ ftp ftp://ftp.jaist.ac.jp/pub/NetBSD/NetBSD-8.0/amd64/binary/sets/
+ftp&gt; mget comp.tgz x*.tgz</code></pre>
+
+<p>pkgsrcは通常どおり自力で持ってくる必要があります。</p>
+
+<pre><code>$ ftp ftp://ftp.jaist.ac.jp/pub/pkgsrc/stable/pkgsrc.tar.gz</code></pre>
+
+<p>転送量課金はないので安心です。</p>
+
+<h2 id="build">ビルド時間計測</h2>
+<p>仮想マシンを6 Core、8GB RAMのプランに変更して、<code>build.sh tools</code>と<code>build.sh release</code>を実行しました。結果は以下のとおりです。</p>
+
+<pre><code>===&gt; Summary of results:
+         build.sh command:    ./build.sh -O ../obj -T ../tools -X ../xsrc -x -U -j 6 tools
+         build.sh started:    Sun Apr 21 18:59:19 JST 2019
+         NetBSD version:      8.0
+         MACHINE:             amd64
+         MACHINE_ARCH:        x86_64
+         Build platform:      NetBSD 8.0 amd64
+         HOST_SH:             /bin/sh
+         No $TOOLDIR/bin/nbmake, needs building.
+         Bootstrapping nbmake
+         MAKECONF file:       /etc/mk.conf
+         TOOLDIR path:        /usr/src/../tools
+         DESTDIR path:        /usr/src/../obj/destdir.amd64
+         RELEASEDIR path:     /usr/src/../obj/releasedir
+         Created /usr/src/../tools/bin/nbmake
+         Updated makewrapper: /usr/src/../tools/bin/nbmake-amd64
+         Tools built to /usr/src/../tools
+         build.sh ended:      Sun Apr 21 19:06:55 JST 2019
+===&gt; .</code></pre>
+
+<pre><code>===&gt; Summary of results:
+         build.sh command:    ./build.sh -O ../obj -T ../tools -X ../xsrc -x -U -j 6 release
+         build.sh started:    Sun Apr 21 19:08:39 JST 2019
+         NetBSD version:      8.0
+         MACHINE:             amd64
+         MACHINE_ARCH:        x86_64
+         Build platform:      NetBSD 8.0 amd64
+         HOST_SH:             /bin/sh
+         MAKECONF file:       /etc/mk.conf
+         TOOLDIR path:        /usr/src/../tools
+         DESTDIR path:        /usr/src/../obj/destdir.amd64
+         RELEASEDIR path:     /usr/src/../obj/releasedir
+         Updated makewrapper: /usr/src/../tools/bin/nbmake-amd64
+         Successful make release
+         build.sh ended:      Sun Apr 21 20:43:35 JST 2019
+===&gt; .</code></pre>
+
+<p>releaseビルドが1時間半ほどで終わってしまいました。次に、www/firefoxパッケージをゼロからビルドしてみます。<code>time(1)</code>による計測結果は以下のとおりです。</p>
+
+<pre><code>sudo make package  44857.06s user 4751.50s system 104% cpu 13:11:23.04 total
+sudo make package clean clean-depends  1056.22s user 368.98s system 38% cpu 1:01:58.16 total;
+sudo make package clean clean-depends  1191.37s user 249.37s system 134% cpu 17:54.55 total
+sudo make package clean  14737.58s user 2770.14s system 237% cpu 2:03:00.03 total</code></pre>
+
+<p>MAKE_JOBSには7を指定しました。また、何度かビルドに失敗しているので実行し直す必要がありました。user時間を足し合わせると61842.23秒、およそ17時間かかりました。FirefoxはGCCやLLVM・Rust・fontconfigのような巨大ソフトウェアに多数依存しているため、ゼロからビルドするとそれなりに速いプランでもこんなにかかります。しかし、一日数百円程度です。ビルド後はマシンを停止させ、1 Core、512MBのプランに変更しました。</p>
+
+<h2 id="shutdown">shutdown -p nowについて</h2>
+<p>NetBSD上で<code>shutdown -p now</code>を実行しても、ConoHaのコントロールパネルからはマシンが動いている扱いになったままになります。コンソールを見ると、キー入力を待ち受けている状態で止まったようです。</p>
+
+<img src="./images/conoha_001.png" alt="Console after exec shutdown">
+
+<p>コントロールパネルから直接「停止」を押してマシンを停止させてください。</p>
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
