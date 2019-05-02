@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>初めてのテスト駆動開発（TDD）と感想</h1>
+<hr>
+
+<h2>TDDに出会うまで</h2>
+<p>Unixにまつわる本やUnix系の技術書は読んできたのですが、開発手法についてはまったく手を出していませんでした。会社員になり学生時代と比べて時間の余裕がなくなると読書は通勤電車で済ませるようになり、手を動かせる時間はなるべくFLOSSを調べたり書いたりするようにしていました。</p>
+
+<p>手を動かす必要がある技術書は電車で読むには不適格すぎるので、読んだだけでとりあえず知識として頭の片隅に入れておけるような、開発手法やマネジメントの本にも手を出し始めたのが2018年からでした。本を買っては積み上げ読んでいく生活をして、ついにKent Beckの『テスト駆動開発』とKent Beck・Cynthia Andresの『エクストリーム・プログラミング』に出会いました。</p>
+
+<p>読んだのは後者が先でした。「XPでは、できるだけ実装前にテストを書く」（『エクストリーム・プログラミング』, p.97）とのことでした。頻繁なテストが欠陥数を下げるという主張には同意できましたが、テスト職場でも趣味のコード書きでも、ソフトウェアの「動作確認」こそすれども「ユニットテスト」は経験がありませんでした。コードへのテストに対しても、「自分で書いたコードをテストするなんて、絶対テストが通るようにテストを書くに違いないだろう」という偏見がありました。要するにTDDが何なのかまったく理解していなかったのです。</p>
+
+<p>『テスト駆動開発』を読んでからは、とりあえずこの不理解は解消されました。テストは必ずしも動作確認のためだけではなく、コーディングや設計の指針も示してくれるらしいのです。PythonによるxUnitの実装の演習はこなしましたが、写経するだけならなんでも順調に進んでしまいます。テストを先に書く利点をあまり実感できませんでした。</p>
+
+<h2>実践</h2>
+<p>もしなにかしらのコマンドラインツールを作るのであれば、そのときはTDDでやってみようと考えました。ちょうどConoHa VPSでマシンを契約していて、コマンドラインから仮想マシンを操作できればなと思っていたところでした。APIは提供されていたので、PythonでAPIのWrapperライブラリを書いてコマンドラインツールを作ろうと思い立ちました。</p>
+
+<p>成果物は<a href="https://github.com/user340/conohactl">https://github.com/user340/conohactl</a>です。最初のcommitから数えると11日ほどかかりました。Pythonのドキュメントを調べたりあまり手が動かなかったりとペースは遅かったのですが、最低限自分がやりたいことは実現できました。</p>
+
+<p>TDDを実践してみて「これが良いな」と思ったことがいくつかあります。</p>
+
+<h3>インタフェースを明確にできる</h3>
+<p>テストを先に書くことで、これから実装しようとしているメソッドがどのようなインタフェースを持つのかを明確にできました。たとえばテストの中でこれから書くべきメソッドを呼ぶだけで、どのクラスにどのような名前のメソッドを書くのか・引数／戻り値はなにかが決定します。なにが渡されてなにを返すのかをあらかじめ決めたわけですから、迷わずコーディングができました。</p>
+
+<p>テスト側で一度メソッドをどう呼び出して戻り値をどう処理するかを書くことになります。したがって、テスト駆動で書いたライブラリを呼び出すユーザプログラムを書くときは、テストと同じようにメソッドを呼び出して戻り値を処理すればいいのです。テストコードがすなわちリファレンスになるということです。これは本当にありがたいことでした。</p>
+
+<h3>例外処理が書きやすくなる</h3>
+<p>テスト対象のメソッド内で、不正な引数が渡されたときや意図しない値が返ってきたときの挙動を決めておかないと異常系のテストができません。起きてほしい例外をテスト側で待ち受けることが、本体の例外処理はどう書けばいいのかという指針になります。</p>
+
+<h3>自信がつく</h3>
+<p>テスト第一で開発すると「このメソッドは（自力で考えられる範囲で）十分にテストしてうまく動作するはずだからcommitしていい」と思えるようになります。テストが通っているコードは自信を持って扱えられます。</p>
+
+<h2>振り返り</h2>
+<p>最初はテストとはなんぞやという認識から始まりましたが、一旦やってみればテストの利点もTDDの利点も両方把握できたように感じます。TDDを実践して「どうテストするか？」を考えながらコードを書くと「クラスの設計をどうするか？」という問題も意識することになります。TDDはコーディングの指針が立てやすくなる開発手法だとわかりました。</p>
+
+<p>ただ、Beckがやったような一歩ずつテストを実行して失敗を確認してからコードを書くようなやり方はあまり馴染みませんでした。テストはテストで一通り書いてから本体を書いてテストを実行するほうが性に合いましたし、手順が細かすぎずコーディングが中断される回数が抑えられました。おそらく趣味や慣れの問題だと思われます。</p>
+
+<p>振り返れば、新しい開発手法を試せて良い経験になりました。これをできれば職場でもやりたいですし、職場でしかできなさそうなペアプログラミングやモブプログラミングなどの手法も試していきたいです。</p>
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
