@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>ファイアウォール&mdash;&mdash;npf</h1>
+<hr>
+<p>NetBSDには<code>pf(4)</code>, <code>ipf(4)</code>, <code>bpf(4)</code>, <code>npf(7)</code>……と多数のファイアウォールが提供されています。公式には<code>npf(7)</code>が標準のファイアウォールです。NetBSDの<code>pf(4)</code>はメンテナがおらずアップストリームの追跡ができていないため、NetBSDのベースシステムから削除されるようです（『<a href="https://mail-index.netbsd.org/tech-kern/2019/03/29/msg024883.html">Removing PF</a>』）。アップストリームを追いかけられないということは、アップストリームで修正されたバグや脆弱性がそのまま残っていることを意味しています。セキュリティを考えれば、メンテナンスができないから打ち切るというのは正しい対応のように思えます。</p>
+
+<p>GNU/Linuxでよく使われる<code>firewalld(1)</code>／<code>firewall-cmd(1)</code>は通信を許可したいプロトコルやポート番号を指定していくホワイトリスト方式で運用するのが一般的です。一方で<code>npf(4)</code>はなにを遮断してなにを許可するかをすべて設定ファイルに記載します。一見難しいように見えますが、hosts.allow／hosts.denyと同じく、まずはすべてを遮断してから必要な通信だけ許可すれば最低限の設定をしたことになります。</p>
+
+<ol>
+<li><a href="#conf">設定ファイル /etc/npf.conf</a></li>
+<li><a href="#daemon">npf(7)起動と設定の確認</a></li>
+</ol>
+
+<h2 id="conf">設定ファイル /etc/npf.conf</h2>
+<p><code>npf(7)</code>の設定ファイルは/etc/npf.confです。このファイルは標準では存在しません。<code>npf(7)</code>を使いたいときに新規作成します。</p>
+
+<p>このファイルの中身は以下のようになります。インターネットで検索しても設定例が少ないのですが、『<a href="http://blog.onodera.asia/2018/07/netbsdamd64-8.html"> NetBSD 8.0のnpf(7)の設定例</a>』や『<a href="https://rmind.github.io/npf/">NPF documentation</a>』を参照するといいでしょう。</p>
+
+<pre><code># It refered http://blog.onodera.asia/2018/07/netbsdamd64-8.html
+# Thank you!
+$pub_if = ifaddrs(wm0)
+$services_tcp = { ssh }
+
+group default {
+        # Block rules
+        # すべて遮断する
+        block in on wm0 all
+
+        # Pass rules
+        # 通信を許可するルールを書く
+        pass final on lo0 all # ループバックアドレスへの通信は通す
+        pass stateful out final all # 出ていく通信は通す
+        # wm0に割り振られたIPアドレスへの通信において
+        # $services_tcpで定義されたポート番号へのTCPは通す
+        pass stateful in final proto tcp to $pub_if port $services_tcp
+}</code></pre>
+
+<h2 id="daemon">npf(7)起動と設定の確認</h2>
+<p>/etc/rc.confに<code>npf(7)</code>の設定を追加します。</p>
+
+<pre><code>npf=YES</code></pre>
+
+<p>デーモンを起動します。</p>
+
+<pre><code># /etc/rc.d/npf reload
+# service npf start</code></pre>
+
+<p><code>npf(7)</code>のルールは<code>npfctl(8)</code>から確認できます。</p>
+
+<pre><code># npfctl show
+# filtering:    active
+# config:       loaded
+
+group # id="1"
+        block in on wm0 all # id="2"
+        pass final on lo0 all # id="3"
+        pass stateful out final all # id="4"
+        pass stateful in final proto tcp flags S/FSRA to &lt;.ifnet-wm0&gt; port 22 # id="5"</code></pre>
+
+<p>/etc/npf.confでsshの記述を消して<code>npfctl reload</code>する、<code>service httpd onestart</code>してHTTPサーバを立ち上げる、……など<code>npf(7)</code>側で通信を許可しないと外部からアクセスできないことを確認してください。</p>
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
