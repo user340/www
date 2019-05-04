@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;}}
+</style>
+<title>e-yuuki.org</title>
+</head>
+<body><div class="inner">
+<h1>私家版ShellScript Coding Style</h1>
+<hr>
+<p>ShellScriptを書くさいに僕が気をつけていることをまとめます。この文書は「シェル芸」や「ワンライナー」といった技芸・難読化には触れません。</p>
+
+<ul>
+<li><a href="shellcoding">ShellScriptを諦めるとき</a></li>
+</ul>
+
+<h2>ShellScriptを諦めるとき</h2>
+<p>ShellScriptでプログラムを書く利点はいくつも考えられます。POSIXで定義されたコマンド群のみを使って書けばすべてのUnix上で動作するソフトウェアができます。おおよその伝統的なUnixコマンドはC言語で実装されていますが、それらを呼び出しパイプとリダイレクトで糊付けするShellScriptもまた高速です。手動でおこなっていた作業を自動化するさい、ShellScriptならひとつひとつの手順を上から順に貼り付けていくだけでおおよそは完了してしまいます。</p>
+
+<p>一方で、ShellScriptで書かれたコードは読みづらく、この一点が小規模以上なShellScript実装のソフトウェアを諦める理由でもあります。一度書けばどのような環境でも動くことは、一度書けば二度とコードを読まなくてもいいことと同等ではないのです。保守をしなくてもいい理由にもなりません。使い捨てのコードでない限り、誰かがそのコードを一部分でも読むときがやってくるのです。その誰かとは二ヶ月後の自分である可能性が大です。</p>
+
+<p><a href="https://github.com/google/styleguide/blob/gh-pages/shell.xml">GoogleのShellScriptスタイルガイド</a>を読んでまとめてみた技術系記事はインターネット上で多数公開されています。XML形式の文書を英語で読みたくない方はそれらを参考にしてください。このスタイルガイドでは冒頭に、ShellScriptは小さなユーティリティか簡単なラッパーを書きたいときのみ使うこと（"Shell should only be used for small utilities or simple wrapper scripts."）、ShellScriptのコードが100行を超える規模になったのであれば、代わりにPythonで書き直すべきであること（"If you are writing a script that is more than 100 lines long, you should probably be writing it in Python instead."）が指摘されています。これは正論です。むしろ僕としては50行を超えた時点でShellScript以外のスクリプト系言語で書きたいところです。</p>
+
+<p>以下の事項がすべて該当するのでなければ、50行を超えた時点で別の言語で実装しましょう。</p>
+
+<ul>
+<li>当該スクリプトの実行環境にPerl・Python・Rubyなどが存在しない可能性がある。</li>
+<li>実行環境となるOSの最小構成にPerl・Python・Rubyなどが存在しない可能性がある。</li>
+<li>実行環境のCPUアーキテクチャ向けにPerl・Python・Rubyなどが移植されていない可能性がある。</li>
+</ul>
+
+<hr>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</div></body>
+</html>
