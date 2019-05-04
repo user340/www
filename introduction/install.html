@@ -4,11 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){
-code{line-height:1.4;}
-.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;}
-pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}}
-@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}}p{text-indent:1em;}
+@media print, screen and (min-width:640px){code{line-height:1.4;}.inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;}p{text-indent:1em;}table, th, td{border: solid 1px; border-collapse: collapse; padding: 5px;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;}table, th, td{border: solid 1px; border-collapse: collapse; padding: 5px;}p{text-indent:1em;}}
 </style>
 <title>e-yuuki.org</title>
 </head>
@@ -17,12 +14,12 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 <hr>
 <h2>目次</h2>
 <ol>
-  <li><a href="#intro">このページについて</a></li>
-  <li><a href="#install">NetBSDのインストール</a></li>
-  <li><a href="#network">ネットワーク接続</a></li>
-  <li><a href="#block">すべて遮断する</a></li>
-  <li><a href="#user">ユーザの作成</a></li>
-  <li><a href="#pkgsrc">pkgsrc(7)のインストール</a></li>
+<li><a href="#intro">このページについて</a></li>
+<li><a href="#install">NetBSDのインストール</a></li>
+<li><a href="#network">ネットワーク接続</a></li>
+<li><a href="#block">すべて遮断する</a></li>
+<li><a href="#user">ユーザの作成</a></li>
+<li><a href="#pkgsrc">pkgsrc(7)のインストール</a></li>
 </ol>
 
 <h2 id="intro">このページについて</h2>
@@ -35,43 +32,42 @@ pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; li
 
 <p>仮想マシンにNetBSDをインストールするのであれば、<a href="https://legacyos.ichmy.0t0.jp/netbsd/">NetBSDで遊ぼうのこーな</a>を参考に仮想化ソフトウェアを選ぶといいでしょう。このページから引用し、さらに僕が普段使っているBhyveや使ったことのあるXenも加えると次のようになります。</p>
 
-<table>
+<table><thead><tr>
+<th>ソフトウェア</th>
+<th>Addin</th>
+<th>状況</th>
+</tr></thead>
+<tbody>
 <tr>
-  <th>ソフトウェア</th>
-  <th>Addin</th>
-  <th>状況</th>
+<td>VirtualBox</td>
+<td>x</td>
+<td>GuestAdditionsは未対応だが他問題なし</td>
 </tr>
 <tr>
-  <td>VirtualBox</td>
-  <td>x</td>
-  <td>GuestAdditionsは未対応だが他問題なし</td>
+<td>VMware</td>
+<td>o</td>
+<td>非ネット共有フォルダに失敗</td>
 </tr>
 <tr>
-  <td>VMware</td>
-  <td>o</td>
-  <td>非ネット共有フォルダに失敗</td>
+<td>クライアントHyper-V</td>
+<td>x</td>
+<td>SMPとACPIを無効化しないとネット不可。ネットはレガシーアダプタ要</td>
 </tr>
 <tr>
-  <td>クライアントHyper-V</td>
-  <td>x</td>
-  <td>SMPとACPIを無効化しないとネット不可。ネットはレガシーアダプタ要</td>
+<td>QEMU</td>
+<td>x</td>
+<td>起動に失敗</td>
 </tr>
 <tr>
-  <td>QEMU</td>
-  <td>x</td>
-  <td>起動に失敗</td>
+<td>Bhyve</td>
+<td>?</td>
+<td>vm-bhyveで確認。</td>
 </tr>
 <tr>
-  <td>Bhyve</td>
-  <td>?</td>
-  <td>vm-bhyveで確認。</td>
-</tr>
-<tr>
-  <td>Xen</td>
-  <td>?</td>
-  <td>Domain 0はNetBSD</td>
-</tr>
-</table>
+<td>Xen</td>
+<td>?</td>
+<td>Domain 0はNetBSD</td>
+</tr></tbody></table>
 
 <p>物理的な環境にインストールする場合、まずは動作が確認されている機器を慎重に選ぶところから始まります。ThinkPadはだいたい動くようです。僕が使ってきたマシンについては<a href="../netbsd/thinkpad.html">NetBSD on ThinkPad</a>を参照してください。</p>
 
