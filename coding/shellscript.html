@@ -15,24 +15,102 @@
 <p>ShellScriptを書くさいに僕が気をつけていることをまとめます。この文書は「シェル芸」や「ワンライナー」といった技芸・難読化には触れません。</p>
 
 <ul>
-<li><a href="shellcoding">ShellScriptを諦めるとき</a></li>
+<li><a href="#shellcoding">ShellScriptを諦めるとき</a></li>
+<li><a href="#bsh">Bourne Shell</a></li>
+<li><a href="#shellcheck">静的解析ツール ShellCheck</a></li>
+<li><a href="#indent">インデント・1行あたりの文字数</a></li>
+<li><a href="#function">関数名</a></li>
+<li><a href="#posix">POSIX</a></li>
 </ul>
 
-<h2>ShellScriptを諦めるとき</h2>
+<h2 id="shellcoding">ShellScriptを諦めるとき</h2>
 <p>ShellScriptでプログラムを書く利点はいくつも考えられます。POSIXで定義されたコマンド群のみを使って書けばすべてのUnix上で動作するソフトウェアができます。おおよその伝統的なUnixコマンドはC言語で実装されていますが、それらを呼び出しパイプとリダイレクトで糊付けするShellScriptもまた高速です。手動でおこなっていた作業を自動化するさい、ShellScriptならひとつひとつの手順を上から順に貼り付けていくだけでおおよそは完了してしまいます。</p>
 
-<p>一方で、ShellScriptで書かれたコードは読みづらく、この一点が小規模以上なShellScript実装のソフトウェアを諦める理由でもあります。一度書けばどのような環境でも動くことは、一度書けば二度とコードを読まなくてもいいことと同等ではないのです。保守をしなくてもいい理由にもなりません。使い捨てのコードでない限り、誰かがそのコードを一部分でも読むときがやってくるのです。その誰かとは二ヶ月後の自分である可能性が大です。</p>
+<p>一方ShellScriptで書かれたコードは読みづらく、この一点こそが小規模以上なShellScript実装のソフトウェアを諦める理由でもあります。一度書けばどのような環境でも動くことは、一度書けば二度とコードを読まなくてもいいことと同等ではないのです。保守をしなくてもいい理由にもなりません。使い捨てのコードでない限り、誰かがそのコードを一部分でも読むときがやってくるのです。さらに、その誰かとは二ヶ月後の自分である可能性が大です。</p>
 
 <p><a href="https://github.com/google/styleguide/blob/gh-pages/shell.xml">GoogleのShellScriptスタイルガイド</a>を読んでまとめてみた技術系記事はインターネット上で多数公開されています。XML形式の文書を英語で読みたくない方はそれらを参考にしてください。このスタイルガイドでは冒頭に、ShellScriptは小さなユーティリティか簡単なラッパーを書きたいときのみ使うこと（"Shell should only be used for small utilities or simple wrapper scripts."）、ShellScriptのコードが100行を超える規模になったのであれば、代わりにPythonで書き直すべきであること（"If you are writing a script that is more than 100 lines long, you should probably be writing it in Python instead."）が指摘されています。これは正論です。むしろ僕としては50行を超えた時点でShellScript以外のスクリプト系言語で書きたいところです。</p>
 
-<p>以下の事項がすべて該当するのでなければ、50行を超えた時点で別の言語で実装しましょう。</p>
+<p>以下の事項のうちひとつでも該当するのであれば、50行を超えた時点で別の言語で実装しましょう。</p>
 
 <ul>
-<li>当該スクリプトの実行環境にPerl・Python・Rubyなどが存在しない可能性がある。</li>
-<li>実行環境となるOSの最小構成にPerl・Python・Rubyなどが存在しない可能性がある。</li>
-<li>実行環境のCPUアーキテクチャ向けにPerl・Python・Rubyなどが移植されていない可能性がある。</li>
+<li>当該スクリプトの実行環境にPerl・Python・Rubyなどが存在する。</li>
+<li>実行環境となるOSの最小構成にPerl・Python・Rubyなどが存在する。</li>
+<li>実行環境のCPUアーキテクチャ向けにPerl・Python・Rubyなどが移植されている。</li>
 </ul>
 
+<h2 id="bsh">Bourne Shell</h2>
+<p>ShellScriptに使う言語はBourne Shellです。Shebangは<code>#!/bin/sh</code>です。RHELかUbuntuでしか動かす予定がないのであればBashを使っても構いませんが、後述するPOSIX準拠ではなくなります。</p>
+
+<p>標準でBashがインストールされていないOSも存在することだけは頭の片隅に入れておくといいでしょう。</p>
+
+<h2 id="shellcheck">静的解析ツール ShellCheck</h2>
+<p><a href="https://www.shellcheck.net/">ShellCheck</a>はHaskellで実装された、ShellScriptの静的解析ツールです。基本的にはShellCheckの指示にしたがってコードを書きます。よくある警告は変数を二重引用符で囲わないときに出る<a href="https://github.com/koalaman/shellcheck/wiki/SC2086">SC2086</a>でしょう。どのように修正すればいいかは<a href="https://github.com/koalaman/shellcheck/wiki/">GitHubのWiki</a>に詳しく書いてあります。警告が出たときはエラーコード（SCxxxx）のページを参照してください。</p>
+
+<p>しかし、なにも考えずなんでもかんでも変数を二重引用符で囲ってしまうと、それはそれでShellScriptが意図しない動作をする可能性もあります。コーディング中の動作確認を頻繁におこないましょう。</p>
+
+<pre><code>#!/bin/sh
+# 典型的な例
+
+list="a b c d"
+
+# ループしない
+for i in "$list"; do # 変数listを二重引用符で囲ったパターン
+    echo "$i"
+done
+# 出力は
+# a b c d
+
+# このコードはスペース区切りでループする。
+list="a b c d"
+for i in $list; do # 変数listは囲われていない
+    echo "$i"
+done
+# 出力は
+# a
+# b
+# c
+# d</code></pre>
+
+<h2 id="indent">インデント・1行あたりの文字数</h2>
+<p>インデントはスペース4つ。1行あたり80文字で収めるよう努力します。ここで「努力する」と書いたのは、長い文字列を処理するときにどうしても80文字を超えてしまうこともあるからです。</p>
+
+<p>パイプでコマンドの出力をつなげていくと80文字を超えてしまう場合もあります。そのときは複数行に分けて書きます。</p>
+
+<pre><code>#!/bin/sh
+# 例
+# これは分割しなくてもいいですが……
+grep "Test" "test.txt" | sort | uniq
+# 複数行に分ける場合
+grep "Test" "test.txt" \
+    | sort \
+    | uniq
+</code></pre>
+
+<h2 id="function">関数名</h2>
+<p>関数名はコマンド名との混同を避ける目的で接頭辞をつけます。たとえば"fn_", "_", "__"などです。</p>
+
+<pre><code>#!/bin/sh
+fn_function()
+{
+    echo "prefix example"
+}
+
+_function()
+{
+    echo "prefix example"
+}
+
+__function()
+{
+    echo "prefix example"
+}</code></pre>
+
+<h2 id="posix">POSIX</h2>
+<p>POSIXはUnix OSの標準規格です。POSIXではShellコマンドも定義されています。<a href="https://pubs.opengroup.org/onlinepubs/9699919799/idx/utilities.html">Utilities</a>に書かれているコマンドのみを使ってShellScriptを書けば、POSIX準拠の移植性の高いShellScriptであると言えます。</p>
+
+<p>書き捨てるShellScriptか、実行環境が限定されているShellScriptであればPOSIX準拠を考える必要はありません。しかし小規模かつ複数の環境での実行を想定する場合や、実行環境が商用Unixかつその環境でプログラミングやテストをするのが難しい（本番環境だからなるべく下手なことをしたくない、外部のサービスを契約して1日単位でレンタルする必要があり開発には向かない、……など）場合は、POSIXにしたがってコーディングすることでコードの動作を保証できます。</p>
+
+<p>巨大なソフトウェアをShellScriptで実装しようというモチベーションのひとつには、POSIX準拠の実装による移植性の担保があるように思えます。しかし前述した理由により、優れた移植性による恩恵よりもコードリーディングの難しさによる問題のほうがよほど目立つでしょう。僕は推奨しません。</p>
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
