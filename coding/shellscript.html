@@ -155,14 +155,13 @@ make || _bomb "make: failed"</code></pre>
 
 <p>この<code>_bomb</code>という関数名はNetBSDのbuild.shから拝借しました。オリジナルの<code>bomb</code>は次のようになっています。</p>
 
-<pre><code>
-# Copyright (c) 2001-2011 The NetBSD Foundation, Inc.
+<pre><code># Copyright (c) 2001-2011 The NetBSD Foundation, Inc.
 # All rights reserved.
 #
 # This is 2-Clause BSD License
 bomb()
 {
-  cat >&2 <<ERRORMESSAGE
+  cat &gt;&amp;2 &lt;&lt;ERRORMESSAGE
 
 ERROR: $@
 *** BUILD ABORTED ***
