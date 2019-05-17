@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){ code{line-height:1.4;font-size:80%;} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
-@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;}}
+@media print, screen and (min-width:640px){code{line-height:1.4} b.root:before{content: "# "} b.user:before{content: "$"} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:90%; line-height:1.4;}  b.root:before{content: "# "} b.user:before{content: "$ "} p{text-indent:1em;}}
 </style>
 <title>e-yuuki.org</title>
 </head>
@@ -68,18 +68,18 @@
 
 <p>emulators/qemuとemulators/haxmパッケージをインストールします。</p>
 
-<pre><code># cd /usr/pkgsrc/emulators/qemu
-# make install clean clean-depends
-# cd /usr/pkgsrc/emulators/haxm
-# make install clean clean-depends</code></pre>
+<pre><code><b class="root">cd /usr/pkgsrc/emulators/qemu</b>
+<b class="root">make install clean clean-depends</b>
+<b class="root">cd /usr/pkgsrc/emulators/haxm</b>
+<b class="root">make install clean clean-depends</b></code></pre>
 
 <p>HAXM用のdevice special filesを作成します。<code>mknod(8)</code>のWrapperスクリプトがemulators/haxmパッケージで提供されているのでそれを使うと便利です。</p>
 
-<pre><code># haxm-mknod</code></pre>
+<pre><code><b class="root">haxm-mknod</b></code></pre>
 
 <p>HAXMのカーネルモジュールを<code>haxm-modload</code>コマンドでロードします。アンロードしたい場合は<code>haxm-modunload</code>コマンドを実行してください。</p>
 
-<pre><code># haxm-modload</code></pre>
+<pre><code><b class="root">haxm-modload</b></code></pre>
 
 <p>カーネルモジュールのロードに成功すると、<code>dmesg(8)</code>から<code>haxm_warning: -------- HAXM v7.4.1 Start --------</code>というメッセージを確認できます。</p>
 
@@ -90,12 +90,12 @@
 <h3 id="disk">仮想ディスクを作成する</h3>
 <p>qcow2フォーマットで20GBの仮想ディスクを作成します。</p>
 
-<pre><code># qemu-img create -f qcow2 NetBSD.qcow2 20G</code></pre>
+<pre><code><b class="root">qemu-img create -f qcow2 NetBSD.qcow2 20G</b></code></pre>
 
 <h3 id="installtodisk">インストールする</h3>
 <p><code>qemu-system-x86_64</code>コマンドの<code>-boot order=d</code>オプションを使い、NetBSDインストーラを起動して先ほど作成した仮想ディスクにNetBSDをインストールします。インストール手順は省略します。</p>
 
-<pre><code># qemu-system-x86_64 \
+<pre><code><b class="root">qemu-system-x86_64 \
 -m 2048M \
 -smp cpus=2 \
 -drive file=NetBSD.qcow2,if=virtio,format=qcow2 \
@@ -103,32 +103,32 @@
 -netdev user,id=n0 \
 -boot order=d -cdrom ~/qemu/iso/NetBSD-8.0-amd64.iso \
 -monitor telnet::4444,server,nowait \
--accel hax</code></pre>
+-accel hax</b></code></pre>
 
 <p>見てのとおり、HAXMをQEMUと一緒に使うにはQEMUに<code>-accel hax</code>オプションを渡します。</p>
 
 <p>インストールが終わったらシャットダウンし、QEMUのモニタからsystem_powerdownコマンドを実行して仮想マシンの電源を落としてください。再起動してもISOファイルは自動で取り外されず、インストーラが起動してしまいます。</p>
 
-<pre><code>$ telnet 127.0.0.1 4444
+<pre><code><b class="user">telnet 127.0.0.1 4444</b>
 Trying 127.0.0.1...
 Connected to localhost.
 Escape character is '^]'.
 QEMU 3.1.0 monitor - type 'help' for more information
-(qemu) system_powerdown
-(qemu) q
+(qemu) <b>system_powerdown</b>
+(qemu) <b>q</b>
 Connection closed by foreign host.</code></pre>
 
 <h3 id="boot">起動する</h3>
 <p>インストール後は仮想ディスクからNetBSDを起動します。</p>
 
-<pre><code># qemu-system-x86_64 \
+<pre><code><b class="root">qemu-system-x86_64 \
 -m 2048M \
 -smp cpus=2 \
 -drive file=NetBSD.qcow2,if=virtio,format=qcow2 \
 -device virtio-net,netdev=n0 \
 -netdev user,id=n0 \
 -monitor telnet::4444,server,nowait \
--accel hax</code></pre>
+-accel hax</b></code></pre>
 
 <img src="./images/haxm_001.png" alt="dmesg on NetBSD on QEMU with HAXM">
 
