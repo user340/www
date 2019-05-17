@@ -98,9 +98,10 @@
 <pre><code># qemu-system-x86_64 \
 -m 2048M \
 -smp cpus=2 \
+-drive file=NetBSD.qcow2,if=virtio,format=qcow2 \
+-device virtio-net,netdev=n0 \
+-netdev user,id=n0 \
 -boot order=d -cdrom ~/qemu/iso/NetBSD-8.0-amd64.iso \
--hda NetBSD.qcow2 \
--net nic -net user \
 -accel hax</code></pre>
 
 <p>見てのとおり、HAXMをQEMUと一緒に使うにはQEMUに<code>-accel hax</code>オプションを渡します。</p>
@@ -111,8 +112,9 @@
 <pre><code># qemu-system-x86_64 \
 -m 2048M \
 -smp cpus=2 \
--hda NetBSD.qcow2 \
--net nic -net user \
+-drive file=NetBSD.qcow2,if=virtio,format=qcow2 \
+-device virtio-net,netdev=n0 \
+-netdev user,id=n0 \
 -accel hax</code></pre>
 
 <img src="./images/haxm_001.png" alt="dmesg on NetBSD on QEMU with HAXM">
