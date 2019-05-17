@@ -102,9 +102,21 @@
 -device virtio-net,netdev=n0 \
 -netdev user,id=n0 \
 -boot order=d -cdrom ~/qemu/iso/NetBSD-8.0-amd64.iso \
+-monitor telnet::4444,server,nowait \
 -accel hax</code></pre>
 
 <p>見てのとおり、HAXMをQEMUと一緒に使うにはQEMUに<code>-accel hax</code>オプションを渡します。</p>
+
+<p>インストールが終わったらシャットダウンし、QEMUのモニタからsystem_powerdownコマンドを実行して仮想マシンの電源を落としてください。再起動してもISOファイルは自動で取り外されず、インストーラが起動してしまいます。</p>
+
+<pre><code>$ telnet 127.0.0.1 4444
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+QEMU 3.1.0 monitor - type 'help' for more information
+(qemu) system_powerdown
+(qemu) q
+Connection closed by foreign host.</code></pre>
 
 <h3 id="boot">起動する</h3>
 <p>インストール後は仮想ディスクからNetBSDを起動します。</p>
@@ -115,6 +127,7 @@
 -drive file=NetBSD.qcow2,if=virtio,format=qcow2 \
 -device virtio-net,netdev=n0 \
 -netdev user,id=n0 \
+-monitor telnet::4444,server,nowait \
 -accel hax</code></pre>
 
 <img src="./images/haxm_001.png" alt="dmesg on NetBSD on QEMU with HAXM">
