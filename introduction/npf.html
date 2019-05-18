@@ -14,19 +14,20 @@
 <hr>
 <p>NetBSDには<code>pf(4)</code>, <code>ipf(4)</code>, <code>bpf(4)</code>, <code>npf(7)</code>……と多数のファイアウォールが提供されています。公式には<code>npf(7)</code>が標準のファイアウォールです。NetBSDの<code>pf(4)</code>はメンテナがおらずアップストリームの追跡ができていないため、NetBSDのベースシステムから削除されるようです（『<a href="https://mail-index.netbsd.org/tech-kern/2019/03/29/msg024883.html">Removing PF</a>』）。アップストリームを追いかけられないということは、アップストリームで修正されたバグや脆弱性がそのまま残っていることを意味しています。セキュリティを考えれば、メンテナンスができないから打ち切るというのは正しい対応のように思えます。</p>
 
-<p>GNU/Linuxでよく使われる<code>firewalld(1)</code>／<code>firewall-cmd(1)</code>は通信を許可したいプロトコルやポート番号を指定していくホワイトリスト方式で運用するのが一般的です。一方で<code>npf(4)</code>はなにを遮断してなにを許可するかをすべて設定ファイルに記載します。一見難しいように見えますが、hosts.allow／hosts.denyと同じく、まずはすべてを遮断してから必要な通信だけ許可すれば最低限の設定をしたことになります。</p>
+<p>GNU/Linuxでよく使われる<code>firewalld(1)</code>／<code>firewall-cmd(1)</code>は通信を許可したいプロトコルやポート番号を指定していくホワイトリスト方式で運用するのが一般的です。一方で<code>npf(4)</code>はなにを遮断してなにを許可するかをすべて設定ファイルに記載します。一見難しいように見えますが、<code>hosts.allow</code>／<code>hosts.deny</code>と同じく、まずはすべてを遮断してから必要な通信だけ許可すれば最低限の設定をしたことになります。</p>
 
 <ol>
 <li><a href="#conf">設定ファイル /etc/npf.conf</a></li>
 <li><a href="#daemon">npf(7)起動と設定の確認</a></li>
+<li><a href="#blacklistd">blacklistd(8)でDoS攻撃を防ぐ</a></li>
 </ol>
 
 <h2 id="conf">設定ファイル /etc/npf.conf</h2>
-<p><code>npf(7)</code>の設定ファイルは/etc/npf.confです。このファイルは標準では存在しません。<code>npf(7)</code>を使いたいときに新規作成します。</p>
+<p><code>npf(7)</code>の設定ファイルは<code>/etc/npf.conf</code>です。このファイルは標準では存在しません。<code>npf(7)</code>を使いたいときに新規作成します。</p>
 
 <p>このファイルの中身は以下のようになります。インターネットで検索しても設定例が少ないのですが、『<a href="http://blog.onodera.asia/2018/07/netbsdamd64-8.html"> NetBSD 8.0のnpf(7)の設定例</a>』や『<a href="https://rmind.github.io/npf/">NPF documentation</a>』を参照するといいでしょう。</p>
 
-<pre><code># It refered http://blog.onodera.asia/2018/07/netbsdamd64-8.html
+<pre><code><b># It refered http://blog.onodera.asia/2018/07/netbsdamd64-8.html
 # Thank you!
 $pub_if = ifaddrs(wm0)
 $services_tcp = { ssh }
@@ -43,21 +44,21 @@ group default {
         # wm0に割り振られたIPアドレスへの通信において
         # $services_tcpで定義されたポート番号へのTCPは通す
         pass stateful in final proto tcp to $pub_if port $services_tcp
-}</code></pre>
+}</b></code></pre>
 
 <h2 id="daemon">npf(7)起動と設定の確認</h2>
 <p>/etc/rc.confに<code>npf(7)</code>の設定を追加します。</p>
 
-<pre><code>npf=YES</code></pre>
+<pre><code><b>npf=YES</b></code></pre>
 
 <p>デーモンを起動します。</p>
 
-<pre><code># /etc/rc.d/npf reload
-# service npf start</code></pre>
+<pre><code><b class="root">/etc/rc.d/npf reload</b>
+<b class="root">service npf start</b></code></pre>
 
 <p><code>npf(7)</code>のルールは<code>npfctl(8)</code>から確認できます。</p>
 
-<pre><code># npfctl show
+<pre><code><b class="root">npfctl show</b>
 # filtering:    active
 # config:       loaded
 
@@ -67,7 +68,33 @@ group # id="1"
         pass stateful out final all # id="4"
         pass stateful in final proto tcp flags S/FSRA to &lt;.ifnet-wm0&gt; port 22 # id="5"</code></pre>
 
-<p>/etc/npf.confでsshの記述を消して<code>npfctl reload</code>する、<code>service httpd onestart</code>してHTTPサーバを立ち上げる、……など<code>npf(7)</code>側で通信を許可しないと外部からアクセスできないことを確認してください。</p>
+<p><code>/etc/npf.conf</code>でsshの記述を消して<code>npfctl reload</code>する、<code>service httpd onestart</code>してHTTPサーバを立ち上げる、……など<code>npf(7)</code>側で通信を許可しないと外部からアクセスできないことを確認してください。</p>
+
+<h2 id="blacklistd">blacklistd(8)でDoS攻撃を防ぐ</h2>
+<p><code>npf(7)</code>と併せて<code>blacklistd(8)</code>を活用するとDenial of Service（DoS）攻撃を防止できます。設定方法は簡単です。ついでにやっておくといいでしょう。</p>
+
+<p><code>blacklistd(8)</code>の設定は<code>/etc/blacklistd.conf</code>に記述します。以下の例ではSSHログインに3回連続で失敗するとブラックリストに登録し24時間接続できないようにしています。</p>
+
+<pre><code><b># Blacklist rule
+# adr/mask:port type    proto   owner           name    nfail   disable
+[local]
+ssh             stream  tcp     *               *       3       24h
+ssh             stream  tcp6    *               *       3       24h</b></code></pre>
+
+<p><code>/etc/rc.conf</code>に<code>blacklistd(8)</code>を自動で起動するよう設定を書き、デーモンを起動します。</p>
+
+<pre><code><b class="root">echo "blacklistd=YES" &gt;&gt; /etc/rc.conf</b>
+<b class="root">service blacklistd start</b></code></pre>
+
+<p><code>npf(7)</code>が<code>blacklistd(8)</code>を使えるように<code>/etc/npf.conf</code>を変更します。ルールに以下を追加してください。</p>
+
+<pre><code><b>ruleset "blacklistd"</b></code></pre>
+
+<p><code>npf(7)</code>に設定を再読み込みさせ、デーモンを再起動してください。</p>
+
+<pre><code><b class="root">npfctl reload</b>
+<b class="root">npfctl stop</b>
+<b class="root">npfctl start</b></code></pre>
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
