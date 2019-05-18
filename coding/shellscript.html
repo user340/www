@@ -50,7 +50,7 @@
 
 <p>しかし、なにも考えずなんでもかんでも変数を二重引用符で囲ってしまうと、それはそれでShellScriptが意図しない動作をする可能性もあります。コーディング中の動作確認を頻繁におこないましょう。</p>
 
-<pre><code>#!/bin/sh
+<pre><code><b>#!/bin/sh
 # 典型的な例
 
 list="a b c d"
@@ -71,7 +71,7 @@ done
 # a
 # b
 # c
-# d</code></pre>
+# d</b></code></pre>
 
 <h2 id="indent">インデント・1行あたりの文字数</h2>
 <p>インデントはスペース4つです。Googleのスタイルでは2つですが、僕はインデントが浅すぎると目で見たときにソースコードの構造がはっきりと分からないので4つにしています。8つは長すぎました。</p>
@@ -80,22 +80,21 @@ done
 
 <p>パイプでコマンドの出力をつなげていくと80文字を超えてしまう場合もあります。そのときは複数行に分けて書きます。</p>
 
-<pre><code>#!/bin/sh
+<pre><code><b>#!/bin/sh
 # 例
 # これは分割しなくてもいいですが……
 grep "Test" "test.txt" | sort | uniq
 # 複数行に分ける場合
 grep "Test" "test.txt" \
     | sort \
-    | uniq
-</code></pre>
+    | uniq</b></code></pre>
 
 <p>上記の例は各フィルタが短すぎて複数行に分ける利点がないかもしれませんが、ソースコード管理システムで差分をとったとき、どのフィルタをどのように変更したのかわかりやすくなります。</p>
 
 <h2 id="function">関数名</h2>
 <p>関数名はコマンド名との混同を避ける目的で接頭辞をつけます。たとえば"fn_", "_", "__"などです。"_"から始まるコマンドは少なくともPOSIXで定義されたコマンド群には存在しません。特定の接頭辞を付けておけば、第三者がコードを読んだとき関数だとすぐに見分けられます。</p>
 
-<pre><code>#!/bin/sh
+<pre><code><b>#!/bin/sh
 fn_function()
 {
     echo "prefix example"
@@ -109,13 +108,12 @@ _function()
 __function()
 {
     echo "prefix example"
-}</code></pre>
+}</b></code></pre>
 
 <h2 id="comment">コメント</h2>
 <p>関数定義のさいは与えられる引数と期待する戻り値についてコメントを書きます。ShellScriptは読みにくいため、このようにコメントを書いておくとコードを読まなくても予期される動作を把握できます。</p>
 
-<pre><code>
-# _function -- Short description of the function
+<pre><code><b># _function -- Short description of the function
 #
 # Args:
 #   $1 filter pattern
@@ -125,14 +123,14 @@ __function()
 _function()
 {
     # process ...
-}</code></pre>
+}</b></code></pre>
 
 <h2 id="err">エラー処理</h2>
 <p>エラー処理は厳格におこないます。ShellScriptは他の高級なプログラミング言語よりも、どの箇所でエラーが発生したのか把握が難しいからです。ファイルを開くとき・ファイルを削除するとき・ディレクトリを移動するとき……などは必ずそのファイルやディレクトリが存在するかを<code>test(1)</code>で確認します。またコマンドの実行が成功・失敗したかどうかの判定はコマンドの戻り値を使います。</p>
 
 <p>エラーメッセージを表示して<code>exit 1</code>する関数を定義しておくと便利です。</p>
 
-<pre><code>#!/bin/sh
+<pre><code><b>#!/bin/sh
 # 現実的ではないが簡単な例
 
 # _bomb -- Show given error message then exit
@@ -151,11 +149,11 @@ dir="./path/to/directory"
 test -d "$dir" || _bomb "$dir: Not found"
 cd "$dir" || _bomb "cd $dir: failed"
 test -f "Makefile" || _bomb "$PWD/Makefile: Not found"
-make || _bomb "make: failed"</code></pre>
+make || _bomb "make: failed"</b></code></pre>
 
 <p>この<code>_bomb</code>という関数名はNetBSDのbuild.shから拝借しました。オリジナルの<code>bomb</code>は次のようになっています。</p>
 
-<pre><code># Copyright (c) 2001-2011 The NetBSD Foundation, Inc.
+<pre><code><b># Copyright (c) 2001-2011 The NetBSD Foundation, Inc.
 # All rights reserved.
 #
 # This is 2-Clause BSD License
@@ -168,7 +166,7 @@ ERROR: $@
 ERRORMESSAGE
   kill ${toppid}    # in case we were invoked from a subshell
   exit 1
-}</code></pre>
+}</b></code></pre>
 
 <h2 id="posix">POSIX</h2>
 <p>POSIXはUnix OSの標準規格です。POSIXではShellコマンドも定義されています。<a href="https://pubs.opengroup.org/onlinepubs/9699919799/idx/utilities.html">Utilities</a>に書かれているコマンドのみを使ってShellScriptを書けば、POSIX準拠の移植性の高いShellScriptであると言えます。</p>

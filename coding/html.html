@@ -33,7 +33,7 @@
 <h2 id="validator">Validator</h2>
 <p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。ビルド方法は<a href="#nuhtml">NetBSDでNu HTML Checkerをビルドする</a>を参照してください。Gitを使っているのであれば、<a href="https://git-scm.com/book/ja/v1/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Gitフック</a>のpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下はpre-commitスクリプトの一例です。<code>chmod +x</code>コマンドで実行権限を与え、変数の値は適宜変更してください。</p>
 
-<pre><code>#!/bin/sh
+<pre><code><b>#!/bin/sh
 
 java="/usr/pkg/bin/openjdk8-java"
 gitdir="/home/uki/src/github.com"
@@ -41,7 +41,7 @@ validator_dir="$gitdir/validator/validator"
 
 git diff --cached --name-only --diff-filter=AM HEAD \
   | grep 'html$' \
-  | xargs $java -jar $validator_dir/build/dist/vnu.jar</code></pre>
+  | xargs $java -jar $validator_dir/build/dist/vnu.jar</b></code></pre>
 
 <p>個人的には後者のThe Nu HTML Checkerの利用を推奨します。逐一Webブラウザ経由でコードをチェックするのは面倒ですし、commit前にコードを検査することで正しくないコードがpushされるのを予防でき自信を持ってデプロイできます。</p>
 
@@ -52,7 +52,7 @@ git diff --cached --name-only --diff-filter=AM HEAD \
 
 <p>npm(1)からtextlintとそのルールセット、HTMLプラグインをインストールするには次のシェルスクリプトを実行してください。</p>
 
-<pre><code>#!/bin/sh
+<pre><code><b>#!/bin/sh
 
 cmd="npm"
 cmd_opt="install -g"
@@ -82,11 +82,11 @@ textlint-rule-preset-jtf-style"
 
 for package in $targets; do
   $cmd "$cmd_opt" "$package"
-done</code></pre>
+done</b></code></pre>
 
 <p>textlintの設定ファイル$HOME/.textlintrcを次のように書きます。設定内容は『<a href="https://efcl.info/2015/10/19/textlint-plugin-jtf-style/">JTF日本語標準スタイルガイドのルールセットで文章をチェックできるtextlintプリセット</a>』、『<a href="https://qiita.com/azu/items/60764ed6f415d3c748bf">文書執筆の指南書で解説されている問題点を textlint で発見する</a>』、『<a href="https://www.monotalk.xyz/blog/web%E3%82%B5%E3%82%A4%E3%83%88-%E3%81%AE-html-%E3%82%92-textlint-%E3%81%A7%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%81%99%E3%82%8B/">WebサイトのHTMLをtextlintでチェックする</a>』を参考にしました。</p>
 
-<pre><code>{
+<pre><code><b>{
     // HTMLプラグインを有効にする
     "plugins": [
     "html"
@@ -175,16 +175,16 @@ done</code></pre>
             ]
         }
     }
-}</code></pre>
+}</b></code></pre>
 
 
 <p>コマンドラインから文章校正ができます。</p>
 
-<pre><code>$ textlint html.html</code></pre>
+<pre><code><b class="user">textlint html.html</b></code></pre>
 
 <p>Gitのpre-commitスクリプトに書いておくと、commit時に自動で文章校正ができます。前述したvalidatorと組み合わせると次のようになります。HTMLと日本語のチェックが同時にでき、強力です。</p>
 
-<pre><code>#!/bin/sh
+<pre><code><b>#!/bin/sh
 
 java="/usr/pkg/bin/openjdk8-java"
 gitdir="/home/uki/src/github.com"
@@ -195,7 +195,7 @@ git diff --cached --name-only --diff-filter=AM HEAD \
   | xargs $java -jar $validator_dir/build/dist/vnu.jar
 git diff --cached --name-only --diff-filter=AM HEAD \
   | grep 'html$' \
-  | xargs textlint</code></pre>
+  | xargs textlint</b></code></pre>
 
 <h2 id="codestyle">一行あたりの文字数とインデント</h2>
 <p>一行あたりの文字数制限はありません。余計な空白が挿入されることを防ぐため、むしろ一段落（<code>p</code>タグで囲う）は一行に収めます。この方針はバージョン管理システムで差分を取ったとき、どこが変更されたのかが分かりづらいという明らかな欠点があります。この欠点を許容できないのであれば、改行は文単位でおこなうべきです。</p>
@@ -207,8 +207,8 @@ git diff --cached --name-only --diff-filter=AM HEAD \
 
 <p>CSSはHTMLコードに直接書きます。別途用意して読み込むほうが効率的なほど長いCSSを書くわけではありませんし、レイアウトの美麗さが文章の質に影響するわけでもありません。この方法だとCSSを更新したときHTMLファイルひとつひとつを更新しなければならないので手間がかかります。しかしCSSコードを改行せず一行にすることで<code>find(1)</code>と<code>sed(1)</code>を組み合わせて簡単に更新ができます。置換前と置換後のテキストはバージョン管理システムから取得できます（<code>git-diff(1)</code>など）。</p>
 
-<pre><code>$ find . -name '*.html' -exec \
-sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
+<pre><code><b class="user">find . -name '*.html' -exec \
+sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</b></code></pre>
 
 <p><a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>によってHTML5とCSSの分離を提案された場合はもちろんそれに従います。</p>
 
@@ -222,17 +222,16 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
 
 <p>キャッシュの設定はWebサーバのプロバイダに依存します。もしWebサーバがレンタルサーバであれば、/etc/httpdディレクトリ以下にあるファイルを編集したりhttpdデーモンを再起動したりする権限は与えられていないと思われます。したがってこの場合には.htaccessを編集してキャッシュの設定をします。たとえば以下のように.htaccessに追記します。</p>
 
-<pre><code>&lt;Files ~ ".(png|jpe?g)"&gt;
+<pre><code><b>&lt;Files ~ ".(png|jpe?g)"&gt;
     Header set Cache-Control "public, max-age=604800"
-&lt;/Files&gt;
-</code></pre>
+&lt;/Files&gt;</b></code></pre>
 
 <p>VPSやクラウドを契約してWebサーバを運用している場合は自由に/etcディレクトリ以下のファイルを編集できるので、NginxやApacheの設定ファイルを適宜変更してください。</p>
 
 <h2 id="gzip">gzip圧縮</h2>
 <p>転送速度向上を目的にテキストファイルをサーバ側で圧縮できます。サーバ側で<code>mod_deflate</code>モジュールが有効になっている必要があります。.htaccessに以下を追記します。</p>
 
-<pre><code>&lt;IfModule mod_deflate.c&gt;
+<pre><code><b>&lt;IfModule mod_deflate.c&gt;
     SetOutputFilter DEFLATE
 
     BrowserMatch ^Mozilla/4\.0[678] no-gzip
@@ -252,7 +251,7 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
     AddOutputFilterByType DEFLATE application/atom_xml
     AddOutputFilterByType DEFLATE application/x-javascript
     AddOutputFilterByType DEFLATE application/x-httpd-php
-&lt;/IfModule&gt;</code></pre>
+&lt;/IfModule&gt;</b></code></pre>
 
 <h2 id="compression">画像圧縮</h2>
 <p><b>This topic was suggested by Andrea Morrys. Thank you.</b></p>
@@ -267,7 +266,7 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</code></pre>
 
 <p>他にも、graphics/optipngやgraphics/jpegoptimなど<code>pkgsrc(7)</code>で提供されているパッケージをインストールすることで、コマンドラインから画像を圧縮できます。<code>optipng(1)</code>で上の画像を圧縮した結果、15%の圧縮ができました。</p>
 
-<pre><code>$ optipng html_001.png
+<pre><code><b class="user">optipng html_001.png</b>
 ** Processing: html_001.png
 1350x646 pixels, 4x8 bits/pixel, RGB+alpha
 Reducing image to 3x8 bits/pixel, RGB
@@ -291,14 +290,14 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
 
 <p>長い引用は<code>blockquote</code>タグを使います。コードのフォーマットは以下の通りです（読みやすさを考慮し整形）。</p>
 
-<pre><code>&lt;figure&gt;
+<pre><code><b>&lt;figure&gt;
   &lt;blockquote&gt;
     &lt;p&gt;引用文&lt;/p&gt;
   &lt;/blockquote&gt;
   &lt;footer&gt;
     &amp;mdash; &lt;cite&gt;著者名&lt;/cite&gt;, &lt;cite&gt;本のタイトル&lt;/cite&gt;
   &lt;/footer&gt;
-&lt;/figure&gt;</code></pre>
+&lt;/figure&gt;</b></code></pre>
 
 <p>これは以下のように描画されます。</p>
 
@@ -310,15 +309,15 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
 <h3>HTML5コーディングのための$HOME/.vimrc</h3>
 <p><b>1. </b>「&lt;/」と入力した時点で、対となるタグを自動で閉じるようにします。そのためには$HOME/.vimrcに以下を追記します。</p>
 
-<pre><code>augroup CloseTag
+<pre><code><b>augroup CloseTag
     autocmd!
     autocmd Filetype xml inoremap &lt;buffer&gt; &lt;/ &lt;/&lt;C-x&gt;&lt;C-o&gt;
     autocmd Filetype html inoremap &lt;buffer&gt; &lt;/ &lt;/&lt;C-x&gt;&lt;C-o&gt;
-augroup END</code></pre>
+augroup END</b></code></pre>
 
 <p><b>2. </b>ファイルへの変更を保存した時点でtextlintを自動的に実行するよう、syntasticプラグインを設定します。</p>
 
-<pre><code>let g:syntastic_html_checkers = ['textlint']</code></pre>
+<pre><code><b>let g:syntastic_html_checkers = ['textlint']</b></code></pre>
 
 <h3 id="nuhtml">NetBSDでNu HTML Checkerをビルドする</h3>
 <p><code>pkgsrc(7)</code>ではNu HTML Checkerのパッケージが提供されていません。NetBSDでNu HTML Checkerを使うにはGitリポジトリからソースコードをcloneしてきてビルドします。ビルドには以下のパッケージが必要です。</p>
@@ -328,8 +327,8 @@ augroup END</code></pre>
 
 <p><a href="https://github.com/validator/validator">https://github.com/validator/validator</a>をcloneします。</p>
 
-<pre><code>$ git clone https://github.com/validator/validator.git
-$ cd validator</code></pre>
+<pre><code><b class="user">git clone https://github.com/validator/validator.git</b>
+<b class="user">cd validator</b></code></pre>
 
 <p>build/build.pyに以下のような変更を加えます。<code>pkgsrc(7)</code>ではPythonインタプリタがバージョン番号付きで提供されており、Javaのコマンド群にはopenjdk8-という接頭辞が付きます。また、ビルド中に<code>Exception in thread "main" java.lang.OutOfMemoryError: Java heap space</code>というエラーが出てビルドが失敗するケースもあるので、メモリを最大4GBまで使えるように変更しています。この数値はビルド環境に応じて変更してください。</p>
 
@@ -370,8 +369,8 @@ index 4cfc5d0b..8cb3d4cb 100755
 
 <p>ビルドスクリプトを実行します。実行可能なjarファイルはbuild/dist/vnu.jarとして生成されます。</p>
 
-<pre><code>$ python2.7 build/build.py build
-$ python2.7 build/build.py jar</code></pre>
+<pre><code><b class="user">python2.7 build/build.py build</b>
+<b class="user">python2.7 build/build.py jar</b></code></pre>
 
 <hr>
 <footer>
