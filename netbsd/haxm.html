@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <style>
-@media print, screen and (min-width:640px){code{line-height:1.4;} b.root:before{content: "# ";} b.user:before{content: "$ ";} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
-@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:90%; line-height:1.4;}  b.root:before{content: "# ";} b.user:before{content: "$ ";} p{text-indent:1em;}}
+@media print, screen and (min-width:640px){code{line-height:1.4;} b.root:before{content: "# ";} b.user:before{content: "$ ";} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}img{max-width:100%;}}
+@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:90%; line-height:1.4;}  b.root:before{content: "# ";} b.user:before{content: "$ ";} p{text-indent:1em;}img{max-width:100%;}}
 </style>
 <title>e-yuuki.org</title>
 </head>
@@ -24,6 +24,8 @@
 <li><a href="#disk">仮想ディスクを作成する</a></li>
 <li><a href="#installtodisk">インストールする</a></li>
 <li><a href="#boot">起動する</a></li></ol></li>
+<li><a href="#gallery">OS Gallery</a>
+<ol><li><a href="#debian">Debian GNU/Linux</a></li></ol></li>
 <li><a href="#qanda">トラブルシューティング</a><ol>
 <li><a href="#qa001">Failed to open the hax moduleというエラーが出る</a></li></ol></li>
 <li><a href="#references">参考文献</a></li>
@@ -131,6 +133,24 @@ Connection closed by foreign host.</code></pre>
 -accel hax</b></code></pre>
 
 <img src="./images/haxm_001.png" alt="dmesg on NetBSD on QEMU with HAXM">
+
+<h2 id="gallery">OS Gallery</h2>
+
+<h3 id="debian">Debian GNU/Linux</h3>
+
+<p>Debian GNU/Linuxを使うには、QEMUに<code>no-acpi</code>オプションを渡してください。インストールISOからブートするときにこのオプションを渡さないと、黒い画面のまま動かなくなります。</p>
+
+<pre><code><b class="root">qemu-system-x86_64 \
+-m 4096M \
+-smp cpus=2 \
+-drive file=Debian.qcow2,if=virtio,format=qcow2 \
+-device virtio-net,netdev=n0 \
+-netdev user,id=n0 \
+-no-acpi \
+-monitor telnet::4444,server,nowait \
+-accel hax</b></code></pre>
+
+<img src="./images/haxm_002.png" alt="Debian on QEMU with HAXM">
 
 <h2 id="qanda">トラブルシューティング</h2>
 <h3 id="qa001">Failed to open the hax moduleというエラーが出る</h3>
