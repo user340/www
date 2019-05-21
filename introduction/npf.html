@@ -25,48 +25,59 @@
 <h2 id="conf">設定ファイル /etc/npf.conf</h2>
 <p><code>npf(7)</code>の設定ファイルは<code>/etc/npf.conf</code>です。このファイルは標準では存在しません。<code>npf(7)</code>を使いたいときに新規作成します。</p>
 
-<p>このファイルの中身は以下のようになります。インターネットで検索しても設定例が少ないのですが、『<a href="http://blog.onodera.asia/2018/07/netbsdamd64-8.html"> NetBSD 8.0のnpf(7)の設定例</a>』や『<a href="https://rmind.github.io/npf/">NPF documentation</a>』を参照するといいでしょう。</p>
+<p>このファイルの中身は以下のようになります。インターネットで検索しても設定例が少ないのですが、『<a href="http://blog.onodera.asia/2018/07/netbsdamd64-8.html"> NetBSD 8.0のnpf(7)の設定例</a>』や『<a href="https://rmind.github.io/npf/">NPF documentation</a>』を参照するといいでしょう。オンラインマニュアル<code>npf.conf(8)</code>も参考にしてください。</p>
 
 <pre><code><b># It refered http://blog.onodera.asia/2018/07/netbsdamd64-8.html
 # Thank you!
-$pub_if = ifaddrs(wm0)
-$services_tcp = { ssh }
+$pub_if = { inet4(vioif0) }
+$pub_if6 = { inet6(vioif0) }
+$services_tcp = { 1126 }
+
+procedure "log" {
+    # npfd(8)でロギングする。
+    log: npflog0
+}
+
+# IPv4
+group "public" on $pub_if {
+    # 出ていく通信は通す。
+    pass stateful out final all
+    # #services_tcpで定義されたサービスやポートへのアクセスを通し、ログに残す。
+    pass stateful in final proto tcp to $pub_if port $services_tcp apply "log"
+}
+
+# IPv6
+group "public" on $pub_if6 {
+    # 出ていく通信は通す。
+    pass stateful out final all
+    # #services_tcpで定義されたサービスやポートへのアクセスを通し、ログに残す。
+    pass stateful in final proto tcp to $pub_if port $services_tcp apply "log"
+}
 
 group default {
-        # Block rules
-        # すべて遮断する
-        block in on wm0 all
+    # lo0へのアクセスはすべて通す。
+    pass final on lo0 all
 
-        # Pass rules
-        # 通信を許可するルールを書く
-        pass final on lo0 all # ループバックアドレスへの通信は通す
-        pass stateful out final all # 出ていく通信は通す
-        # wm0に割り振られたIPアドレスへの通信において
-        # $services_tcpで定義されたポート番号へのTCPは通す
-        pass stateful in final proto tcp to $pub_if port $services_tcp
+    # blacklistd を使う。
+    ruleset "blacklistd"
+
+    # すべて遮断する。
+    block all
 }</b></code></pre>
 
 <h2 id="daemon">npf(7)起動と設定の確認</h2>
-<p>/etc/rc.confに<code>npf(7)</code>の設定を追加します。</p>
+<p>/etc/rc.confに<code>npf(7)</code>と<code>npfd(8)</code>の設定を追加します。</p>
 
-<pre><code><b>npf=YES</b></code></pre>
+<pre><code><b class="root">echo npf=YES >> /etc/rc.conf</b>
+<b class="root">echo npfd=YES >> /etc/rc.conf</b></code></pre>
 
 <p>デーモンを起動します。</p>
 
 <pre><code><b class="root">/etc/rc.d/npf reload</b>
+<b class="root">service npfd start</b>
 <b class="root">service npf start</b></code></pre>
 
-<p><code>npf(7)</code>のルールは<code>npfctl(8)</code>から確認できます。</p>
-
-<pre><code><b class="root">npfctl show</b>
-# filtering:    active
-# config:       loaded
-
-group # id="1"
-        block in on wm0 all # id="2"
-        pass final on lo0 all # id="3"
-        pass stateful out final all # id="4"
-        pass stateful in final proto tcp flags S/FSRA to &lt;.ifnet-wm0&gt; port 22 # id="5"</code></pre>
+<p><code>npf(7)</code>のルールは<code>npfctl(8)</code>から確認できます。<code>npfd(8)</code>のログは標準では<code>/var/log/npflog0.pcap</code>です。中身はバイナリです。<code>tcpdump -enr /var/log/npflog0.pcap</code>と実行するとログを確認できます。</p>
 
 <p><code>/etc/npf.conf</code>でsshの記述を消して<code>npfctl reload</code>する、<code>service httpd onestart</code>してHTTPサーバを立ち上げる、……など<code>npf(7)</code>側で通信を許可しないと外部からアクセスできないことを確認してください。</p>
 
