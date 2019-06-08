@@ -1,3 +1,4 @@
+AddDefaultCharset UTF-8
 <IfModule mod_rewrite.c>
     RewriteEngine on
     RewriteCond %{HTTPS} off
