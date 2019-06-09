@@ -3,13 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<style>
-@media print, screen and (min-width:640px){ code{line-height:1.4;} b.root:before{content: "# ";} b.user:before{content: "$ ";} .inner{margin: auto auto; line-height:1.75; letter-spacing:0.05em;width:38em;text-align: justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} p{text-indent:1em;}}
-@media only screen and (max-width:640px){.inner{font-size:80%; margin:auto auto; line-height:1.75; letter-spacing:0.05em; width:25em; text-align:justify; text-justify: inter-character; color: #333333;} pre{padding-top:1em; padding-left:2em; padding-right:2em; padding-bottom:1em; line-height:0; border:solid 1px; border-radius:1em; white-space:pre-wrap;} code{font-size:70%; line-height:1.4;} p{text-indent:1em;}}
-</style>
+<link rel="stylesheet" type="text/css" href="/css/my.css">
 <title>e-yuuki.org</title>
 </head>
-<body><div class="inner">
+<body><div class="tiny">
 <h1>ファイアウォール&mdash;&mdash;npf</h1>
 <hr>
 <p>NetBSDには<code>pf(4)</code>, <code>ipf(4)</code>, <code>bpf(4)</code>, <code>npf(7)</code>……と多数のファイアウォールが提供されています。公式には<code>npf(7)</code>が標準のファイアウォールです。NetBSDの<code>pf(4)</code>はメンテナがおらずアップストリームの追跡ができていないため、NetBSDのベースシステムから削除されるようです（『<a href="https://mail-index.netbsd.org/tech-kern/2019/03/29/msg024883.html">Removing PF</a>』）。アップストリームを追いかけられないということは、アップストリームで修正されたバグや脆弱性がそのまま残っていることを意味しています。セキュリティを考えれば、メンテナンスができないから打ち切るというのは正しい対応のように思えます。</p>
