@@ -209,7 +209,7 @@ sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</b></code></
 
 <p><a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>によってHTML5とCSSの分離を提案された場合はもちろんそれに従います。</p>
 
-<div class="column">
+<div class="colum">
 <div class="title">速さか楽さか？</div>
 <div class="text"><p>上記の運用方法はとても大変です。sedで一括置換が可能なのは、HTMLに直接書いたCSSがすべて同じだという暗黙の前提があります。もしなんらかの拍子に空白や改行を付け加えてしまったり、軽い手直しのつもりでCSSになにか変更を加えると、もうそれだけで記述の整合性が崩れてしまいます。</p>
 <p>実はこのページも以前はstyleタグのなかに全CSSを書いていたのですが、コンテンツが増えれば増えるほどCSSの変更に追従する運用がしづらくなってしまい結局linkタグを使うことになりました。こちらのほうが圧倒的に楽です。PageSpeed Insightsではミリ秒単位で遅くなったらしいのですが、いまどきどこでも高速回線にアクセスできるなら誤差でしかないでしょう。</p>
