@@ -14,38 +14,38 @@
 
 <p>NetBSD自体がマイナーなOSであり、その開発者になるにはどうしたらいいかという文書は日本語で書かれている印象がないのでここに残しておきます。また<code>pkgsrc(7)</code>のCVS repositoryに直接commitするにも開発者申請が必要ですが、ここではその話はしません。</p>
 
-<h2>1. NetBSDを使う</h2>
+<h2>NetBSDを使う</h2>
 <p>まずはNetBSDを使わないと話が始まりません。用途・動機はなんでもいいと思います。<code>pkgsrc(7)</code>であればGNU/Linux distributions・FreeBSD・OpenBSD上で利用できることから、OSをインストールして使うより敷居が高くはないと思われます。</p>
 
-<h3>1.1. 僕の場合</h3>
+<h3>僕の場合</h3>
 <p>大学3年生冬の研究室配属ののち、研修で触ったのがNetBSDでした。卒業論文のために書いたプログラムはNetBSDに完全に依存していて、修士論文もまた同様でした。これは自発的に（無論、研究テーマを決めたのは自分自身）NetBSDを使い始めたというわけではなく、なりゆきでそうなったと言うのが正しいと思います。</p>
 
-<h2>2. できそうなことを見つける</h2>
+<h2>できそうなことを見つける</h2>
 <p>NetBSD/<code>pkgsrc(7)</code>を使っていく中で、少なからず不便に思った点や困った点が見つかると思います。その問題を自分で解決したいと思ったときにはじめてThe NetBSD Projectへ参加する動機が見つかります。</p>
 
-<h3>2.1. 僕の場合</h3>
+<h3>僕の場合</h3>
 <p>修士論文で書いたプログラムがNetBSDのソースツリーの一部に依存しており、事実そこだけforkしている形になっていました。しかしforkingの弊害、つまりアップストリームの変更に追従していくのが大変という問題に気づきました。</p>
 
-<h3>2.2. Project proposals for NetBSD</h3>
+<h3>Project proposals for NetBSD</h3>
 <p>NetBSD Wikiの<a href="https://wiki.netbsd.org/projects/">Project proposals for NetBSD</a>には未解決・進行中のプロジェクトの一覧が載っています。もしあなたが問題解決好きなエンジニアであればこの中から自身のスキルと嗜好に合ったものを探してみるといいでしょう。</p>
 
-<h3>2.3. Google Summer of Code</h3>
+<h3>Google Summer of Code</h3>
 <p>NetBSDのプロジェクトの中にはGoogle Summer of Codeに応募して取り組められるものもあります。GSoCに参加したくてかつNetBSDに少しでも興味があるのであれば、良いとっかかりになるのではないでしょうか。<a href="https://wiki.netbsd.org/projects/gsoc/">https://wiki.netbsd.org/projects/gsoc/</a></p>
 
-<h2>3. できそうなことをある程度こなす</h2>
+<h2>できそうなことをある程度こなす</h2>
 <p>やりたいこと・やってみたいことが見つかったら、それを実際にやってみます。そしてその成果をなんらかの形で共有します。共有する方法はなんでもいいです。SNSでシェアしてもいいですし、FLOSS系のイベントやカンファレンスで少し時間をもらって発表してもいいです。とにかく、なんらかのやりたいことがあって、それを現実に実行していると他の開発者に伝えることが重要です。</p>
 
-<h3>3.1. 僕の場合</h3>
+<h3>僕の場合</h3>
 <p>成果をAsiaBSDConや日本NetBSDユーザーズグループのBoFで発表しました。成果物があまりにも特定分野に偏りすぎているがために特定のユーザコミュニティ内で成果発表をしないとあまり意味がない場合もあります。GNU/LinuxやLinuxカーネルならまだしも、*BSDはまさにこの典型です。</p>
 
-<h2>4. スポンサーを探す</h2>
+<h2>スポンサーを探す</h2>
 <p>最難関の手順です。まずこの時点で誰がNetBSDの開発者なのかを把握していないといけません。そのためにはSNSだけでなく対面して会える現実世界でのカンファレンスやイベントに出向く必要もあるでしょう。スポンサーになってくれるかを開発者に尋ねて、OKをもらってください。</p>
 
 <p>ここから<a href="https://www.netbsd.org/foundation/policies/application-procedure.html">New NetBSD developer application procedure</a>の流れに沿って動くことになります。この時点ではまだ"Existing members decide to sponsor a potential member."の途中です。</p>
 
 <p>この時点でスポンサーにPGP公開鍵へ署名してもらうといいでしょう。</p>
 
-<h2>5. 開発者申請する</h2>
+<h2>開発者申請する</h2>
 <p>スポンサーを最低1人、できれば2人集めたら開発者申請をします。スポンサーと相談しながら<a href="https://www.netbsd.org/foundation/policies/membership-app.txt">NetBSD Foundation Membership Application Form</a>に必要事項を記入してください。以下を記入する必要があります。</p>
 
 <ul>
@@ -60,7 +60,7 @@
 
 <p>スポンサーと相談してすべて書き終えたら、NetBSDのMembership committeeにMembership Application Formをメールで送ります。テキストを本文に書いてしまうといいでしょう。</p>
 
-<h2>6. 事務手続きをする</h2>
+<h2>事務手続きをする</h2>
 <p>Membership committeeと開発者らによる審査が通ったら事務手続きをして完了です。この事務手続きはmembership agreement formに署名をしてThe NetBSD Foundationに郵送（あるいはFAX）し、PGPの公開鍵で署名された/etc/passwdのエントリとSSH公開鍵のテキストを所定のアドレスへ送る必要があります。ここで、署名するためのPGP公開鍵は既存のメンバーによって署名されたものでなければなりません。</p>
 
 <h2>完了！</h2>
