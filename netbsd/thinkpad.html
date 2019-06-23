@@ -18,6 +18,7 @@
 <li><a href="#X230i/trackpoint">トラックポイント</a></li>
 <li><a href="#X230i/touchpad">タッチパッド</a></li>
 <li><a href="#X230i/if">ネットワークインタフェース</a></li>
+<li><a href="#X230i/ext_memory">メモリ増設</a></li>
 </ol></li>
 </ol>
 
@@ -30,7 +31,7 @@
 <h2 id="X230i">X230i</h2>
 
 <h3 id="X230i/display">ディスプレイ拡張</h3>
-<p>D-Subは問題なく使える。 HDMIポートがないためMiniDisplayPortを通じておこなわなければなりませんが、下記のようなメッセージがコンソールに出力され、ディスプレイ拡張ができません。</p>
+<p>D-Subは問題なく使えます。 HDMIポートがないためHDMI接続はMiniDisplayPortを通じなければなりませんが、下記のようなメッセージがコンソールに出力され、ディスプレイ拡張ができません。</p>
 <pre><code>DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
 DRM error in intel_dp_set_link_train: DP training pattern 3 not supported
@@ -76,6 +77,30 @@ lo0: flags=8049&lt;UP,LOOPBACK,RUNNING,MULTICAST&gt; mtu 33624
 	inet 127.0.0.1 netmask 0xff000000
 	inet6 ::1 prefixlen 128
 	inet6 fe80::1%lo0 prefixlen 64 scopeid 0x3</code></pre>
+
+<h2 id="X230i/ext_memory">メモリ増設</h2>
+<p>先日メモリを8GBから16GBへ増設しました。ハードウェアの話になるのでOSはあまり関係ないと思いますが「動いている」程度の軽い報告です。</p>
+
+<p>増設可能な最大メモリサイズはCPUに依存します。僕が持っているX230iは<a href="https://ark.intel.com/content/www/jp/ja/ark/products/71465/intel-core-i3-3120m-processor-3m-cache-2-50-ghz.html">Core i3-3120M</a>でした。搭載可能なメモリは最大32GBまでです。</p>
+
+<p>買ったのはPanramの8GB2枚入り計16GBのモデルです。ツクモで7280円でした。初期不良が不安な方は1ヶ月間のパーツ交換保証（500円）をつけるといいでしょう。</p>
+
+<img src="./images/thinkpad_001.png" alt="W3N1600PS-L8G Package">
+<img src="./images/thinkpad_002.png" alt="W3N1600PS-L8G Package back side">
+
+<p>交換したところ、うまく動いています。初期不良もありませんでした。</p>
+
+<pre><code>$ cat /proc/meminfo
+        total:    used:    free:  shared: buffers: cached:
+Mem:  16356347904 4079255552 12277092352        0 828518400 2918219776
+Swap: 4294967296        0 4294967296
+MemTotal:  15972996 kB
+MemFree:   11989348 kB
+MemShared:        0 kB
+Buffers:     809100 kB
+Cached:     2849824 kB
+SwapTotal:  4194304 kB
+SwapFree:   4194304 kB</code></pre>
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
