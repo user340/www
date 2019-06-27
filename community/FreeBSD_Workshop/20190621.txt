@@ -1,0 +1,30 @@
+第54回FreeBSDワークショップ
+
+日本国内の*BSDユーザ活動を活発化させる。
+    ユーザ会合が無視できてしまうほどの大きさになってしまった。
+
+FreeBSD Project
+    SVNを捨てるわけではないが、gitを使うことで合意はとれている。
+    svn -> gitの同期が大変。
+    CVSからSubversionの移行は5年かかった。
+
+FreeBSD FoundationといってもLinux FoundationやApache Foundationとは活動内容がま
+ったく違う。
+
+
+acme.sh
+
+boostはバージョンが上がると大変なことになる。
+
+FreeBSDはbaseのgccをアップデートしないことにした。
+
+NetBSD on Hyper-V第二世代も使えるようになる（NetBSD 9）。
+
+Boot Environment
+    ルートファイルシステムをZFSにすると使える機能
+    ルートファイルシステムをcloneして、ブートする環境を選択できる。
+    管理ツール
+        - bectl（base）: C言語実装
+        - beadm（ports）: シェルスクリプト
+    ユースケース
+        - freebsd-update
