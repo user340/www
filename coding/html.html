@@ -6,26 +6,73 @@
 <link rel="stylesheet" type="text/css" href="/css/my.css">
 <title>e-yuuki.org</title>
 </head>
-<body><div class="tiny">
-<h1>私家版HTML Coding Style</h1>
+<body>
+<article class="tiny">
+<h1>私家版HTML文書執筆ガイド</h1>
 <hr>
 <p>e-yuuki.orgの文書を書くときに気をつけていることをまとめます。したがってHTML5の範疇を超える話題も含まれます。ベストプラクティスを集めたわけではありません。W3Cの勧告やValidatorの更新によって都度変更される可能性があります。</p>
-
-<ul>
+<nav>
+<ol>
 <li><a href="#version">HTML 5</a></li>
 <li><a href="#validator">Validator</a></li>
 <li><a href="#textlint">日本語校正</a></li>
 <li><a href="#codestyle">一行あたりの文字数とインデント</a></li>
-<li><a href="#css">CSS</a></li>
 <li><a href="#javascript">JavaScript</a></li>
 <li><a href="#cache">キャッシュ（cache）</a></li>
 <li><a href="#gzip">gzip圧縮</a></li>
 <li><a href="#compression">画像圧縮</a></li>
-<li><a href="#tips">Tips</a></li>
-</ul>
-
+<li><a href="#tips">Tips</a>
+<ol>
+<li><a href="#cite">引用の方法</a></li>
+<li><a href="#vimrc">HTML5コーディングのための$HOME/.vimrc</a></li>
+<li><a href="#nuhtml">NetBSDでNu HTML Checkerをビルドする</a></li>
+</ol>
+</li>
+</ol>
+</nav>
 <h2 id="version">HTML 5</h2>
-<p>W3C Recommendationに従って書きます。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第ソースコードをアップデートします。</p>
+<p>HTML5はW3C Recommendationに従って書きます。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第ソースコードをアップデートします。</p>
+
+<p>HTML5のテンプレートは以下のとおりです。ここでは読みやすさのためインデントをしていますが、<a href="#codestyle">下記で述べるように</a>実際に公開するコードはインデントを削除します。</p>
+
+<pre><code><b>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="ja"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width,initial-scale=1.0"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="@@/path/to/your/css@@"&gt;
+    &lt;title&gt;@@Webサイトのタイトルを書く@@&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- 1ページにつき1 article--&gt;
+    &lt;article class="@@class if you have@@"&gt;
+      &lt;header&gt; &lt;!-- headerにコンテンツのタイトルと概要および目次を書く--&gt;
+        &lt;h1&gt;@@ページのタイトルを書く@@&lt;/h1&gt;
+        &lt;nav&gt; &lt;!-- 目次 --&gt;
+          &lt;ol&gt; &lt;!-- ページ内リンクはid名に#をつける --&gt;
+            &lt;li&gt;&lt;a href="#section001"&gt;Section 001&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="#section002"&gt;Section 002&lt;/a&gt;&lt;/li&gt;
+          &lt;/ol&gt;
+        &lt;/nav&gt; &lt;!-- 目次の終わり --&gt;
+      &lt;header&gt;
+      &lt;section&gt; &lt;!-- 節（セクション）はsectionタグで区切る --&gt;
+        &lt;h2 id="section001"&gt;Section 001&lt;/h2&gt;
+      &lt;/section&gt;
+      &lt;section&gt;
+        &lt;h2 id="section002"&gt;Section 002&lt;/h2&gt;
+      &lt;/section&gt;
+      &lt;footer&gt;
+        &lt;!-- フッタに著作権情報・日付・タグなどの情報を書く --&gt;
+      &lt;/footer&gt;
+    &lt;/article&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</b></code></pre>
+<div class="colum">
+<div class="title">「正しい」HTML5</div>
+<div class="text"><p>W3Cの勧告どおりにHTML5をコーディングするのはとても大変です。原文が英語なので、なにか調べるのにも非英語ネイティブからすれば一苦労です。くわえてHTML5について書いている記事は無数にあるためにどれを信用していいのかわかりません。</p>
+<p>しかし一番大変なのは、HTML5の変更に追従していくことでしょう。こればかりはどうしようもないので、もとのテキストをMarkdownなどの軽量マークアップ言語で書いて、PandocのようなコンバータでHTML5に変換する運用をとるのがもっとも楽かと思われます。事実僕もHTML5らしいコーディングスタイルに完全に移行できていません。</p>
+</div></div>
 
 <h2 id="validator">Validator</h2>
 <p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。ビルド方法は<a href="#nuhtml">NetBSDでNu HTML Checkerをビルドする</a>を参照してください。Gitを使っているのであれば、<a href="https://git-scm.com/book/ja/v1/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Gitフック</a>のpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下はpre-commitスクリプトの一例です。<code>chmod +x</code>コマンドで実行権限を与え、変数の値は適宜変更してください。</p>
@@ -199,24 +246,8 @@ git diff --cached --name-only --diff-filter=AM HEAD \
 
 <p>ページサイズを抑えるために、インデントは必要ありません。HTMLのコーディングではPythonのようにインデントが義務付けられていません。複雑なリストを書くときはインデントを使って見やすくしても構いませんが、commitするときはインデントをすべて削除します。</p>
 
-<h2 id="css">CSS</h2>
-<p>レイアウトを整える目的で<code>br</code>タグやテーブルを使ってはいけません。レイアウトに関するコードはすべてCSSとして書きます。</p>
-
-<p>CSSはHTMLコードに直接書きます。別途用意して読み込むほうが効率的なほど長いCSSを書くわけではありませんし、レイアウトの美麗さが文章の質に影響するわけでもありません。この方法だとCSSを更新したときHTMLファイルひとつひとつを更新しなければならないので手間がかかります。しかしCSSコードを改行せず一行にすることで<code>find(1)</code>と<code>sed(1)</code>を組み合わせて簡単に更新ができます。置換前と置換後のテキストはバージョン管理システムから取得できます（<code>git-diff(1)</code>など）。</p>
-
-<pre><code><b class="user">find . -name '*.html' -exec \
-sed -i 's/変更前のテキスト/変更後のテキスト/' {} \;</b></code></pre>
-
-<p><a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>によってHTML5とCSSの分離を提案された場合はもちろんそれに従います。</p>
-
-<div class="colum">
-<div class="title">速さか楽さか？</div>
-<div class="text"><p>上記の運用方法はとても大変です。sedで一括置換が可能なのは、HTMLに直接書いたCSSがすべて同じだという暗黙の前提があります。もしなんらかの拍子に空白や改行を付け加えてしまったり、軽い手直しのつもりでCSSになにか変更を加えると、もうそれだけで記述の整合性が崩れてしまいます。</p>
-<p>実はこのページも以前はstyleタグのなかに全CSSを書いていたのですが、コンテンツが増えれば増えるほどCSSの変更に追従する運用がしづらくなってしまい結局linkタグを使うことになりました。こちらのほうが圧倒的に楽です。PageSpeed Insightsではミリ秒単位で遅くなったらしいのですが、いまどきどこでも高速回線にアクセスできるなら誤差でしかないでしょう。</p>
-</div></div>
-
 <h2 id="javascript">JavaScript</h2>
-<p>僕のWebページではJavaScriptは使いません。TwitterやFacebook, Instagramといったユーザインタラクションが重要視されるサービスはともかく、テキスト中心の静的な技術文書はHTML5とCSSのみで書けます。</p>
+<p>JavaScriptは使いません。TwitterやFacebook, Instagramといったユーザインタラクションが重要視されるサービスはともかく、テキスト中心の静的な技術文書はHTML5とCSSのみで書けます。</p>
 
 <p>必ずしもユーザがJavaScriptを有効にしているとは限らないという点に注意してください。セキュリティ意識が高いユーザはJavaScriptを標準で無効にする拡張機能をブラウザにインストールしていることもあります（NoScriptなど）。またCUI Webブラウザ（w3m, lynxなど）ではJavaScriptを実行できません。一方で見栄え・組版・収益化などの都合でJavaScriptがどうしても欠かせないときもあります。そういった場合にはJavaScriptがなくても最低限、文章だけは読めるようにしてください</p>
 
@@ -286,7 +317,7 @@ Output IDAT size = 98513 bytes (18122 bytes decrease)
 Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
 
 <h2 id="tips">Tips</h2>
-<h3>引用の方法</h3>
+<h3 id="cite">引用の方法</h3>
 <p>引用の方法はそれが短いものか長いものかによって変わります。どの程度から長いと判断するかは曖昧ですが、文を2〜3以上引用したいのであれば長い引用の方法をとります。</p>
 
 <p>短い引用であれば「」で囲んで文中に書き、出典元を（）の中に明記します。たとえば「出版された情報をコンピュータを使って共有しようとする読者は、 法律上は著作権に違反しているのです」（Richard Stallman,『自由か著作権か？』）</p>
@@ -309,8 +340,9 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
 &mdash; <cite>Richard Stallman</cite>, <cite>結城浩（訳）</cite>, <cite>自由か著作権か？</cite>
 </footer></figure>
 
-<h3>HTML5コーディングのための$HOME/.vimrc</h3>
-<p><b>1. </b>「&lt;/」と入力した時点で、対となるタグを自動で閉じるようにします。そのためには$HOME/.vimrcに以下を追記します。</p>
+<h3 id="vimrc">HTML5コーディングのための$HOME/.vimrc</h3>
+<h4>タグを自動的に閉じる</h4>
+<p>対となるタグを「&lt;/」と入力した時点で閉じるようにします。$HOME/.vimrcに以下を追記します。</p>
 
 <pre><code><b>augroup CloseTag
     autocmd!
@@ -318,7 +350,8 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
     autocmd Filetype html inoremap &lt;buffer&gt; &lt;/ &lt;/&lt;C-x&gt;&lt;C-o&gt;
 augroup END</b></code></pre>
 
-<p><b>2. </b>ファイルへの変更を保存した時点でtextlintを自動的に実行するよう、syntasticプラグインを設定します。</p>
+<h4>textlintを自動実行する</h4>
+<p>ファイルへの変更を保存した時点でtextlintを自動的に実行するよう、syntasticプラグインを設定します。</p>
 
 <pre><code><b>let g:syntastic_html_checkers = ['textlint']</b></code></pre>
 
@@ -374,11 +407,11 @@ index 4cfc5d0b..8cb3d4cb 100755
 
 <pre><code><b class="user">python2.7 build/build.py build</b>
 <b class="user">python2.7 build/build.py jar</b></code></pre>
-
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
 <p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
 </footer>
-</div></body>
+</article>
+</body>
 </html>
