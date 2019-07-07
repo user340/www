@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>ZFS on NetBSD</h1>
+<hr>
+<p>ZFSは簡単に言えば高機能なファイルシステムです。ZFSはストレージのsnapshot／rollbackを簡単に実行できます。重要なデータのバックアップはもちろん、仮想マシンのディスクイメージに対してZFSの機能を活用することで、仮想マシン上でなにかしらのデータが壊れてもすぐに復元できます。</p>
+
+<p>NetBSDではZFSがBase Systemにインストールされています。ここではUSB経由で外付けされたひとつのSSDをひとつのpoolとしてZFSを利用する手順を述べます。なお、NetBSD 8.1では古いZFSが使われており、新しいバージョンのZFSを使うにはNetBSD 8.99.37以降を使う必要があります[<a href="#clarestudio">clarestudio.org</a>][<a href="#wiki">wiki.netbsd.org</a>]。</p>
+
+<div align="center" style="padding: 1em;">
+<table>
+<tr><th>パーツ名</th><th>メーカ</th><th>型番</th></tr>
+<tr><td>HDD/SSDケース</td><td>AOTECH</td><td>AOK-25CASE-U3C</td></tr>
+<tr><td>SSD</td><td>crucial</td><td>CT250MX500SSD1/JP</td></tr>
+</table>
+</div>
+<img src="./images/zfs_001.jpg" alt="Disk for ZFS">
+<nav>
+  <ol>
+    <li><a href="#kernel">NetBSDバージョンの確認</a></li>
+    <li><a href="#module">カーネルモジュールをロードする</a></li>
+    <li><a href="#pool">ZFS poolを作成する</a></li>
+    <li><a href="#filesystem">ZFSファイルシステムを作成する</a></li>
+    <li><a href="#mount">マウント・アンマウント</a></li>
+    <li><a href="#references">参考文献</a></li>
+  </ol>
+</nav>
+<h2 id="kernel">NetBSDバージョンの確認</h2>
+<h2 id="module">カーネルモジュールをロードする</h2>
+<h2 id="pool">ZFS poolを作成する</h2>
+<h2 id="filesystem">ZFSファイルシステムを作成する</h2>
+<h2 id="mount">マウント・アンマウント</h2>
+<h2 id="references">参考文献</h2>
+<dl>
+<dt id="clarestudio"><a href="https://www.clarestudio.org/netbsd/zfs.html"><b>ZFS</b></a></dt>
+<dd>https://www.clarestudio.org/netbsd/zfs.html</dd>
+<dd>2019/07/07 閲覧</dd>
+<dt id="wiki"><a href="https://wiki.netbsd.org/projects/project/zfs/"><b>Finish ZFS</b></a></dt>
+<dd>https://wiki.netbsd.org/projects/project/zfs/</dd>
+<dd>2019/07/07 閲覧</dd>
+</dl>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
