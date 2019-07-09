@@ -26,19 +26,92 @@
 </table>
 </div>
 <img src="./images/zfs_001.jpg" alt="Disk for ZFS">
+<p>接続したときの<code>dmesg(8)</code>出力は次のとおりです。</p>
+
+<pre><code>[    49.848242] umass0 at uhub0 port 2 configuration 1 interface 0
+[    49.848242] umass0: AOTECH (0x152d) AOTECH (0x578), rev 3.00/7.01, addr 1
+[    49.848242] umass0: using SCSI over Bulk-Only
+[    49.848242] scsibus0 at umass0: 2 targets, 1 lun per target
+[    49.858249] sd0 at scsibus0 target 0 lun 0: &lt;AOTECH, , 0701&gt; disk fixed
+[    49.868255] sd0: fabricating a geometry
+[    49.868255] sd0: 232 GB, 238475 cyl, 64 head, 32 sec, 512 bytes/sect x 488397168 sectors
+[    49.888268] sd0: fabricating a geometry</code></pre>
+
 <nav><ol>
 <li><a href="#kernel">NetBSDバージョンの確認</a></li>
 <li><a href="#module">カーネルモジュールをロードする</a></li>
 <li><a href="#pool">ZFS poolを作成する</a></li>
 <li><a href="#filesystem">ZFSファイルシステムを作成する</a></li>
 <li><a href="#mount">マウント・アンマウント</a></li>
+<li><a href="#version">zpool upgradeとzfs upgradeの出力</a></li>
 <li><a href="#references">参考文献</a></li>
 </ol></nav>
 <h2 id="kernel">NetBSDバージョンの確認</h2>
+<p>前述のとおりNetBSD 8.99.37以降から新しいバージョンのZFSを使えます。まずは<code>uname -r</code>を実行しバージョンを確認してください。8.99.37以前であればNetBSDのビルドと更新が必要です。2019年7月9日時点でcurrent版を使いたくないのであれば、古いZFSで我慢するか8.2や9.0のリリースを待つことになります。</p>
+
+<p>本稿ではバージョン8.99.50で動作確認しました。</p>
+
 <h2 id="module">カーネルモジュールをロードする</h2>
+<p>ZFSを使うには、事前にzfsモジュールをロードする必要があります。<code>modload(8)</code>にzfs.kmodを渡してください。</p>
+
+<pre><code><b class="root">modload /stand/amd64/8.99.50/modules/zfs/zfs.kmod</b></code></pre>
+
+<p>このモジュールをロードすると、<code>dmesg(8)</code>から<code>WARNING: ZFS on NetBSD is under development</code>といった文字列を確認できます。また<code>modstat(8)</code>を実行してロードされたカーネルモジュールを確認することもできます。</p>
+
+<pre><code>    NAME                    CLASS    SOURCE   FLAG  REFS    SIZE REQUIRES
+    ...
+    zfs                     vfs      filesys  -        0       - solaris
+    ...</code></pre>
+
 <h2 id="pool">ZFS poolを作成する</h2>
+<p>モジュールをロードできたら、ディスクを接続していよいよZFSを使います。ここでは接続したディスク全体（/dev/sd0）をひとつのZFSストレージプールと見立てます。プールを作るには<code>zpool(8)</code>をroot権限で実行します。zpoolという名前のプールを作成します。</p>
+
+<pre><code><b class="root">zpool create zpool /dev/sd0</b></code></pre>
+
+<p>このコマンドを実行すると、ルートディレクトリ（/）にzpoolディレクトリが自動的に作られ、プールがマウントされます。<code>mount(8)</code>からマウントされているファイルシステムの一覧を見てみましょう。</p>
+
+<pre><code><b class="root">mount</b>
+/dev/wd0a on / type ffs (local)
+kernfs on /kern type kernfs (local)
+ptyfs on /dev/pts type ptyfs (local)
+procfs on /proc type procfs (local)
+tmpfs on /var/shm type tmpfs (local)
+zpool on /zpool type zfs (local)</code></pre>
+
 <h2 id="filesystem">ZFSファイルシステムを作成する</h2>
+<p>次に<code>zfs(8)</code>でこのプールにファイルシステムを作成します。たとえばshareというファイルシステムを作ります。</p>
+
+<pre><code><b class="root">zfs create zpool/share</b></code></pre>
+
+<p><code>zfs list</code>からシステムのZFSファイルシステムの一覧を取得できます。</p>
+
+<pre><code><b class="root">zfs list</b>
+NAME          USED  AVAIL  REFER  MOUNTPOINT
+zpool         103K   228G    22K  /zpool
+zpool/share    21K   228G    21K  /zpool/share</code></pre>
+
+<p>作成したファイルシステムは自動的にマウントされるため、作成後はすぐにマウントポイント/zpool/shareを参照できます。</p>
+
+<p>ここではshareという名前でファイルシステムを作りましたが、用途に応じて任意の名前のファイルシステムを作成してください。ZFSではファイルシステム単位でスナップショット／ロールバックができます。そのような操作の対象となることを想定した粒度でファイルシステムを作るといいでしょう。</p>
+
 <h2 id="mount">マウント・アンマウント</h2>
+<p><code>zfs umount -a</code>をすると、システムでマウントされているZFSファイルシステムがすべてアンマウントされます。一方<code>zfs mount -a</code>はシステムから見えているプールのファイルシステムをすべてマウントします。</p>
+
+<h2 id="version">zpool upgradeとzfs upgradeの出力</h2>
+<p>参考までに<code>zpool upgrade</code>と<code>zfs upgrade</code>の出力結果を載せておきます。前述のとおり、NetBSDのバージョンは8.99.50です。</p>
+
+<pre><code><b class="root">zpool upgrade</b>
+This system supports ZFS pool feature flags.
+
+All pools are formatted using feature flags.
+
+Every feature flags pool has all supported features enabled.</code></pre>
+
+<pre><code><b class="root">zfs upgrade</b>
+This system is currently running ZFS filesystem version 5.
+
+All filesystems are formatted with the current version.</code></pre>
+
 <h2 id="references">参考文献</h2>
 <dl>
 <dt id="clarestudio"><a href="https://www.clarestudio.org/netbsd/zfs.html"><b>ZFS</b></a></dt>
