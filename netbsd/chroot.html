@@ -37,6 +37,10 @@ $ tar zxf etc.tgz -C $HOME/containers/netbsd_minimal</code></pre>
 <pre><code>$ cd $HOME/containers/netbsd_minimal/dev
 # sh MAKEDEV all</code></pre>
 
+<p>名前解決するためにホスト側の/etc/resolve.confをコンテナへコピーします。</p>
+
+<pre><code>$ cp /etc/resolve.conf $HOME/containers/netbsd_minimal/etc</code></pre>
+
 <p>これで最小のNetBSDコンテナを構築できました。次のように<code>chroot(8)</code>コマンドを実行して、コンテナの中に入ります。コンテナから抜けるには<code>exit</code>します。</p>
 
 <pre><code>$ cd $HOME/containers
