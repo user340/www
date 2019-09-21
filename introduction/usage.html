@@ -13,6 +13,8 @@
 
 <p>一方で実際にCUI上で作業する必要があるにしても、操作の手順書が用意されているか、実行すべきコマンドが限られている・明記されている場合がほとんどです。たとえば「このディレクトリ（directory）に移動してこのコマンドを実行せよ」、「このファイル（file）をこのように編集してこのコマンドを実行せよ」といった具合です。このような指示が与えられたのであれば、特定のディレクトリに移動する方法さえわかってさえいればいいのです。したがって、このページでは必要最低限のコマンドのみを紹介するにとどめます。</p>
 
+<p>なお、本ページのコマンド実行例はすべてNetBSD-current/amd64上で確認したものであり、他バージョンや別アーキテクチャ・他プラットフォーム上でまったく同じ動作ができることを保証するものではありません。しかし本ページ上で述べている内容は多少の差はあれどFreeBSDやGNU/Linuxディストリビューションでも共通しています。</p>
+
 <ol>
 <li><a href="#path">絶対パスと相対パス</a></li>
 <li><a href="#pwd">現在位置を確認する</a></li>
@@ -21,7 +23,6 @@
 <li><a href="#mkdir">ディレクトリを作る</a></li>
 <li><a href="#rmdir">ディレクトリを消す</a></li>
 <li><a href="#less">ファイルの中身を見る</a></li>
-<li><a href="#vi">ファイルを編集する</a></li>
 <li><a href="#mv">ファイルを移動する・名前を変える</a></li>
 <li><a href="#rm">ファイルを消す</a></li>
 </ol>
@@ -100,11 +101,83 @@ myprog</code></pre>
 <p>最初のうちは<code>cd(1)</code>したあとに<code>pwd(1)</code>や<code>ls(1)</code>を実行し、自分がいまどこのディレクトリにいてそのディレクトリにはどのようなファイルがあるのかを常に把握しておく癖をつけておくと混乱しにくくなります。</p>
 
 <h2 id="mkdir">ディレクトリを作る</h2>
+<p>ディレクトリの作成には<code>mkdir(1)</code>に作りたいディレクトリのパスを渡します。たとえば<b>mydir</b>という名前のディレクトリをカレントディレクトリに作りたいときは次のように実行します。</p>
+
+<pre><code><b class="user">mkdir mydir</b></code></pre>
+
+<p>当然<b>/home/uki/mydir</b>や<b>./mydir</b>といったように絶対パスや相対パス指定でも構いません。</p>
+
 <h2 id="rmdir">ディレクトリを消す</h2>
+<p>ディレクトリを削除するには<code>rmdir(1)</code>に削除対象のディレクトリへのパスを渡します。上で作ったばかりのディレクトリを消すには次のように実行します。</p>
+
+<pre><code><b class="user">rmdir mydir</b></code></pre>
+
+<p>なお、削除対象のディレクトリにディレクトリやファイルが存在すると<code>rmdir(1)</code>の実行は以下のように失敗します。</p>
+
+<pre><code><b class="user">rmdir not_empty_dir</b>
+rmdir: not_empty_dir: Directory not empty</code></pre>
+
+<p>中身ごとディレクトリを削除したいときは後述する<code>rm(1)</code>コマンドの<code>-f</code>と<code>-r</code>オプションを使うといいでしょう。しかし、削除されたディレクトリやファイルは基本的には復元不可能です。注意して実行してください。</p>
+
 <h2 id="less">ファイルの中身を見る</h2>
-<h2 id="vi">ファイルを編集する</h2>
+<p><code>ls(1)</code>でファイルの一覧を取得しても、それらのファイルになにが書かれているのかを調べたいときもあります。<code>less(1)</code>のようなページャソフトウェアを使うことで、画面上にファイルの中身を映せます。<code>less(1)</code>に中身を読みたいファイル名を渡し実行してください。</p>
+
+<pre><code><b class="user">less test.txt</b></code></pre>
+
+<p>画面上に<b>test.txt</b>の内容が表示されます。<code>less(1)</code>の操作方法はおおよそ以下の表のとおりです。前方一致・後方一致の検索もできますが、ここでは説明を省きます。他の機能についてはオンラインマニュアルなどを参照してください。</p>
+
+<table>
+  <thead>
+    <tr>
+      <td>操作</td>
+      <td>入力</td>
+    </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>一行下へスクロールする</td>
+    <td>j</td>
+  </tr>
+  <tr>
+    <td>一行上へスクロールする</td>
+    <td>k</td>
+  </tr>
+  <tr>
+    <td>一ページ下へスクロールする</td>
+    <td>SPACE</td>
+  </tr>
+  <tr>
+    <td>一ページ上へスクロールする</td>
+    <td>b</td>
+  </tr>
+  <tr>
+    <td><code>less(1)</code>を終了する</td>
+    <td>q</td>
+  </tr>
+  </tbody>
+</table>
+
 <h2 id="mv">ファイルを移動する・名前を変える</h2>
+<p>ファイルやディレクトリのパスを変えたり名前を変更するには<code>mv(1)</code>を使います。このコマンドの書式は次のようになっています。</p>
+
+<pre><code><b class="user">mv [移動元のパス] [移動先のパス]</b></code></pre>
+
+<p>ここで、ファイル<b>/home/uki/test.txt</b>を<b>/home/uki/src/test.txt</b>へ移動したいとしましょう。<b>/home/uki/src</b>ディレクトリは既に存在するものとします。このとき<code>mv(1)</code>を次のように実行します。</p>
+
+<pre><code><b class="user">mv /home/uki/test.txt /home/uki/src/test.txt</b></code></pre>
+
+<p><code>mv(1)</code>にはファイルやディレクトリの名前変更もできます。いま移動した<b>/home/uki/src/test.txt</b>を<b>/home/uki/src/renamed.txt</b>にしたいとき、次のように<code>mv(1)</code>を実行します。</p>
+
+<pre><code><b class="user">mv /home/uki/src/test.txt /home/uki/src/renamed.txt</b></code></pre>
+
+<p>絶対パスではなく相対パスでの指定も可能です。</p>
+
 <h2 id="rm">ファイルを消す</h2>
+<p>ファイルやディレクトリの削除には<code>rm(1)</code>を使います。削除対象のファイルやディレクトリのパスを指定します。たとえば<b>test.txt</b>を削除したいときは以下のように実行します。</p>
+
+<pre><code><b class="user">rm test.txt</b></code></pre>
+
+<p>このコマンド実行により<b>test.txt</b>は完全に削除され、復元できません。このコマンドを使うときは細心の注意を払ってください。</p>
 <hr>
 <footer>
 <div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
