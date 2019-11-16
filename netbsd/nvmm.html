@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>QEMUとNVMMによるハイパーバイザの利用</h1>
+<hr>
+<h2>目次</h2>
+<ol>
+<li><a href="#nvmm">NVMMとは</a>
+<li><a href="#installation">NVMMのインストール</a>
+<ol>
+<li><a href="#netbsd_installation">NetBSDカーネルとモジュールのビルド</a></li>
+<li><a href="#pkgsrc_installation">qemu-nvmmパッケージのインストール</a></li>
+</ol>
+</li>
+<li><a href="#references">参考文献</a></li>
+</ol>
+<h2 id="nvmm">NVMMとは</h2>
+<p>NVMM（NetBSD Virtual Machine Monitor）はNetBSD x86_64アーキテクチャ上でハイパーバイザを提供するNetBSDカーネルの機能です。Xenと同じくNetBSDのソースコードに取り込まれているハイパーバイザですが、Xenと違いゲスト仮想マシン用のカーネル（Domain-U）を別途用意したり、ホスト側のカーネルがマルチコアに対応していないわけではありません。LinuxカーネルのKVMや<a href="./haxm.html">NetBSDのHAXM</a>と同じく、ハードウェア仮想化にQEMUを用いて、QEMUのプラグインとしてハードウェアアクセラレーション（hardware-acceleration）を使うことになります。</p>
+
+<p>2019年11月16日時点で最新のNetBSD 8.1では、NVMMはまだ提供されていません。したがっていまNVMMを試してみたいのであればcurrentブランチかnetbsd-9ブランチをチェックアウトするしかありません。本稿の内容は2019年10月19日にビルドしたNetBSD 9.99.17を使って確認しています。</p>
+
+<h2 id="installation">NVMMのインストール</h2>
+
+<h3 id="netbsd_installation">NetBSDカーネルとモジュールのビルド</h3>
+
+<p>標準ではNVMMの疑似デバイス（pseudo-device）は有効になっていません。GENERICカーネルを使うのであれば、<code>sys/arch/amd64/conf/GENERIC</code>を次のように編集してください。</p>
+
+<pre><code>--- a/sys/arch/amd64/conf/GENERIC       Sat Oct 19 14:42:30 2019 +0000
++++ b/sys/arch/amd64/conf/GENERIC       Sat Nov 16 12:15:37 2019 +0900
+@@ -1153,7 +1153,7 @@
+ pseudo-device  lockstat                # lock profiling
+ pseudo-device  bcsp                    # BlueCore Serial Protocol
+ pseudo-device  btuart                  # Bluetooth HCI UART (H4)
+-#pseudo-device nvmm                    # NetBSD Virtual Machine Monitor
++pseudo-device  nvmm                    # NetBSD Virtual Machine Monitor
+
+ # wscons pseudo-devices
+ pseudo-device  wsmux                   # mouse &amp; keyboard multiplexor</code></pre>
+
+<p>カーネルのビルドに成功したら、カーネルを入れ替えてOSを再起動してください。カーネルモジュールをロードする必要があるため、<code>build.sh</code>はdistributionまで作って<code>install=/</code>するのが確実です（<code>modules</code>オペレーションでモジュールだけビルドするのもいいです）。再起動後正しくOSが立ち上がれば、<code>modload(8)</code>を実行し<code>nvmm</code>カーネルモジュールを読み込んでください。</p>
+
+<pre><code><b class="root">modload /stand/amd64/9.99.17/modules/nvmm/nvmm.kmod</b></code></pre>
+
+<h3 id="pkgsrc_installation">qemu-nvmmパッケージのインストール</h3>
+<p>上記の操作によってNetBSDカーネル側でNVMMを使う準備は完了しましたが、QEMUからNVMMを使う準備はまだできていません。NVMMを使えるようになるパッチが当たったQEMUをビルドし、システムにインストールする必要があります。</p>
+
+<h2 id="references">参考文献</h2>
+<dl>
+<dt>Maxime Villard, <i><a href="https://m00nbsd.net/4e0798b7f2620c965d0dd9d6a7a2f296.html">NVMM</a></i></dt>
+<dd>NVMMの公式なプロジェクトページです。</dd>
+<dt>Maxime Villard, <i><a href="https://blog.netbsd.org/tnf/entry/from_zero_to_nvmm">From Zero to NVMM</a></i></dt>
+<dd>NVMMの作者VillardによるNVMMの解説記事です。</dd>
+</dl>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
