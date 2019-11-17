@@ -141,6 +141,157 @@ Hostname=ThinkPad X230i</b></code></pre>
 <pre><code><b class="root">service zabbix_server start</b></code></pre>
 
 <h3 id="frontend">Zabbix Webフロントエンドの設定</h3>
+<p>Zabbix Webフロントエンドを使うには、Apacheとphp-fpmの設定が必要です。はじめにphp-fpmの設定をおこないます。<code>/usr/pkg/etc/php-fpm.d/zabbix.conf</code>を新規作成し、次のように編集してください。</p>
+
+<pre><code><b>[zabbix]
+user = www
+group = www
+
+listen = /var/run/php-fpm_zabbix.sock
+listen.owner = www
+listen.group = www
+listen.allowed_clients = 127.0.0.1
+
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 5
+pm.min_spare_servers = 5
+pm.max_spare_servers = 35
+
+php_value[session.save_handler] = files
+
+php_value[max_execution_time] = 300
+php_value[memory_limit] = 512M
+php_value[post_max_size] = 128M
+php_value[upload_max_filesize] = 128M
+php_value[max_input_time] = 300
+php_value[max_input_vars] = 10000
+php_value[always_populate_raw_post_data] = -1
+php_value[date.timezone] = Asia/Tokyo</b></code></pre>
+
+<p>つぎにApacheの設定をおこないます。<code>/usr/pkg/etc/httpd/httpd-php.conf</code>を新規作成し、以下のように編集してください。</p>
+
+<pre><code><b>
+# /usr/pkg/etc/httpd/httpd-php.conf
+AddType text/html .php
+DirectoryIndex index.php</b></code></pre>
+
+<p>次に<code>/usr/pkg/etc/httpd/httpd-zabbix.conf</code>を新規作成し、以下のように編集してください。</p>
+
+<pre><code><b># /usr/pkg/etc/httpd/httpd-zabbix.conf
+Alias /zabbix /usr/pkg/share/zabbix/php
+
+&lt;Directory "/usr/pkg/share/zabbix/php"&gt;
+	Options -FollowSymLinks
+	AllowOverride Limit
+	&lt;LimitExcept POST GET&gt;
+		Order deny,allow
+		Deny from all
+	&lt;/LimitExcept&gt;
+	&lt;IfModule mod_authz_core.c&gt;
+		Require all granted
+	&lt;/IfModule&gt;
+	&lt;IfModule !mod_authz_core.c&gt;
+		Order allow,deny
+		Allow from all
+	&lt;/IfModule&gt;
+	&lt;files *.php&gt;
+		SetHandler application/x-httpd-php
+		SetHandler "proxy:unix:/var/run/php-fpm_zabbix.sock|fcgi://localhost"
+	&lt;/files&gt;
+&lt;/Directory&gt;
+
+&lt;Directory ~ "^/usr/pkg/share/zabbix/php/(conf|api|include|local)/"&gt;
+	&lt;IfModule mod_authz_core.c&gt;
+		Require all denied
+	&lt;/IfModule&gt;
+	&lt;IfModule !mod_authz_core.c&gt;
+		Order deny,allow
+		Deny from all
+	&lt;/IfModule&gt;
+	&lt;files *.php&gt;
+		&lt;IfModule mod_authz_core.c&gt;
+			Require all denied
+		&lt;/IfModule&gt;
+		&lt;IfModule !mod_authz_core.c&gt;
+			Order deny,allow
+			Deny from all
+		&lt;/IfModule&gt;
+	&lt;/files&gt;
+&lt;/Directory&gt;</b></code></pre>
+
+<p>最後に<code>/usr/pkg/etc/httpd.conf</code>を編集します。以下の差分のように変更してください（僕がCGIアプリケーションを走らせるときにした変更が一部残っていますが気にしないでください）。</p>
+
+<pre><code><b>--- /usr/pkg/share/examples/httpd/httpd.conf	2019-11-17 10:53:36.000000000 +0900
++++ httpd/httpd.conf	2019-11-17 11:56:43.538984425 +0900
+@@ -127,11 +123,11 @@
+ LoadModule setenvif_module lib/httpd/mod_setenvif.so
+ LoadModule version_module lib/httpd/mod_version.so
+ #LoadModule remoteip_module lib/httpd/mod_remoteip.so
+-#LoadModule proxy_module lib/httpd/mod_proxy.so
++LoadModule proxy_module lib/httpd/mod_proxy.so
+ #LoadModule proxy_connect_module lib/httpd/mod_proxy_connect.so
+ #LoadModule proxy_ftp_module lib/httpd/mod_proxy_ftp.so
+ #LoadModule proxy_http_module lib/httpd/mod_proxy_http.so
+-#LoadModule proxy_fcgi_module lib/httpd/mod_proxy_fcgi.so
++LoadModule proxy_fcgi_module lib/httpd/mod_proxy_fcgi.so
+ #LoadModule proxy_scgi_module lib/httpd/mod_proxy_scgi.so
+ #LoadModule proxy_uwsgi_module lib/httpd/mod_proxy_uwsgi.so
+ #LoadModule proxy_fdpass_module lib/httpd/mod_proxy_fdpass.so
+@@ -270,7 +266,7 @@
+ # is requested.
+ #
+ &lt;IfModule dir_module&gt;
+-    DirectoryIndex index.html
++    DirectoryIndex index.html index.cgi index.php
+ &lt;/IfModule&gt;
+ 
+ #
+@@ -523,3 +519,6 @@
+ SSLRandomSeed connect builtin
+ &lt;/IfModule&gt;
+ 
++IncludeOptional etc/httpd/httpd-zabbix.conf
++IncludeOptional etc/httpd/httpd-php.conf
++IncludeOptional etc/httpd/httpd-mpm.conf</b></code></pre>
+
+<p>最後に<code>/usr/pkg/share/zabbix/php/conf/zabbix.conf.php</code>を次のように編集します。</p>
+
+<pre><code><b>
+&lt;?php
+// Zabbix GUI configuration file.
+global $DB, $HISTORY;
+
+$DB['TYPE']				= 'POSTGRESQL';
+$DB['SERVER']			= 'localhost';
+$DB['PORT']				= '0';
+$DB['DATABASE']			= 'zabbix';
+$DB['USER']				= 'zabbix';
+// PostgreSQLのzabbixユーザのパスワードを書く
+$DB['PASSWORD']			= '設定したパスワード';
+// Schema name. Used for IBM DB2 and PostgreSQL.
+$DB['SCHEMA']			= '';
+
+$ZBX_SERVER				= 'localhost';
+$ZBX_SERVER_PORT		= '10051';
+$ZBX_SERVER_NAME		= '';
+
+$IMAGE_FORMAT_DEFAULT	= IMAGE_FORMAT_PNG;
+
+// Uncomment this block only if you are using Elasticsearch.
+// Elasticsearch url (can be string if same url is used for all types).
+//$HISTORY['url']   = [
+//		'uint' =&gt; 'http://localhost:9200',
+//		'text' =&gt; 'http://localhost:9200'
+//];
+// Value types stored in Elasticsearch.
+//$HISTORY['types'] = ['uint', 'text'];
+</b></code></pre>
+
+<p>php-fpmとApacheのデーモンを動かし、Webブラウザから 127.0.0.1/zabbix へアクセスします。標準ではユーザAdminのパスワードには「zabbix」が設定されています。</p>
+
+<pre><code><b class="root">service php_fpm start</b>
+<b class="root">service apache start</b></code></pre>
 
 <h2>後注</h2>
 <ol>
