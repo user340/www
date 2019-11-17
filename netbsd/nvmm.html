@@ -18,6 +18,7 @@
 <li><a href="#netbsd_installation">NetBSDカーネルとモジュールのビルド</a></li>
 <li><a href="#pkgsrc_installation">qemu-nvmmパッケージのインストール</a></li>
 </ol>
+<li><a href="#howtouse">使い方</a></li>
 </li>
 <li><a href="#references">参考文献</a></li>
 </ol>
@@ -49,7 +50,17 @@
 <pre><code><b class="root">modload /stand/amd64/9.99.17/modules/nvmm/nvmm.kmod</b></code></pre>
 
 <h3 id="pkgsrc_installation">qemu-nvmmパッケージのインストール</h3>
-<p>上記の操作によってNetBSDカーネル側でNVMMを使う準備は完了しましたが、QEMUからNVMMを使う準備はまだできていません。NVMMを使えるようになるパッチが当たったQEMUをビルドし、システムにインストールする必要があります。</p>
+<p>上記の操作によってNetBSDカーネル側でNVMMを使う準備は完了しましたが、QEMUからNVMMをプラグインとして使う準備はまだできていません。NVMMを使えるようになるパッチが当たったQEMUをビルドし、システムにインストールする必要があります。</p>
+
+<p><code>pkgsrc(8)</code>から<b>wip/qemu-nvmm</b>パッケージをインストールします。pkgsrc-2019Q3時点では、このパッケージはまだ提供されていません。そこで、pkgsrc-wipをインストールし、そこからこのパッケージをビルドしインストールします。ここではpkgsrc-wipのインストール手順を省略します。<a href="https://pkgsrc.org/wip/">公式Webページ</a>を参照してください。</p>
+
+<p>wipであれ、インストール方法は通常の<code>pkgsrc(8)</code>と同じです。通常の<b>emulators/qemu</b>パッケージが既にインストールされているのであれば、<code>pkg_delete(1)</code>で削除してください。</p>
+
+<pre><code><b class="root">cd wip/qemu-nvmm</b>
+<b class="root">make install clean clean-depends</b></code></pre>
+
+<h2 id="howtouse">使い方</h2>
+<p>実行すべきコマンドラインについては『<a href="./haxm.html">QEMUとHAXMによるハイパーバイザの利用</a>』を参照してください。HAXMとの違いは、<code>accel</code>オプションに<code>nvmm</code>を指定する点です。動作テスト済みのゲストOSの一覧は『<i><a href="https://m00nbsd.net/4e0798b7f2620c965d0dd9d6a7a2f296.html">NVMM</a>』に載っています。</p>
 
 <h2 id="references">参考文献</h2>
 <dl>
@@ -57,6 +68,8 @@
 <dd>NVMMの公式なプロジェクトページです。</dd>
 <dt>Maxime Villard, <i><a href="https://blog.netbsd.org/tnf/entry/from_zero_to_nvmm">From Zero to NVMM</a></i></dt>
 <dd>NVMMの作者VillardによるNVMMの解説記事です。</dd>
+<dt><i><a href="https://pkgsrc.org/wip/">The pkgsrc-wip project</a></i></dt>
+<dd></dd>
 </dl>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
