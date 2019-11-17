@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>ZabbixによるNetBSDシステム監視</h1>
+<hr>
+<ol>
+<li><a href="#zabbix">Zabbixについて</a></li>
+<li><a href="#installation">インストール</a></li>
+<ol>
+<li><a href="#sysutils-zabbix">sysutils/zabbixのインストール</a></li>
+<li><a href="#sysutils-zabbix-frontend">sysutils/zabbix-frontendのインストール</a></li>
+<li><a href="#agent">Zabbix Agentの設定と起動</a></li>
+<li><a href="#server">Zabbix Serverの設定と起動</a></li>
+<li><a href="#frontend">Zabbix Webフロントエンドの設定</a></li>
+</ol>
+</ol>
+
+<h2 id="zabbix">Zabbixについて</h2>
+<p><a href="https://www.zabbix.com">Zabbix</a>はZabbix LLC.という企業主体で開発されているFLOSS（GPLv2）の監視ソフトウェアです。バックエンドはC言語、フロントエンドはPHPで実装されています[<a id="ragent2" href="#agent2">1</a>]。</p>
+
+<p>Zabbixの監視システムをおおまかに図にすると図1-1のようになります。</p>
+
+<figure style="text-align:center;">
+<img src="./images/zabbix_001.png" alt="zabbix basic monitoring system">
+<figcaption><b>図1-1: </b>基本的なZabbix監視システム。矢印はなにかしらのデータのやりとりがあることを示しています。</figcaption>
+</figure>
+
+<p>図1-1に示したとおりZabbixはServer-Agentモデルの監視をおこないます。監視対象のシステムにZabbix Agentがインストールされ、Zabbix Serverは各Zabbix Agentへ監視項目を問い合わせ、返ってきたデータをデータベースに格納します[<a id="ractive" href="#active">2</a>]。取得した監視データはZabbix Webフロントエンドから確認でき、グラフにプロットすることも可能です。</p>
+
+<p>Zabbix LLC.からはGNU/Linuxディストリビューション向けにServerおよびAgentのパッケージが提供されており、FreeBSD・OpenBSD・MacOS・Windows・AIX・HP-UXなどの環境に対してはAgentのパッケージのみ提供されています。NetBSD向けパッケージは提供されておらず、<code>pkgsrc(7)</code>から<b>sysutils/zabbix</b>パッケージをインストールする必要があります。Zabbix Webフロントエンドは別途<b>sysutils/zabbix-frontend</b>パッケージをインストールしなければなりません。</p>
+
+<h2 id="installation">インストール</h2>
+<h3 id="sysutils-zabbix">sysutils/zabbixのインストール</h3>
+<p><b>sysutils/zabbix</b>パッケージをインストールします。このパッケージにはZabbix Agent・Zabbix Server・Zabbix Proxyが含まれています。pkgsrc-2019Q3時点ではZabbix 4.0.9が提供されるようですが、4.0.9ではZabbix側のNetBSD依存のコードが古くビルドに失敗します。そこで、このパッケージは修正パッチがあるpkgsrc-currentブランチを使ってください。</p>
+
+<p>また、Zabbix Serverを動かすホストと同じホストでデータベースも動かす場合は、別途データベースを用意します。標準では<b>sysutils/zabbix</b>パッケージは<b>database/postgresql95-client</b>パッケージに依存しているため、<b>database/postgresql95-server</b>をインストールするといいでしょう（これより新しいバージョンのPostgreSQLでは動作未確認です。おそらく動くと思います）。</p>
+
+<pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix</b>
+<b class="root">cvs update -dP -A</b>
+<b class="root">make install clean clean-depends</b>
+<b class="root">cd /usr/pkgsrc/database/postgresql95-server</b>
+<b class="root">make install clean clean-depends</b></code></pre>
+
+<p>必要なデーモンのRCファイルを用意します。ここではPostgreSQLとZabbix AgentおよびZabbix Serverにします。</p>
+
+<pre><code><b class="root">cp /usr/pkg/share/examples/rc.d/pgsql /etc/rc.d</b>
+<b class="root">cp /usr/pkg/share/examples/rc.d/zabbix_agentd /etc/rc.d</b>
+<b class="root">cp /usr/pkg/share/examples/rc.d/zabbix_server /etc/rc.d</b></code></pre>
+
+<p><code>/etc/rc.conf</code>に以下を追記します。</p>
+
+<pre><code><b>pgsql=YES
+zabbix_agentd=YES
+zabbix_server=YES</b></code></pre>
+
+<h3 id="sysutils-zabbix-frontend">sysutils/zabbix-frontendのインストール</h3>
+<p>Zabbix Webフロントエンドを使うには<b>sysutils/zabbix-frontend</b>パッケージをインストールします。pkgsrc-2019Q3ではこのパッケージはPHP 7.1に依存していますが、Apache上でPHP 7のスクリプトを実行するにはモジュールではなくCGIを使うように標準の設定が変更されました。そこでPHPのFastCGI実装である<b>www/php-fpm</b>パッケージも一緒にインストールしなければなりません。</p>
+
+<pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix-frontend</b>
+<b class="root">make install clean clean-depends</b>
+<b class="root">cd /usr/pkgsrc/www/php-fpm</b>
+<b class="root">make install clean clean-depends</b></code></pre>
+
+<p>Webサーバとphp-fpmのRCファイルを用意します。</p>
+
+<pre><code><b class="root">cp /usr/pkg/share/examples/rc.d/apache /etc/rc.d</b>
+<b class="root">cp /usr/pkg/share/examples/rc.d/php_fpm /etc/rc.d</b></code></pre>
+
+<p><code>/etc/rc.conf</code>に以下を追記します。</p>
+
+<pre><code><b>apache=YES
+php_fpm=YES</b></code></pre>
+
+<h2>後注</h2>
+<ol>
+<li id="agent2">Zabbix 4.4からZabbix AgentをGo言語で再実装したZabbix Agent 2がリリースされました。<a href="#ragent2">&uarr;</a></li>
+<li id="active">ServerからAgentへ向けた監視データの問い合わせをPassive Checkと呼びます。逆にZabbix AgentからZabbix Serverへ向けて監視データを送信する場合はActive Checkと呼びます。<a href="#ractive">&uarr;</a></li>
+</ol>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
