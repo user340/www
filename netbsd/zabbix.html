@@ -29,10 +29,10 @@
 
 <figure style="text-align:center;">
 <img src="./images/zabbix_001.png" alt="zabbix basic monitoring system">
-<figcaption><b>図1-1: </b>基本的なZabbix監視システム。矢印はなにかしらのデータのやりとりがあることを示しています。</figcaption>
+<figcaption><b>図1: </b>基本的なZabbix監視システム。矢印はなにかしらのデータのやりとりがあることを示しています。</figcaption>
 </figure>
 
-<p>図1-1に示したとおりZabbixはServer-Agentモデルの監視をおこないます。監視対象のシステムにZabbix Agentがインストールされ、Zabbix Serverは各Zabbix Agentへ監視項目を問い合わせ、返ってきたデータをデータベースに格納します[<a id="ractive" href="#active">2</a>]。取得した監視データはZabbix Webフロントエンドから確認でき、グラフにプロットすることも可能です。</p>
+<p>図1に示したとおりZabbixはServer-Agentモデルの監視をおこないます。監視対象のシステムにZabbix Agentがインストールされ、Zabbix Serverは各Zabbix Agentへ監視項目を問い合わせ、返ってきたデータをデータベースに格納します[<a id="ractive" href="#active">2</a>]。取得した監視データはZabbix Webフロントエンドから確認でき、グラフにプロットすることも可能です。</p>
 
 <p>Zabbix LLC.からはGNU/Linuxディストリビューション向けにServerおよびAgentのパッケージが提供されており、FreeBSD・OpenBSD・MacOS・Windows・AIX・HP-UXなどの環境に対してはAgentのパッケージのみ提供されています。NetBSD向けパッケージは提供されておらず、<code>pkgsrc(7)</code>から<b>sysutils/zabbix</b>パッケージをインストールする必要があります。Zabbix Webフロントエンドは別途<b>sysutils/zabbix-frontend</b>パッケージをインストールしなければなりません。</p>
 
@@ -288,10 +288,22 @@ $IMAGE_FORMAT_DEFAULT	= IMAGE_FORMAT_PNG;
 //$HISTORY['types'] = ['uint', 'text'];
 </b></code></pre>
 
-<p>php-fpmとApacheのデーモンを動かし、Webブラウザから 127.0.0.1/zabbix へアクセスします。標準ではユーザAdminのパスワードには「zabbix」が設定されています。</p>
+<p>php-fpmとApacheのデーモンを動かします</p>
 
 <pre><code><b class="root">service php_fpm start</b>
 <b class="root">service apache start</b></code></pre>
+
+<p>Webブラウザから 127.0.0.1/zabbix へアクセスします。標準ではユーザAdminのパスワードには「zabbix」が設定されています。</p>
+
+<figure>
+<img src="./images/zabbix_002.png" alt="Zabbix web frontend login page">
+<figcaption><b>図2: </b>Zabbix Webフロントエンドのログインページ。 標準ではAdmin/zabbixでログインできます。</figcaption>
+</figure>
+
+<figure>
+<img src="./images/zabbix_003.png" alt="Zabbix web frontend dashboard">
+<figcaption><b>図3: </b>Zabbix Webフロントエンドにログインした直後のダッシュボードページ。</figcaption>
+</figure>
 
 <h2>後注</h2>
 <ol>
