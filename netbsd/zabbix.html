@@ -78,6 +78,70 @@ zabbix_server=YES</b></code></pre>
 <pre><code><b>apache=YES
 php_fpm=YES</b></code></pre>
 
+<h3 id="agent">Zabbix Agentの設定と起動</h3>
+<p>Zabbix Agentの設定ファイルは<code>/usr/pkg/etc/zabbix_agentd.conf</code>です。基本的には以下の設定項目を確認します。</p>
+
+<dl>
+<dt><code>LogFile</code></dt>
+<dd>Zabbix Agentのログファイルのパスです。</dd>
+<dt><code>Server</code></dt>
+<dd>Zabbix ServerのDNS名かIPアドレスです。</dd>
+<dt><code>ServerActive</code></dt>
+<dd>Active Checkの監視データを送信する先のZabbix ServerのDNS名かIPアドレスです。基本的には<code>Server</code>の設定と同じになるかと思われます。</dd>
+<dt><code>Hostname</code></dt>
+<dd>Zabbix Agentのホスト名です。Zabbix AgentがインストールされているOSのホスト名ではありません。</dd>
+</dl>
+
+<p>ここでは次のように設定をしました。なお、<code>/var/log/zabbix</code>ディレクトリは新規作成し、ディレクトリのオーナとグループをzabbix.zabbixに変更しています。</p>
+
+<pre><code><b>LogFile=/var/log/zabbix/zabbix_agentd.log
+Server=127.0.0.1
+ServerActive=127.0.0.1
+Hostname=ThinkPad X230i</b></code></pre>
+
+<p>設定後はZabbix Agentデーモンを実行してください。</p>
+
+<pre><code><b class="root">service zabbix_agentd start</b></code></pre>
+
+<h3 id="server">Zabbix Serverの設定と起動</h3>
+<p>ここではZabbix Serverとデータベースを動かすホストが同一であるとします。NetBSD標準の設定ではセマフォ（semaphore）が足りなくなりZabbix Serverかデータベースのどちらかが動きません。そこで<code>sysctl(8)</code>からシステム中のセマフォの数を増やす設定をします。実際の数字はトライアンドエラーで調整してください。</p>
+
+<pre><code><b class="root">sysctl -w kern.ipc.semmni=40</b></code></pre>
+
+<p>PostgreSQLを起動します。</p>
+
+<pre><code><b class="root">service pgsql start</b></code></pre>
+
+<p>PostgreSQLにZabbix Server用のユーザとデータベースを作成します。<b>database/postgresql95-server</b>パッケージは標準ではpgsqlユーザがPostgreSQLの管理者なようです。ここでzabbixユーザに設定したパスワードは後で利用します。</p>
+
+<pre><code><b class="root">sudo -u pgsql createuser --pwprompt zabbix</b>
+<b class="root">sudo -u pgsql createdb -O zabbix zabbix</b></code></pre>
+
+<p>データベース作成後はZabbix用のデータベースを初期化します。初期化用のSQL文はパッケージで提供されています。</p>
+
+<pre><code><b class="root">sudo -u zabbix psql zabbix &lt; /usr/pkg/share/zabbix/schema.sql</b>
+<b class="root">sudo -u zabbix psql zabbix &lt; /usr/pkg/share/zabbix/images.sql</b>
+<b class="root">sudo -u zabbix psql zabbix &lt; /usr/pkg/share/zabbix/data.sql</b></code></pre>
+
+<p>データベースの設定完了後はZabbix Serverの設定ファイル<code>/usr/pkg/etc/zabbix_server.conf</code>を編集します。確認すべき設定項目は以下のとおりです。</p>
+
+<dl>
+<dt><code>LogFile</code></dt>
+<dd>Zabbix Serverが出力するログファイルのパスです。</dd>
+<dt><code>DBName</code></dt>
+<dd>Zabbix Serverが使うデータベース名です。本稿の手順に従った場合、標準の<code>zabbix</code>のままで問題ありません。</dd>
+<dt><code>DBUser</code></dt>
+<dd>Zabbix Serverがデータベースへアクセスするためのユーザ名です。本稿の手順に従った場合、標準の<code>zabbix</code>のままで問題ありません。</dd>
+<dt><code>DBPassword</code></dt>
+<dd><code>createuser</code>コマンドを実行したときにzabbixユーザに設定したパスワードを設定します。</dd>
+</dl>
+
+<p>設定後はZabbix Serverデーモンを実行してください。</p>
+
+<pre><code><b class="root">service zabbix_server start</b></code></pre>
+
+<h3 id="frontend">Zabbix Webフロントエンドの設定</h3>
+
 <h2>後注</h2>
 <ol>
 <li id="agent2">Zabbix 4.4からZabbix AgentをGo言語で再実装したZabbix Agent 2がリリースされました。<a href="#ragent2">&uarr;</a></li>
