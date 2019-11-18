@@ -106,7 +106,7 @@ Hostname=Zabbix server</b></code></pre>
 <h3 id="server">Zabbix Serverの設定と起動</h3>
 <p>ここではZabbix Serverとデータベースを動かすホストが同一であるとします。NetBSD標準の設定ではセマフォ（semaphore）が足りなくなりZabbix Serverかデータベースのどちらかが動きません。そこで<code>sysctl(8)</code>からシステム中のセマフォの数を増やす設定をします。実際の数字はトライアンドエラーで調整してください。</p>
 
-<pre><code><b class="root">sysctl -w kern.ipc.semmni=40</b></code></pre>
+<pre><code><b class="root">sysctl -w kern.ipc.semmns=80</b></code></pre>
 
 <p>PostgreSQLを起動します。</p>
 
@@ -174,7 +174,8 @@ php_value[date.timezone] = Asia/Tokyo</b></code></pre>
 <pre><code><b>
 # /usr/pkg/etc/httpd/httpd-php.conf
 AddType text/html .php
-DirectoryIndex index.php</b></code></pre>
+DirectoryIndex index.php
+SetHandler application/x-httpd-php</b></code></pre>
 
 <p>次に<code>/usr/pkg/etc/httpd/httpd-zabbix.conf</code>を新規作成し、以下のように編集してください。</p>
 
