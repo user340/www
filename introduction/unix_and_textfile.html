@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>Unixとテキストファイル</h1>
+<figure style="text-align:right">
+<blockquote><p>ほとんどのUNIX環境には、テキストの送信、修正、フィルタ処理のためのユーティリティが何十と存在し、UNIXユーザーはそれをさまざまに組み合わせて、日常の業務を行っている。</p></blockquote>
+<footer>Mike Gancarz『UNIXという考え方』（p.59）</footer>
+</figure>
+<hr>
+<p>UNIX哲学にもあるように、Unix系OSを使う上でテキストファイル（text file）を扱うことは避けては通れません。むしろテキストファイルあるいはそれに収められたデータを高速かつ効率的に処理したいからこそUnix系OSを使う意義があるのです。本稿ではテキストファイルの利点について簡単に述べたあとに、Unix系OS上でテキストファイルを扱うコマンドをいくつか紹介します。</p>
+
+<ol>
+  <li><a href="#philosophy">UNIX哲学が主張するテキストファイルの優位性</a></li>
+  <li><a href="#today">テキストファイルの現在</a></li>
+</ol>
+
+<h2 id="philosophy">UNIX哲学が主張するテキストファイルの優位性</h2>
+<p>「UNIX哲学」の「哲学」とは「設計思想」や「実践」「考え方」のような意味で使われています。どこかの委員会や学会で定義されているものではありません。またUNIX哲学にしたがって開発した結果UNIXが生まれたのでもありません。UNIXが生まれてプログラマに長年利用された結果、すぐれた設計や実践が見つかりUNIX哲学としてまとめることができた……というある意味結果論的なものです。</p>
+
+<p>UNIX哲学の解説書として一般的なのはMike Gancarzによる『The Unix Philosophy』です（芳尾 桂 監訳, 『UNIXという考え方』, オーム社 開発局, 2001）。この本ではUNIX哲学を9の定理と10の小定理に分け、それらの定理についてそれぞれ解説を述べています。日本語版にして約150ページ弱とやや薄めの本です。</p>
+
+<p>Gancarzはテキストファイル（『UNIXという考え方』では「ASCIIフラットファイル」と呼ばれている）について「データが生きて価値を持ち続けるためには、必要なときには移動しなければならない」（p.58）したがって「動かせないデータは、死んだデータ」（p.58）であるという前提から、「ASCIIテキストは、最良の形式ではないまでも、間違いなく最も一般的な形式」（p.58）であり、データは移植性に長けいつでも動かせるテキストファイルとして保存すべきだという定理を導いています。くわえてテキストファイルの中身はなにかしらの変換をせずともテキストエディタで確認できること、UNIXにはテキストファイルを処理するためのコマンドが豊富に用意されておりテキストファイル中のデータを簡単に処理できることを利点として挙げています。</p>
+
+<h2 id="today">テキストファイルの現在</h2>
+<p>今日ではテキストファイルそのものは未だに健在です。一方でRHEL系のGNU/Linux OSで使われている<code>journald</code>はログをバイナリ形式で保存します。今後、ユーザがテキストエディタで直接設定ファイルやログファイルを閲覧・編集する機会が減るのであれば、データ自体の形式はよりコンパクトな方へ移行されるのではないかと予想しています。また同じテキストファイルにしても、JSONやYAMLといった行指向ではない形式でデータを表現するようになりました。これらのようなデータ形式のパーサは、いまどきのプログラミング言語だと標準ライブラリやパッケージとして提供されており使い方も簡単です。しかし伝統的な行指向のテキスト処理コマンドである<code>sed</code>や<code>awk</code>、<code>grep</code>などではデータを解析するだけでも一苦労です。</p>
+
+<figure>
+<pre><code>{
+    "example": {
+        "a": 0,
+        "b": 1,
+        "c": 2,
+        "d": 3
+    }
+}</code></pre>
+<figcaption><b>図1: </b>テキストファイルだがJSON形式によるデータ表現</figcaption>
+</figure>
+
+<figure>
+<pre><code>#!/usr/bin/env python
+import json
+
+with open('example.json', mode='r', encoding='utf-8') as f:
+    data = json.load(f)
+
+print(data['example']['a'])  # 0
+print(data['example']['b'])  # 1
+print(data['example']['c'])  # 2
+print(data['example']['d'])  # 3
+</code></pre>
+<figcaption><b>図2: </b>Python 3.8によるJSONの解析</figcaption>
+</figure>
+
+<figure>
+<pre><code><b class="user">grep "3" example.json</b>
+<b>        "d": 3</b></code></pre>
+<figcaption><b>図3: </b><code>grep</code>は行指向でテキストを処理するため、これだけではどのキーに対応した辞書のメンバか判別できない</figcaption>
+</figure>
+
+<p>POSIXで定義されたコマンドではありませんが、喜ばしいことに<code>jq</code>や<code>yq</code>のようなコマンドライン上でも高級なデータ形式を解析できるコマンドが存在します。おそらく多くの環境では別途当該パッケージのインストールが必要でしょう。</p>
+
+<p>Gancarzが言うようにテキストファイルそのものは残り続けていますが、それをどう解析するかが悩みの種になっています。もしPOSIXで定義されたUnixコマンドのみでテキストファイル内のデータを素早く処理したい場合、データ形式は行指向でなければなりません。</p>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
