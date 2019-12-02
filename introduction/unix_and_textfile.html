@@ -17,8 +17,13 @@
 <p>UNIX哲学にもあるように、Unix系OSを使う上でテキストファイル（text file）を扱うことは避けては通れません。むしろテキストファイルあるいはそれに収められたデータを高速かつ効率的に処理したいからこそUnix系OSを使う意義があるのです。本稿ではテキストファイルの利点について簡単に述べたあとに、Unix系OS上でテキストファイルを扱うコマンドをいくつか紹介します。</p>
 
 <ol>
-  <li><a href="#philosophy">UNIX哲学が主張するテキストファイルの優位性</a></li>
-  <li><a href="#today">テキストファイルの現在</a></li>
+<li><a href="#philosophy">UNIX哲学が主張するテキストファイルの優位性</a></li>
+<li><a href="#today">テキストファイルの現在</a></li>
+<li><a href="#tools">テキストファイルを処理する便利なツール</a>
+<ol>
+<li><a href="#cut">cut&dash;&mdash;各行を列単位で切り取る</a></li>
+<li><a href="#grep">grep</a></li>
+</ol></li>
 </ol>
 
 <h2 id="philosophy">UNIX哲学が主張するテキストファイルの優位性</h2>
@@ -29,22 +34,22 @@
 <p>Gancarzはテキストファイル（『UNIXという考え方』では「ASCIIフラットファイル」と呼ばれている）について「データが生きて価値を持ち続けるためには、必要なときには移動しなければならない」（p.58）したがって「動かせないデータは、死んだデータ」（p.58）であるという前提から、「ASCIIテキストは、最良の形式ではないまでも、間違いなく最も一般的な形式」（p.58）であり、データは移植性に長けいつでも動かせるテキストファイルとして保存すべきだという定理を導いています。くわえてテキストファイルの中身はなにかしらの変換をせずともテキストエディタで確認できること、UNIXにはテキストファイルを処理するためのコマンドが豊富に用意されておりテキストファイル中のデータを簡単に処理できることを利点として挙げています。</p>
 
 <h2 id="today">テキストファイルの現在</h2>
-<p>今日ではテキストファイルそのものは未だに健在です。一方でRHEL系のGNU/Linux OSで使われている<code>journald</code>はログをバイナリ形式で保存します。今後、ユーザがテキストエディタで直接設定ファイルやログファイルを閲覧・編集する機会が減るのであれば、データ自体の形式はよりコンパクトな方へ移行されるのではないかと予想しています。また同じテキストファイルにしても、JSONやYAMLといった行指向ではない形式でデータを表現するようになりました。これらのようなデータ形式のパーサは、いまどきのプログラミング言語だと標準ライブラリやパッケージとして提供されており使い方も簡単です。しかし伝統的な行指向のテキスト処理コマンドである<code>sed</code>や<code>awk</code>、<code>grep</code>などではデータを解析するだけでも一苦労です。</p>
+<p>今日ではテキストファイルそのものは未だに健在です。一方でRHEL系のGNU/Linux OSで使われている<code>journald</code>はログをバイナリ形式で保存します。今後、ユーザがテキストエディタで直接設定ファイルやログファイルを閲覧・編集する機会が減るのであれば、データ自体の形式はよりコンパクトな方へ移行されるのではないかと予想しています。また同じテキストファイルにしても、JSONやYAMLといった行指向ではない形式でデータを表現する機会も多くなりました。これらのようなデータ形式のパーサは、いまどきのプログラミング言語だと標準ライブラリやパッケージとして提供されており使い方も簡単です。しかし伝統的な行指向のテキスト処理コマンドである<code>sed</code>や<code>awk</code>、<code>grep</code>などではデータを解析するだけでも一苦労です。</p>
 
 <figure>
-<pre><code>{
+<pre><code><b>{
     "example": {
         "a": 0,
         "b": 1,
         "c": 2,
         "d": 3
     }
-}</code></pre>
+}</b></code></pre>
 <figcaption><b>図1: </b>テキストファイルだがJSON形式によるデータ表現</figcaption>
 </figure>
 
 <figure>
-<pre><code>#!/usr/bin/env python
+<pre><code><b>#!/usr/bin/env python
 import json
 
 with open('example.json', mode='r', encoding='utf-8') as f:
@@ -53,8 +58,7 @@ with open('example.json', mode='r', encoding='utf-8') as f:
 print(data['example']['a'])  # 0
 print(data['example']['b'])  # 1
 print(data['example']['c'])  # 2
-print(data['example']['d'])  # 3
-</code></pre>
+print(data['example']['d'])  # 3</b></code></pre>
 <figcaption><b>図2: </b>Python 3.8によるJSONの解析</figcaption>
 </figure>
 
@@ -67,5 +71,31 @@ print(data['example']['d'])  # 3
 <p>POSIXで定義されたコマンドではありませんが、喜ばしいことに<code>jq</code>や<code>yq</code>のようなコマンドライン上でも高級なデータ形式を解析できるコマンドが存在します。おそらく多くの環境では別途当該パッケージのインストールが必要でしょう。</p>
 
 <p>Gancarzが言うようにテキストファイルそのものは残り続けていますが、それをどう解析するかが悩みの種になっています。もしPOSIXで定義されたUnixコマンドのみでテキストファイル内のデータを素早く処理したい場合、データ形式は行指向でなければなりません。</p>
+
+<h2 id="tools">テキストファイルを処理する便利なツール</h2>
+<p>テキストファイルの利点とテキストファイルを処理するにあたっての課題がわかったところで、行指向のデータを処理するという前提のもとに、テキストファイルを処理するのに便利なツールを紹介します。本節では図4に示すテキストファイルを処理するものとします。</p>
+
+<figure>
+<pre><code><b>John,23,Student
+Smith,40,Doctor
+Luke,26,Student
+Marcy,34,Writer
+Bob,50,Programmer</b></code></pre>
+<figcaption><b>図4: </b>例として示すテキストファイル<b>example.txt</b>はコンマ区切りで「名前」「年齢」「職業」をあらわす。</figcaption>
+</figure>
+
+<h3 id="cut">cut&dash;&mdash;各行を列単位で切り取る</h3>
+<p><code>cut</code>は与えられたファイル（あるいはストリーム）の各行を列単位で切り取ることができます。たとえばexample.txtでは一列目が名前を示しています。テキストファイルから名前だけを切り取りたいときは次のように<code>cut</code>を実行します。</p>
+
+<pre><code><b class="user">cut -d "," -f 1 example.txt</b>
+John
+Smith
+Luke
+Marcy
+Bob</code></pre>
+
+<p>ここでオプション<code>-d</code>には区切り文字を渡し、どのような文字が列の区切りとして機能しているかを<code>cut</code>に教えています。</p>
+
+<h3 id="grep">grep&mdash;&mdash;</h3>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
