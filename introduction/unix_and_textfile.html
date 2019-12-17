@@ -22,7 +22,8 @@
 <li><a href="#tools">テキストファイルを処理する便利なツール</a>
 <ol>
 <li><a href="#cut">cut&dash;&mdash;各行を列単位で切り取る</a></li>
-<li><a href="#grep">grep</a></li>
+<li><a href="#grep">grep&dash;&dash;パターンに一致した文字列を抽出する</a></li>
+<li><a href="#stream">テキストストリームとパイプ／リダイレクト</a></li>
 </ol></li>
 </ol>
 
@@ -85,7 +86,7 @@ Bob,50,Programmer</b></code></pre>
 </figure>
 
 <h3 id="cut">cut&dash;&mdash;各行を列単位で切り取る</h3>
-<p><code>cut</code>は与えられたファイル（あるいはストリーム）の各行を列単位で切り取ることができます。たとえばexample.txtでは一列目が名前を示しています。テキストファイルから名前だけを切り取りたいときは次のように<code>cut</code>を実行します。</p>
+<p><code>cut</code>は与えられたテキストの各行を列単位で切り取ることができます。たとえばexample.txtでは一列目が名前を示しています。テキストファイルから名前だけを切り取りたいときは次のように<code>cut</code>を実行します。</p>
 
 <pre><code><b class="user">cut -d "," -f 1 example.txt</b>
 John
@@ -96,6 +97,9 @@ Bob</code></pre>
 
 <p>ここでオプション<code>-d</code>には区切り文字を渡し、どのような文字が列の区切りとして機能しているかを<code>cut</code>に教えています。</p>
 
-<h3 id="grep">grep&mdash;&mdash;</h3>
+<h3 id="grep">grep&mdash;&mdash;パターンに一致した文字列を抽出する</h3>
+<p><code>grep</code>は与えられたテキストの各行に対して、パターンに一致している文字列を持つ行を抽出します。パターンには正規表現を利用できます。</p>
+
+<h2 id="stream">テキストストリームとパイプ／リダイレクト</h2>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
