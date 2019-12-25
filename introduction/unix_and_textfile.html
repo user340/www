@@ -21,7 +21,8 @@
 <li><a href="#today">テキストファイルの現在</a></li>
 <li><a href="#tools">テキストファイルを処理する便利なツール</a>
 <ol>
-<li><a href="#cut">cut&dash;&mdash;各行を列単位で切り取る</a></li>
+<li><a href="#cut">cut&mdash;&mdash;各行を列単位で切り取る</a></li>
+<li><a href="#sort">sort&mdash;&mdash;行をソートする</a></li>
 <li><a href="#grep">grep&dash;&dash;パターンに一致した文字列を抽出する</a></li>
 <li><a href="#stream">テキストストリームとパイプ／リダイレクト</a></li>
 </ol></li>
@@ -77,11 +78,12 @@ print(data['example']['d'])  # 3</b></code></pre>
 <p>テキストファイルの利点とテキストファイルを処理するにあたっての課題がわかったところで、行指向のデータを処理するという前提のもとに、テキストファイルを処理するのに便利なツールを紹介します。本節では図4に示すテキストファイルを処理するものとします。</p>
 
 <figure>
-<pre><code><b>John,23,Student
-Smith,40,Doctor
-Luke,26,Student
-Marcy,34,Writer
-Bob,50,Programmer</b></code></pre>
+<pre><code><b>john,23,student
+smith,40,doctor
+luke,26,student
+marcy,34,writer
+bob,50,programmer
+dennis,38,consultant</b></code></pre>
 <figcaption><b>図4: </b>例として示すテキストファイル<b>example.txt</b>はコンマ区切りで「名前」「年齢」「職業」をあらわす。</figcaption>
 </figure>
 
@@ -89,16 +91,48 @@ Bob,50,Programmer</b></code></pre>
 <p><code>cut</code>は与えられたテキストの各行を列単位で切り取ることができます。たとえばexample.txtでは一列目が名前を示しています。テキストファイルから名前だけを切り取りたいときは次のように<code>cut</code>を実行します。</p>
 
 <pre><code><b class="user">cut -d "," -f 1 example.txt</b>
-John
-Smith
-Luke
-Marcy
-Bob</code></pre>
+john
+smith
+luke
+marcy
+bob
+dennis</code></pre>
 
 <p>ここでオプション<code>-d</code>には区切り文字を渡し、どのような文字が列の区切りとして機能しているかを<code>cut</code>に教えています。</p>
 
+<h3 id="sort">sort&mdash;&mdash;行をソートする</h3>
+<p><code>sort</code>は与えられたテキストを昇順に並べます。</p>
+
+<pre><code><b class="sort">sort example.txt</b>
+bob,50,programmer
+dennis,38,consultant
+john,23,student
+luke,26,student
+marcy,34,writer
+smith,40,doctor</code></pre>
+
+<p><code>sort</code>単体で使うことはあまりありません。おもに<code>-u</code>オプションと組み合わせて行の重複を取り除くために使われます。<code>sort | uniq</code>でも行の重複を取り除けられます。</p>
+
 <h3 id="grep">grep&mdash;&mdash;パターンに一致した文字列を抽出する</h3>
-<p><code>grep</code>は与えられたテキストの各行に対して、パターンに一致している文字列を持つ行を抽出します。パターンには正規表現を利用できます。</p>
+<p><code>grep</code>は与えられたテキストの各行に対して、パターンに一致している文字列を持つ行を抽出します。パターンには正規表現を利用できます。たとえば文字列"student"を含む行を抽出するときには以下のように実行します。</p>
+
+<pre><code><b class="user">grep "student" example.txt</b>
+john,23,student
+luke,26,student</code></pre>
+
+<p>次に、名前が文字列"den"から始まる行を抽出してみましょう。出力は"dennis"さんの行だけが期待しているものとなります。先ほどの例にしたがうと<code><b>grep "den" example.txt</b></code>と実行したくなりますが、これでは"stu<b>den</b>t"を持つ行にも一致してしまい、期待どおりの出力になりません。</p>
+
+<pre><code><b class="user">grep "den"</b>
+john,23,student
+luke,26,student
+dennis,38,consultant</code></pre> 
+
+<p>幸いにもこのデータでは名前は先頭の列にあると分かっています。そこで<code>grep</code>を「先頭の文字列が"den"で始まる行を抽出」するよう実行します。このようなとき、正規表現を組み合わせることでパターンを補強できます。</p>
+
+<pre><code><b class="user">grep "^den" example.txt</b>
+dennis,38,consultant</code></pre>
+
+<p>正規表現については、それだけで本を一冊書けるほどには奥深く難しいものなのでここでは解説をしません。</p>
 
 <h2 id="stream">テキストストリームとパイプ／リダイレクト</h2>
 <hr>
