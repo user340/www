@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>NetBSDビルド環境を自作パソコンで作る</h1>
+<hr>
+<p>いままでプライベートでの開発はすべてThinkPad X230iを使っていました。中古のノートパソコンでもNetBSDは特に問題なく動作しますが、NetBSDのソースツリーをビルドしたりpkgsrcからパッケージをインストールしたりするときにどうしても時間がかかり不便を感じていました。</p>
+
+<p>計算資源の非力さを補うためにクラウドサービスを使って一時的にハイパワーなマシンを借りるということもしました。Webコンソールへログインするのが面倒なことから、サービスのAPIを叩いてCUIでマシンの起動や停止、性能の変更をおこなうプログラムをPythonで実装しさえもしました。このやり方は高価なマシンを所有する必要がなく経済的だったのですが、NetBSD-currentのHEADをクラウド上のマシンでも追いかけるのが面倒で段々と使わなくなりました。</p>
+
+<p>AMDのRyzenが高速なわりに安く手に入り、build.shの実行もすぐに終わるという話は前から耳にしていました。くわえて個人的には自作パソコンを作ったことがなく、興味はあったのですが特にこれといったモチベーションは湧かずにいました。クラウドでのビルドマシン運用が面倒になってきたのをきっかけに、勉強ついでに自作パソコンを作りそれにNetBSDをインストールして日頃使いのマシン兼ビルドマシンとして運用しようと思い立ちました。</p>
+
+<ul>
+<li><a href="#configure">マシン構成</a>
+<li><a href="#troubles">トラブル</a></li>
+</li>
+</ul>
+
+<h2 id="configure">マシン構成</h2>
+<p>初めて自作パソコンに挑戦することもあり、ツクモの店員さんに予算はおおよそ10万円ほどですと伝えてパーツの見積もりをもらうことにしました。ゲームをするわけではないのでグラフィックボードは安くてもよいのですが、頻繁にビルドする都合上CPUの熱は抑えたいのでケースとCPUクーラは評判が良いものをお願いしました。それで、集まったものがこちらです。</p>
+
+<table>
+<thead><tr><td>構成要素</td><td>名前</td></tr></thead>
+<tbody>
+<tr><td>CPU</td><td>AMD Ryzen 3600X</td>
+<tr><td>マザーボード</td><td>ASUS TUF B450-PRO GAMING</td></tr>
+<tr><td>電源</td><td>SILVER STONE ST75F-GS</td></tr>
+<tr><td>CPUクーラ</td><td>noctua NN-U12A</td></tr>
+<tr><td>ケース</td><td>Cooler Master MasterBox CM694</td></tr>
+<tr><td>ディスク</td><td>crucial MX500</td></tr>
+<tr><td>メモリ</td><td>crucial 32BG KIT DESKTOP DDR4-3200 UDIMM</td></tr>
+<tr><td>グラフィックボード</td><td>玄人志向 RD-RX560-E2GB</td></tr>
+</tbody>
+</table>
+
+<p>端から確定していたのはCPUとマザーボードだけで、あとは店員さんからの説明とオススメを聞いた上で僕が選びました。見積もりよりコンサルタントと言ったほうがより正確でしょうか。ポイントの差し引きをして工具セットも付けた結果、計104,190円となりました。即決です。</p>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
