@@ -19,10 +19,11 @@
 <ul>
 <li><a href="#configure">マシン構成</a></li>
 <li><a href="#troubles">トラブル</a>
-<ul><li><a href="#built">メモリを半差し</a></li>
+<ul><li><a href="#misbuilt">メモリを半挿し</a></li>
 <li><a href="#x11">Xが立ち上がらない</a></li></ul>
 </li>
 <li><a href="#buildspeed">build.shがどれくらい速く終わるか？</a></li>
+<li><a href="#conclution">おわりに</a></li>
 </ul>
 
 <h2 id="configure">マシン構成</h2>
@@ -44,8 +45,30 @@
 
 <p>端から確定していたのはCPUとマザーボードだけで、あとは店員さんからの説明とおすすめを聞いた上で僕が選びました。見積もりよりコンサルタントと言ったほうがより正確でしょうか。ポイントの差し引きをして工具セットも付けた結果、計104,190円となりました。即決です。</p>
 
+<p>ザックにパーツを入れ、入り切らないパーツは紙袋に、ケースは外装箱にプラスチックの取っ手をつけてもらい家まで持ち帰りました。両手がふさがっているのとPCケースの大きさから、改札を通るのには苦労しました。</p>
+
+<h2 id="troubles">トラブル</h2>
+
+<h3 id="misbuilt">メモリを半挿し</h3>
+<p>いざパーツを開封し組み立てたはいいものの、電源を入れモニタに接続しても"<b>no input signal</b>"と表示されたきりなにも映りませんでした。グラフィックボードの接触不良を疑ったりCPUの挿し方がまずかったのかなと思い、組み立て直してからまた電源を入れたものの改善の兆しはありませんでした。</p>
+
+<p>調べるとパソコンのパーツの中で壊れやすく相性の問題もあるパーツはマザーボードとメモリそしてグラフィックボードらしく、相性や初期不良を疑ってみることにしました。そこで後日、ツクモに相性保証をつけていたマザーボードとメモリを持ち込み、動作チェックを依頼したのですが結果は「問題なし」とのことでした。</p>
+
+<p>帰り際に「メモリスロットの片側にだけツメがあるタイプは、ツメが無い側のメモリがしっかり挿さっているか確認したほうがいいですよ」と教えてもらいました。持ち込んだパーツ以外の初期不良や相性もあるかもしれないし……という不安と共に帰宅し、ものは試しとちょっと強めに力を入れメモリを挿し込んでみると、前は聞かなかった「カチリ」という音が。確信を胸に電源を入れてみると、みごとBIOS画面が出てきたのです。初期不良や相性云々はすべて思い違いで、単なる組み立てミスだったわけでした。</p>
+
+<h3 id="x11">Xが立ち上がらない</h3>
+<p>主な用途はビルドであると言いえど日頃使いのマシンとしても使うわけですから、Xは立ちあがってもらわないと困ります。そして困りました。購入したRadeon RX560はNetBSDでは使えなさそうだったのです。amdgpuを有効にしたカーネルをビルドし、<code>x11/xf86-video-amdgpu</code>をインストールして<code>X -configure</code>しても<code>no screens found</code>と出てXが立ち上がりませんでした。</p>
+
+<p>たしかに<a href="https://netbsd.gw.com/cgi-bin/man-cgi?radeon+4">radeon(4)</a>にはRX560と書いてはいません。amdgpu(4)にも特に型番は明記されていません。自らの調査不足を反省し、今度は<code>x11/xf86-video-nouveau</code>のnouveau(4)にしっかり書かれているNVIDIA GeForce 1050Tiを購入しました。nouveauを有効にしたカーネルをビルドして再度挑戦することに。</p>
+
+<p>ところが、これでも同じく<code>no screens found</code>エラーが出てXが立ち上がりませんでした。Ryzen 5 3600Xは内蔵GPUが無いタイプのCPUなので、ここで諦めるとGUIを出せずに単なるビルドマシンとして運用せざるを得ません。</p>
+
+<p>結局どうしたか？オチとしてはNetBSDの代わりにFreeBSDをインストールし、NetBSD特有の処理をしたいときはbhyveを使い仮想マシン上のNetBSDを触ることに決めました。本当はネイティブなNetBSDをデスクトップ環境として使いたかったのですが最終的に妥協したということです。FreeBSDはnvidia-driver-390.87_3パッケージを入れ、問題なく動いています。</p>
+
+<p>一応、最後のあがきとしてNVIDIAの公式サイトからLinux用のドライバをダウンロードし、Linuxエミュレーションでそのドライバを動かそうともしました。FreeBSDのグラフィック系のドライバはLinuxエミュレーションで動くものもあるというのをヒントにしたのです。しかし、<b>startx</b>した時点でNVIDIAのドライバがLinuxの共有ライブラリを読み込んでくれず、僕がやってみた範囲では失敗に終わりました。結構よさそうなアイデアだと思ったのですが残念です。もしかすると工夫しだいでどうにかなったのかもしれませんが、もし同じ構成でXまで動かせた人がいればやり方を教えてください。</p>
+
 <h2 id="buildspeed">build.shがどれくらい速く終わるか？</h2>
-<p>ネイティブなNetBSD/amd64システムで<code>build.sh</code>からi386バイナリをクロスビルドしました。ツールチェイン、GENERICカーネル、ディストリビューションのビルド結果は以下のとおりです。</p>
+<p>ベンチマークとして、ネイティブなNetBSD/amd64システムで<code>build.sh</code>からi386バイナリをクロスビルドしました。ツールチェイン、GENERICカーネル、ディストリビューションのビルド結果は以下のとおりです。</p>
 
 <pre><code>===&gt; Summary of results:
          build.sh command:    ./build.sh -O /zpool/obj -R /zpool/releasedir -T /zpool/tools -V MKDEBUG=yes -V MKDEBUGLIB=yes -V MKLINT=yes -X /home/uki/src/cvs.NetBSD.org/xsrc -x -j12 -U -a i386 -m i386 -D /zpool/destdir/i386 tools
@@ -102,7 +125,19 @@
          build.sh ended:      Sat Dec 28 18:51:20 JST 2019
 ===&gt; .</code></pre>
 
-<p>CPUを全開で使うと、ツールチェインのビルドは約5分、GENERICカーネルのビルドは1分未満、ディストリビューションのビルドは約41分で終わってしまいました。ThinkPadでビルドしていた頃と比べればどれだけ時間の節約になっているか論ずるまでもありません。</p>
+<p>CPUを全開で使うと、ツールチェインのビルドは約5分、GENERICカーネルのビルドは1分未満、ディストリビューションのビルドは約41分で終わってしまいました。ThinkPadでビルドしていた頃と比べればどれだけ時間の節約になっているか、論ずるまでもありません。</p>
+
+<h2 id="conclution">おわりに</h2>
+
+<img src="./images/homebuilt_001.jpg" alt="parts">
+
+<img src="./images/homebuilt_002.jpg" alt="parts">
+
+<p>そういうわけで僕の初自作パソコンはソフトの部分で失敗というか妥協に終わってしまったのですが、それでもデスクトップ環境はいつも以上に快適に動いていますし、ビルドも従来よりかなり速いためそこそこ満足しています。</p>
+
+<p>パーツの組み立てはプラスドライバ一本で終わり、思っていたよりも簡単でした。一番難しいと感じた作業を挙げるとすれば、フロントパネル用のピンヘッダをマザーボードに取り付ける作業でしょうか。マザーボードの説明書とにらめっこしながらどこになにを挿すか慎重に探りました。</p>
+
+<p>「自作パソコンを作ればパソコンの内部が理解できる」とまでは言いたくありませんが、パソコンがどういう要素（パーツ）から成っているのか程度は理解でき、達成感や満足を得られるのは間違いないでしょう。今後はディスクを増やしてZFSのRAIDを組んだりしてみようかなと考えています。</p>
 
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
