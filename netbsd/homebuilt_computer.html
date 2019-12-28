@@ -17,9 +17,12 @@
 <p>AMDのRyzenが高速なわりに安く手に入り、build.shの実行もすぐに終わるという話は前から耳にしていました。くわえて個人的には自作パソコンを作ったことがなく、興味はあったのですが特にこれといったモチベーションは湧かずにいました。クラウドでのビルドマシン運用が面倒になってきたのをきっかけに、勉強ついでに自作パソコンを作りそれにNetBSDをインストールして日頃使いのマシン兼ビルドマシンとして運用しようと思い立ちました。</p>
 
 <ul>
-<li><a href="#configure">マシン構成</a>
-<li><a href="#troubles">トラブル</a></li>
+<li><a href="#configure">マシン構成</a></li>
+<li><a href="#troubles">トラブル</a>
+<ul><li><a href="#built">メモリを半差し</a></li>
+<li><a href="#x11">Xが立ち上がらない</a></li></ul>
 </li>
+<li><a href="#buildspeed">build.shがどれくらい速く終わるか？</a></li>
 </ul>
 
 <h2 id="configure">マシン構成</h2>
@@ -39,7 +42,67 @@
 </tbody>
 </table>
 
-<p>端から確定していたのはCPUとマザーボードだけで、あとは店員さんからの説明とオススメを聞いた上で僕が選びました。見積もりよりコンサルタントと言ったほうがより正確でしょうか。ポイントの差し引きをして工具セットも付けた結果、計104,190円となりました。即決です。</p>
+<p>端から確定していたのはCPUとマザーボードだけで、あとは店員さんからの説明とおすすめを聞いた上で僕が選びました。見積もりよりコンサルタントと言ったほうがより正確でしょうか。ポイントの差し引きをして工具セットも付けた結果、計104,190円となりました。即決です。</p>
+
+<h2 id="buildspeed">build.shがどれくらい速く終わるか？</h2>
+<p>ネイティブなNetBSD/amd64システムで<code>build.sh</code>からi386バイナリをクロスビルドしました。ツールチェイン、GENERICカーネル、ディストリビューションのビルド結果は以下のとおりです。</p>
+
+<pre><code>===&gt; Summary of results:
+         build.sh command:    ./build.sh -O /zpool/obj -R /zpool/releasedir -T /zpool/tools -V MKDEBUG=yes -V MKDEBUGLIB=yes -V MKLINT=yes -X /home/uki/src/cvs.NetBSD.org/xsrc -x -j12 -U -a i386 -m i386 -D /zpool/destdir/i386 tools
+         build.sh started:    Sat Dec 28 18:01:32 JST 2019
+         NetBSD version:      9.99.30
+         MACHINE:             i386
+         MACHINE_ARCH:        i386
+         Build platform:      NetBSD 9.99.30 amd64
+         HOST_SH:             /bin/sh
+         MAKECONF file:       /etc/mk.conf
+         TOOLDIR path:        /zpool/tools
+         DESTDIR path:        /zpool/destdir/i386
+         RELEASEDIR path:     /zpool/releasedir
+         Updated makewrapper: /zpool/tools/bin/nbmake-i386
+         Tools built to /zpool/tools
+         build.sh ended:      Sat Dec 28 18:06:19 JST 2019
+===&gt; .</code></pre>
+
+<pre><code>===&gt; Summary of results:
+         build.sh command:    ./build.sh -O /zpool/obj -R /zpool/releasedir -T /zpool/tools -V MKDEBUG=yes -V MKDEBUGLIB=yes -V MKLINT=yes -X /home/uki/src/cvs.NetBSD.org/xsrc -x -j12 -U -a i386 -m i386 -D /zpool/destdir/i386 kernel=GENERIC
+         build.sh started:    Sat Dec 28 19:04:05 JST 2019
+         NetBSD version:      9.99.30
+         MACHINE:             i386
+         MACHINE_ARCH:        i386
+         Build platform:      NetBSD 9.99.30 amd64
+         HOST_SH:             /bin/sh
+         MAKECONF file:       /etc/mk.conf
+         TOOLDIR path:        /zpool/tools
+         DESTDIR path:        /zpool/destdir/i386
+         RELEASEDIR path:     /zpool/releasedir
+         Updated makewrapper: /zpool/tools/bin/nbmake-i386
+         Building kernel without building new tools
+         Building kernel:     GENERIC
+         Build directory:     /zpool/obj/sys/arch/i386/compile/GENERIC
+         Kernels built from GENERIC:
+          /zpool/obj/sys/arch/i386/compile/GENERIC/netbsd
+         build.sh ended:      Sat Dec 28 19:05:37 JST 2019
+===&gt; .</code></pre>
+
+<pre><code>===&gt; Summary of results:
+         build.sh command:    ./build.sh -O /zpool/obj -R /zpool/releasedir -T /zpool/tools -V MKDEBUG=yes -V MKDEBUGLIB=yes -V MKLINT=yes -X /home/uki/src/cvs.NetBSD.org/xsrc -x -j12 -U -a i386 -m i386 -D /zpool/destdir/i386 distribution
+         build.sh started:    Sat Dec 28 18:10:10 JST 2019
+         NetBSD version:      9.99.30
+         MACHINE:             i386
+         MACHINE_ARCH:        i386
+         Build platform:      NetBSD 9.99.30 amd64
+         HOST_SH:             /bin/sh
+         MAKECONF file:       /etc/mk.conf
+         TOOLDIR path:        /zpool/tools
+         DESTDIR path:        /zpool/destdir/i386
+         RELEASEDIR path:     /zpool/releasedir
+         Updated makewrapper: /zpool/tools/bin/nbmake-i386
+         Successful make distribution
+         build.sh ended:      Sat Dec 28 18:51:20 JST 2019
+===&gt; .</code></pre>
+
+<p>CPUを全開で使うと、ツールチェインのビルドは約5分、GENERICカーネルのビルドは1分未満、ディストリビューションのビルドは約41分で終わってしまいました。ThinkPadでビルドしていた頃と比べればどれだけ時間の節約になっているか論ずるまでもありません。</p>
 
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
