@@ -32,7 +32,7 @@
 <figcaption><b>図1: </b>基本的なZabbix監視システム。矢印はなにかしらのデータのやりとりがあることを示しています。</figcaption>
 </figure>
 
-<p>図1に示したとおりZabbixはServer-Agentモデルの監視をおこないます。監視対象のシステムにZabbix Agentがインストールされ、Zabbix Serverは各Zabbix Agentへ監視項目を問い合わせ、返ってきたデータをデータベースに格納します[<a id="ractive" href="#active">2</a>]。取得した監視データはZabbix Webフロントエンドから確認でき、グラフにプロットすることも可能です。</p>
+<p>図1に示したとおりZabbixはServer-Agentモデルの監視をおこないます。監視対象のシステムにZabbix Agentがインストールされ、Zabbix Serverは各Zabbix Agentへ監視項目を問い合わせ、返ってきたデータをデータベースに格納します[<a id="ractive" href="#active">2</a>]。取得した監視データはZabbix Webフロントエンドから確認でき、グラフにプロットできます。</p>
 
 <p>Zabbix LLC.からはGNU/Linuxディストリビューション向けにServerおよびAgentのパッケージが提供されており、FreeBSD・OpenBSD・MacOS・Windows・AIX・HP-UXなどの環境に対してはAgentのパッケージのみ提供されています。NetBSD向けパッケージは提供されておらず、<code>pkgsrc(7)</code>から<b>sysutils/zabbix</b>パッケージをインストールする必要があります。Zabbix Webフロントエンドは別途<b>sysutils/zabbix-frontend</b>パッケージをインストールしなければなりません。</p>
 
@@ -40,7 +40,7 @@
 <h3 id="sysutils-zabbix">sysutils/zabbixのインストール</h3>
 <p><b>sysutils/zabbix</b>パッケージをインストールします。このパッケージにはZabbix Agent・Zabbix Server・Zabbix Proxyが含まれています。pkgsrc-2019Q3時点ではZabbix 4.0.9が提供されるようですが、4.0.9ではZabbix側のNetBSD依存のコードが古くビルドに失敗します。そこで、このパッケージは修正パッチがあるpkgsrc-currentブランチを使ってください。</p>
 
-<p>また、Zabbix Serverを動かすホストと同じホストでデータベースも動かす場合は、別途データベースを用意します。標準では<b>sysutils/zabbix</b>パッケージは<b>database/postgresql95-client</b>パッケージに依存しているため、<b>database/postgresql95-server</b>をインストールするといいでしょう（これより新しいバージョンのPostgreSQLでは動作未確認です。おそらく動くと思います）。</p>
+<p>また、Zabbix Serverを動かすホストと同じホストでデータベースも動かす場合は、別途データベースを用意します。標準では<b>sysutils/zabbix</b>パッケージは<b>database/postgresql95-client</b>パッケージに依存しているため、<b>database/postgresql95-server</b>をインストールしてください。</p>
 
 <pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix</b>
 <b class="root">cvs update -dP -A</b>
@@ -104,7 +104,7 @@ Hostname=Zabbix server</b></code></pre>
 <pre><code><b class="root">service zabbix_agentd start</b></code></pre>
 
 <h3 id="server">Zabbix Serverの設定と起動</h3>
-<p>ここではZabbix Serverとデータベースを動かすホストが同一であるとします。NetBSD標準の設定ではセマフォ（semaphore）が足りなくなりZabbix Serverかデータベースのどちらかが動きません。そこで<code>sysctl(8)</code>からシステム中のセマフォの数を増やす設定をします。実際の数字はトライアンドエラーで調整してください。</p>
+<p>ここではZabbix Serverとデータベースを動かすホストが同一だとします。NetBSD標準の設定ではセマフォ（semaphore）が足りなくなりZabbix Serverかデータベースのどちらかが動きません。そこで<code>sysctl(8)</code>からシステム中のセマフォの数を増やす設定をします。実際の数字はトライアンドエラーで調整してください。</p>
 
 <pre><code><b class="root">sysctl -w kern.ipc.semmns=80</b></code></pre>
 
@@ -289,12 +289,12 @@ $IMAGE_FORMAT_DEFAULT	= IMAGE_FORMAT_PNG;
 //$HISTORY['types'] = ['uint', 'text'];
 </b></code></pre>
 
-<p>php-fpmとApacheのデーモンを動かします</p>
+<p>php-fpmとApacheのデーモンを動かします。</p>
 
 <pre><code><b class="root">service php_fpm start</b>
 <b class="root">service apache start</b></code></pre>
 
-<p>Webブラウザから 127.0.0.1/zabbix へアクセスします。標準ではユーザAdminのパスワードには「zabbix」が設定されています。</p>
+<p>Webブラウザから http://127.0.0.1/zabbix へアクセスします。標準ではユーザAdminのパスワードには「zabbix」が設定されています。</p>
 
 <figure>
 <img src="./images/zabbix_002.png" alt="Zabbix web frontend login page">
