@@ -101,124 +101,112 @@ git diff --cached --name-only --diff-filter=AM HEAD \
 cmd="npm"
 cmd_opt="install -g"
 targets="textlint
+@textlint-ja/textlint-rule-no-insert-dropping-sa
+@textlint-ja/textlint-rule-no-synonyms
+sudachi-synonyms-dictionary
 textlint-filter-rule-whitelist
-textlint-rule-no-start-duplicated-conjunction
-textlint-rule-no-doubled-conjunction
-textlint-rule-ng-word
-textlint-rule-no-dead-link
-textlint-rule-terminology
-textlint-rule-max-ten
-textlint-rule-no-doubled-joshi
-textlint-rule-no-double-negative-ja
-textlint-rule-ja-no-redundant-expression
-textlint-rule-ja-no-abusage
-textlint-rule-sentence-length
+textlint-plugin-html
 textlint-rule-first-sentence-length
-textlint-rule-no-dropping-the-ra
-textlint-rule-no-doubled-conjunctive-particle-ga
-textlint-rule-no-doubled-conjunction
-textlint-rule-ja-hiragana-keishikimeishi
 textlint-rule-ja-hiragana-fukushi
 textlint-rule-ja-hiragana-hojodoushi
-@textlint-ja/textlint-rule-no-insert-dropping-sa
+textlint-rule-ja-hiragana-keishikimeishi
+textlint-rule-ja-no-abusage
+textlint-rule-ja-no-mixed-period
+textlint-rule-ja-no-redundant-expression
+textlint-rule-ja-no-successive-word
+textlint-rule-ja-no-weak-phrase
+textlint-rule-max-ten
+textlint-rule-ng-word
+textlint-rule-no-dead-link
+textlint-rule-no-double-negative-ja
+textlint-rule-no-doubled-conjunction
+textlint-rule-no-doubled-conjunctive-particle-ga
+textlint-rule-no-doubled-joshi
+textlint-rule-no-dropping-the-ra
+textlint-rule-no-mix-dearu-desumasu
+textlint-rule-no-start-duplicated-conjunction
 textlint-rule-prefer-tari-tari
 textlint-rule-preset-jtf-style
-textlint-plugin-html"
+textlint-rule-sentence-length
+textlint-rule-terminology"
+textlintrc="textlintrc"
 
 for package in $targets; do
   $cmd "$cmd_opt" "$package"
-done</b></code></pre>
+done
+
+if [ -f "$textlintrc" ]; then
+    if [ -f "$HOME/.${textlintrc}" ]; then
+        exit 0
+    else
+        cp "$textlintrc" "$HOME/.${textlintrc}"
+    fi
+fi</b></code></pre>
 
 <p>textlintの設定ファイル$HOME/.textlintrcを次のように書きます。設定内容は『<a href="https://efcl.info/2015/10/19/textlint-plugin-jtf-style/">JTF日本語標準スタイルガイドのルールセットで文章をチェックできるtextlintプリセット</a>』、『<a href="https://qiita.com/azu/items/60764ed6f415d3c748bf">文書執筆の指南書で解説されている問題点を textlint で発見する</a>』、『<a href="https://www.monotalk.xyz/blog/web%E3%82%B5%E3%82%A4%E3%83%88-%E3%81%AE-html-%E3%82%92-textlint-%E3%81%A7%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF%E3%81%99%E3%82%8B/">WebサイトのHTMLをtextlintでチェックする</a>』を参考にしました。</p>
 
 <pre><code><b>{
-    // HTMLプラグインを有効にする
     "plugins": [
-    "html"
+        "html"
     ],
     "rules": {
-        // 一文の「、」を3つに制限
         "max-ten": {
             "max" : 3
         },
-        // 同じ表現から文を開始しすぎない
         "no-start-duplicated-conjunction": {
-            "interval" : 2 // interval of sentences
+            "interval" : 2
         },
-        // 逆説の接続助詞「が」を検知
         "no-doubled-conjunctive-particle-ga": true,
-        // 同じ接続しが連続して出現していないかを検知
         "no-doubled-conjunction": true,
-        // 「の」の多用を検知
+        "no-double-negative-ja": true,
+        "ja-no-redundant-expression": true,
+        "no-dropping-the-ra": true,
+        "ja-no-successive-word": true,
+        "@textlint-ja/no-synonyms": true,
+        "ja-hiragana-keishikimeishi": true,
+        "ja-hiragana-fukushi": true,
+        "ja-hiragana-hojodoushi": true,
+        "@textlint-ja/textlint-rule-no-insert-dropping-sa": true,
+        "prefer-tari-tari": true,
+        "ja-no-abusage": true,
+        "ja-no-mixed-period": true,
+        "ja-no-weak-phrase": true,
+        "no-mix-dearu-desumasu": {
+            "preferInHeader": "",
+            "preferInBody": "ですます",
+            "preferInList": "ですます",
+            "strict": true
+        },
         "no-doubled-joshi": {
             "min_interval" : 1,
             "strict": false,
             "allow": []
         },
-        // 表記ゆれの検知
         "terminology": {
-            // Load default terms (see terms.json in the repository)
             "defaultTerms": true,
-            // Syntax elements to skip. Overrides the default
             "skip": ["Blockquote"],
-            // List of terms
             "terms": [
-            // Exact spelling including the case
-            "JavaScript",
-            "ESLint",
-            "Sass",
-            "Less",
-            "npm",
-            // RegExp (case-insensitive) → replacement
-            ["front[- ]end(\\w*)", "frontend$1"],
-            ["back[- ]end(\\w*)", "backend$1"],
-            ["web[- ]?site(s?)", "site$1"],
-            ["hot[- ]key", "hotkey"],
-            ["repo\\b", "repository"],
-            ["CLI tool(s?)", "command line tool$1"],
-            ["build system(s?)", "build tool$1"],
-            ["id['’]?s", "IDs"],
-            ["(\\w+[^.?!]\\)? )webpack", "$1webpack"],
-            ["(\\w+[^.?!]\\)? )internet", "$internet"]
-            ],
+                "JavaScript",
+                "ESLint",
+                "Sass",
+                "Less",
+                "npm",
+                ["front[- ]end(\\w*)", "frontend$1"],
+                ["back[- ]end(\\w*)", "backend$1"],
+                ["web[- ]?site(s?)", "site$1"],
+                ["hot[- ]key", "hotkey"],
+                ["repo\\b", "repository"],
+                ["CLI tool(s?)", "command line tool$1"],
+                ["build system(s?)", "build tool$1"],
+                ["id['’]?s", "IDs"],
+                ["(\\w+[^.?!]\\)? )webpack", "$1webpack"],
+                ["(\\w+[^.?!]\\)? )internet", "$internet"]
+            ]
         },
-        // JTF日本語標準スタイルガイド
-        "preset-jtf-style": {
-            "1.2.1.句点(。)と読点(、)": false,
-            "3.1.1.全角文字と半角文字の間": false,
-            "4.1.3.ピリオド(.)、カンマ(,)": false,
-            "4.2.6.ハイフン(-)": false,
-            "4.3.2.大かっこ［］": false
-        },
-        // 二重否定を検知
-        "no-double-negative-ja": true,
-        // 冗長な表現を検知
-        "ja-no-redundant-expression": true,
-        // 「ら」抜き言葉を検知
-        "no-dropping-the-ra": true,
-        // 開くべき漢字を検知（形式名詞）
-        "ja-hiragana-keishikimeishi": true,
-        // 開くべき漢字を検知（副詞）
-        "ja-hiragana-fukushi": true,
-        // 開くべき漢字を検知（補助動詞）
-        "ja-hiragana-hojodoushi": true,
-        // サ抜き、サ入れ表現の誤用を検知
-        "@textlint-ja/textlint-rule-no-insert-dropping-sa": true,
-        // 例示・並列・対表現の「〜たり〜たりする」を検知
-        "prefer-tari-tari": true,
-        // よくある日本語の誤用を検知
-        "ja-no-abusage": true
+        "preset-jtf-style": "true"
     },
     "filters": {
-        "whitelist": {
-            "allow": [
-                "/&lt;pre&gt;&lt;code&gt;[\\s\\S]*?&lt;\/code&gt;&lt;\/pre&gt;/m", // code
-                "/&lt;code&gt;[\\s\\S]*?&lt;\/code&gt;/m", // code
-                "/&lt;blockquote&gt;[\\s\\S]*?&lt;\/blockquote&gt;/m", // 引用
-                "/『[\\s\\S]*?』/m", // 書籍名
-                "/[\\s\\S]*?.html/" // URL
-            ]
-        }
+        "whitelist": "true"
     }
 }</b></code></pre>
 
