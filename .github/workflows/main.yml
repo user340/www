@@ -14,14 +14,12 @@ jobs:
         uses: Cyb3r-Jak3/html5validator-action@v0.1
         with:
           root: .
-      - name: Install SSH Key
+      - name: Install SSH Key for Deploy
         uses: shimataro/ssh-key-action@v1
         with:
           private-key: ${{ secrets.SSH_KEY }}
           public-key: ${{ secrets.SSH_KEY_PUBLIC }}
           known-hosts: ${{ secrets.KNOWN_HOSTS }}
           config: ${{ secrets.SSH_CONFIG  }}
-      - name: Install packages
-        run: apt install openssh-client
-      - name: Deploy to Server
+      - name: Deploy to e-yuuki.org
         run: ssh e-yuuki.org "cd www && git pull"
