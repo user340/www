@@ -61,7 +61,7 @@ zabbix_agentd=YES
 zabbix_server=YES</b></code></pre>
 
 <h3 id="sysutils-zabbix-frontend">sysutils/zabbix-frontendのインストール</h3>
-<p>Zabbix Webフロントエンドを使うには<b>sysutils/zabbix-frontend</b>パッケージをインストールします。pkgsrc-2019Q3ではこのパッケージはPHP 7.1に依存していますが、Apache上でPHP 7のスクリプトを実行するにはモジュールではなくCGIを使うように標準の設定が変更されました。そこでPHPのFastCGI実装である<b>www/php-fpm</b>パッケージも一緒にインストールしなければなりません。</p>
+<p>Zabbix Webフロントエンドを使うには<b>sysutils/zabbix-frontend</b>パッケージをインストールします。pkgsrc-2019Q3ではこのパッケージはPHP 7.1に依存していますが、Apache上でPHP 7のスクリプトを実行するにはモジュールではなくCGIを使うように標準の設定が変更されました。そこで<b>www/php-fpm</b>パッケージも一緒にインストールしなければなりません。これはPHPのFastCGI実装です。</p>
 
 <pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix-frontend</b>
 <b class="root">make install clean clean-depends</b>

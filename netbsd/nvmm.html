@@ -21,15 +21,15 @@
 <li><a href="#references">参考文献</a></li>
 </ol>
 <h2 id="nvmm">NVMMとは</h2>
-<p>NVMM（NetBSD Virtual Machine Monitor）はNetBSD x86_64アーキテクチャ上でハイパーバイザを提供するNetBSDカーネルの機能です。Xenと同じくNetBSDのソースコードに取り込まれているハイパーバイザですが、Xenと違いゲスト仮想マシン用のカーネル（Domain-U）を別途用意したり、ホスト側のカーネルがマルチコアに対応していないわけではありません。LinuxカーネルのKVMや<a href="./haxm.html">NetBSDのHAXM</a>と同じく、ハードウェア仮想化にQEMUを用いて、QEMUのプラグインとしてハードウェアアクセラレーション（hardware-acceleration）を使うことになります。</p>
+<p>NVMM（NetBSD Virtual Machine Monitor）はNetBSD x86_64アーキテクチャ上でハイパーバイザを提供するNetBSDカーネルの機能です。Xenと同じくNetBSDのソースコードに取り込まれているハイパーバイザですが、Xenと違いゲスト仮想マシン用のカーネル（Domain-U）を別途用意しなければならなかったり、ホスト側のカーネルがマルチコアに対応していたりしないわけではありません。LinuxカーネルのKVMや<a href="./haxm.html">NetBSDのHAXM</a>と同じく、ハードウェア仮想化にQEMUを用いて、QEMUのプラグインとしてハードウェアアクセラレーション（hardware-acceleration）を使うことになります。</p>
 
-<p>2019年11月16日時点で最新のNetBSD 8.1では、NVMMはまだ提供されていません。したがっていまNVMMを試してみたいのであればcurrentブランチかnetbsd-9ブランチをチェックアウトするしかありません。本稿の内容は2019年10月19日にビルドしたNetBSD 9.99.17を使って確認しています。</p>
+<p>2019年11月16日時点で最新のNetBSD 8.1では、NVMMはまだ提供されていません。したがっていまNVMMを試してみたいならcurrentブランチかnetbsd-9ブランチをチェックアウトするしかありません。本稿の内容は2019年10月19日にビルドしたNetBSD 9.99.17を使って確認しています。</p>
 
 <h2 id="installation">NVMMのインストール</h2>
 
 <h3 id="netbsd_installation">NetBSDカーネルとモジュールのビルド</h3>
 
-<p>標準ではNVMMの疑似デバイス（pseudo-device）は有効になっていません。GENERICカーネルを使うのであれば、<code>sys/arch/amd64/conf/GENERIC</code>を次のように編集してください。</p>
+<p>標準ではNVMMの疑似デバイス（pseudo-device）は有効になっていません。GENERICカーネルを使う場合、<code>sys/arch/amd64/conf/GENERIC</code>を次のように編集してください。</p>
 
 <pre><code>--- a/sys/arch/amd64/conf/GENERIC       Sat Oct 19 14:42:30 2019 +0000
 +++ b/sys/arch/amd64/conf/GENERIC       Sat Nov 16 12:15:37 2019 +0900
@@ -43,7 +43,7 @@
  # wscons pseudo-devices
  pseudo-device  wsmux                   # mouse &amp; keyboard multiplexor</code></pre>
 
-<p>カーネルのビルドに成功したら、カーネルを入れ替えてOSを再起動してください。カーネルモジュールをロードする必要があるため、<code>build.sh</code>はdistributionまで作って<code>install=/</code>するのが確実です（<code>modules</code>オペレーションでモジュールだけビルドするのもいいです）。再起動後正しくOSが立ち上がれば、<code>modload(8)</code>を実行し<code>nvmm</code>カーネルモジュールを読み込んでください。</p>
+<p>カーネルのビルドに成功したら、カーネルを入れ替えてOSを再起動してください。カーネルモジュールをロードする必要があるため、<code>build.sh</code>はdistributionまで作って<code>install=/</code>するのが確実です（<code>modules</code>オペレーションでモジュールだけビルドするのもいいです）。再起動後正しくOSが立ち上がれば、<code>modload(8)</code>で<code>nvmm</code>カーネルモジュールを読み込んでください。</p>
 
 <pre><code><b class="root">modload /stand/amd64/9.99.17/modules/nvmm/nvmm.kmod</b></code></pre>
 
@@ -52,7 +52,7 @@
 
 <p><code>pkgsrc(8)</code>から<b>wip/qemu-nvmm</b>パッケージをインストールします。pkgsrc-2019Q3時点では、このパッケージはまだ提供されていません。そこで、pkgsrc-wipをインストールし、そこからこのパッケージをビルドしインストールします。ここではpkgsrc-wipのインストール手順を省略します。<a href="https://pkgsrc.org/wip/">公式Webページ</a>を参照してください。</p>
 
-<p>wipであれ、インストール方法は通常の<code>pkgsrc(8)</code>と同じです。通常の<b>emulators/qemu</b>パッケージが既にインストールされているのであれば、<code>pkg_delete(1)</code>で削除してください。</p>
+<p>イパッケージのンストール方法は<code>pkgsrc(8)</code>と同じです。<code>pkgsrc(8)</code>の<b>emulators/qemu</b>パッケージがすでにインストールされているなら、それを<code>pkg_delete(1)</code>で削除してください。</p>
 
 <pre><code><b class="root">cd wip/qemu-nvmm</b>
 <b class="root">make install clean clean-depends</b></code></pre>
