@@ -6,7 +6,7 @@ jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
-      - name: HTML5 Validator
+      - name: HTML5 Validator to NetBSD Writing
         uses: Cyb3r-Jak3/html5validator-action@v0.1
         with:
-          Root: .
+          Root: netbsd/
