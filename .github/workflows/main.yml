@@ -6,7 +6,7 @@ jobs:
   Lint:
     runs-on: ubuntu-latest
     steps:
-      - name: HTML5 Validator to NetBSD Writing
-        uses: Cyb3r-Jak3/html5validator-action@v0.1
+      - name: Link Checker
+        uses: peter-evans/link-checker@v1
         with:
-          root: 'netbsd'
+          args: -v -r *
