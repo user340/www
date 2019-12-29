@@ -3,12 +3,12 @@ name: CI
 on: [push]
 
 jobs:
-  Lint:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Link Checker
         uses: peter-evans/link-checker@v1
         with:
-          args: -v -d . -r $PWD/
+          args: -v -d . -r .
       - name: debug
         run: pwd && ls
