@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>GitHub ActionsでホームページのCIを確立した</h1>
+<hr>
+<p>話題の旬を逃していますが、GitHub Actionsに入門しhttps://e-yuuki.orgの継続的インテグレーション（CI）を確立させることができました。非常に便利な反面、GitHub／Microsoftによるベンダーロックインがさらに加速し、インフラストラクチャがますます秘匿される時代になったのだなとも思い知らされました。</p>
+
+<ol>
+<li><a href="#what">GitHub Actionsとは</a></li>
+<li><a href="#example">事例: e-yuuki.org</a>
+<ol>
+<li><a href="#before">いままでのデプロイ手順</a></li>
+<li><a href="#after">GitHub Actions導入によるデプロイ自動化</a></li>
+</ol>
+</li>
+<li><a href="#opinion">ロックインへの危機感</a></li>
+<li><a href="#conclution">おわりに</a></li>
+</ol>
+
+<h2 id="what">GitHub Actionsとは</h2>
+<p><b>GitHub Actions</b>は<a href="https://github.com/about">GitHub, Inc.</a>が提供しているCIサービスです。オンプレミスで動かすCIサービスは<a href="https://buildbot.net">Buildbot</a>や<a href="https://jenkins.io">Jenkins</a>といったFLOSSが著名です。しかしCIサービスは必ずしもオンプレミスで稼働させるものではなく、<a href="https://travis-ci.org">Travis CI</a>や<a href="https://circleci.com">CircleCI</a>のようにサービス提供者がホスティングしているサーバを使うものもあります。GitHub Actionsは後者のサービスです。Windows Server・Ubuntu・macOSをGitHub, Inc.がホスティングしているサーバ上で仮想マシンとして動かし、<b>アクション</b>として定義されているDockerコンテナやJavaScriptを実行できます。</p>
+
+<p>僕が使ってみたかぎり、GitHub Actionsは以下の点で優れています。</p>
+
+<ul>
+<li>既存のGitHubリポジトリと簡単に連携できる。他サービスにサインインしなくていい。</li>
+<li>GitHubアカウントが無料プランでも（制限はあるものの）利用できる。</li>
+<li>アクションがGitHubリポジトリで公開されており検索が簡単。</li>
+<li>自分でCI環境を構築しなくてもよい。</li>
+<li>ワークフローの作成はYAMLを書くだけ。</li>
+</ul>
+
+<p>要するにGitHubのエコシステム内で開発からデプロイまでを完結できるようになったということです。</p>
+
+<h2 id="example">事例: e-yuuki.org</h2>
+<p>ここではGitHub Actionsを導入する前後で記事執筆がどう変わったかを紹介します。</p>
+
+<p>記事を執筆するうえで次の4つの手順を踏んでいました。</p>
+
+<ol>
+<li>HTMLで書く</li>
+<li><a href="https://github.com/textlint/textlint">textlint</a>で日本語を校正する</li>
+<li><a href="https://github.com/validator/validator">Nu Html Checker</a>でHTMLを検査する</li>
+<li>Webサーバへデプロイする</li>
+</ol>
+
+<h3 id="before">いままでのデプロイ手順</h3>
+<p>日本語校正とHTMLの検査は<code>.git/hooks/pre-commit</code>にスクリプトを書きローカルで実行していました。上記の2と3にあたります。次に<code>git push</code>したあと手動でWebサーバにログインし、<code>git pull</code>でGitHubのリポジトリから修正を取ってきていました。これは上記の4にあたります。</p>
+
+<p>GitHub Actionsを知るまではこの手順でも特に不便を感じていませんでした。ただし、問題点がないわけではありませんでした。</p>
+
+<p>第一にデプロイを忘れることがたびたびありました。手動でやる以上忘れるのは当然と言えます。第二に、textlintは<code>npm</code>からインストールするためどんな環境でもnpmさえインストールできれば動かせました。しかしNu Html CheckerはOpenJDKを使って手元でビルドする必要があります。執筆環境が変わるたびに毎回OpenJDKをインストールしてビルドするのは面倒でした。</p>
+
+<p>一時期はBuildbotを使ってHTML検査とデプロイの自動化を試みたこともありますが、リポジトリへの<code>push</code>をトリガーにビルドが走るよう設定できず、高機能なcronとして使わざるをえなかった経緯もあります。</p>
+
+<h3 id="after">GitHub Actions導入によるデプロイ自動化</h3>
+<p>GitHub Actionsなら<code>push</code>した時点でなにかを処理できます。まずはSSHを使ってデプロイだけでもできないものかとアクションを調べていると、<a href="https://github.com/shimataro/ssh-key-action">Install SSH key</a>アクションを見つけました。これは秘密鍵・公開鍵・known_hosts・ssh_configをGitHubリポジトリのSecretsとして登録しておくことで、コンテナの<code>~/.ssh</code>にそれをインストールしてくれるアクションです。秘密鍵はPEM形式で登録しないとエラーになる点だけ注意すれば特に問題なく利用できました。これでデプロイを忘れる問題は解消されました。</p>
+
+<p>次にHTMLの検査もしたいと思い調べると、<a href="https://github.com/Cyb3r-Jak3/html5validator-action">HTML5 Validator Action</a>を見つけました。これはNu Html Checkerを実行してくれるアクションです。これで環境ごとにビルドが必要な問題も解消できたわけです。</p>
+
+<p>最終的に、以下のようにワークフローを書いてHTMLの検査とデプロイを自動化させました。ワークフローはGitHubのWebコンソールから作るか、リポジトリの<code>.github/workflows/main.yml</code>に書きます。ファイル名は任意で大丈夫らしいですが、ディレクトリ名は<code>.github/workflows</code>固定です。</p>
+
+<pre><code><b>name: CI
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Validate HTML5
+        uses: Cyb3r-Jak3/html5validator-action@v0.1
+        with:
+          root: .
+      - name: Install SSH Key for Deploy
+        uses: shimataro/ssh-key-action@v1
+        with:
+          private-key: ${{ secrets.SSH_KEY }}
+          public-key: ${{ secrets.SSH_KEY_PUBLIC }}
+          known-hosts: ${{ secrets.KNOWN_HOSTS }}
+          config: ${{ secrets.SSH_CONFIG  }}
+      - name: Deploy to e-yuuki.org
+        run: ssh e-yuuki.org "cd www && git pull"</b></code></pre>
+
+<p>このファイルがある状態で<code>git push</code>をすると、ソースコードのチェックアウトからデプロイまでがUbuntu上で自動的に実行されます。</p>
+
+<img src="./img/github_actions_001.png" alt="CI">
+
+<p>結果どうなったか？どんな些細なことでも自動化できると気持ちよいものです。ブログでテキストボックスに文章を書いて「投稿」ボタンを押すのと同じ感覚で、文章をテキストエディタで書いて<code>git push</code>できるようになりました。</p>
+
+<h2 id="opinion">ロックインへの危機感</h2>
+<p>すばらしい体験を享受したはいいものの、FLOSSに携わる者としてGitHub, Inc.とそれを買収したMicrosoftという巨大な中央集権のロックインは気になるところです。これまでオンプレミスでBuildbotやJenkinsを動かしてきた経験からするとあまりにもGitHub Actionsは便利すぎるところがあります（BuildbotやJenkinsを上手に扱えられなかっただけかもしれませんが）。生産的なのは間違いないのですが、それと引き換えになにを失いなにが制限されるのかを、現場へ導入するときに検討してみる必要があります。</p>
+
+<p>またGitHub Actionsはインフラを隠し「アクション」としてより高い抽象度のサービスを提供している点が「うまい」と感じました。なにかしらのサービスを使うにはこのパッケージをインストールしてこういう設定をして……というような時代はGitHub Actions登場以前に終わり少数勢力となっています。代わりにコンテナがそれを秘匿し、ユーザはサービスだけを受け取るようになったのです。しかしGitHub Actionsは「アクション」でそれをもう一段高いレイヤーに押し上げたのではないでしょうか。もはやコンテナが動いているのかJavaScriptが動いているのか意識することなく、単にマーケットプレイスから好きなサービスを選ぶだけでよくなりました。</p>
+
+<h2 id="conclution">おわりに</h2>
+<p>GitHub Actionsで簡単にCIを導入できました。GitHubでブログ記事やWebサービスのソースコードを管理している方にとって、GitHub Actionsはlintからデプロイまでを簡単に自動化できる優れものです。</p>
+
+<p>反面、ロックインやプロプライエタリなサービス（GitHub自体そうですが）をなるべく避けたい方は注意が必要でしょう。</p>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
