@@ -41,7 +41,7 @@
 </div>
 
 <h2 id="solutions">解決手段</h2>
-<p><a href="https://www.gnu.org/software/gnuzilla/">IceCat</a>がFirefoxを置き換え、<a href="https://wiki.hyperbola.info/iceweasel-uxp">Iceweasel-UXP</a>がBasiliskを置き換えたように、商標の制限を避けつつRust全体を<b>再ブランド化</b>します[<a href="#note6">6</a>]。しかしRustはプログラミング言語で、Webブラウザではありません。<b>再ブランド化されたRustはGNUプロジェクトによってメンテナンスされ、FSDG互換のディストリビューションもそうなる可能性があります</b>[<a href="#note7">7</a>]。Rustはプログラミング言語なので、わたしたちはすべてのRust依存なアプリケーションを、再ブランド化されたRustのバージョンへ適応させるためのパッチを求めるでしょう。わたしたちは<a href="https://www.hyperbola.info/packages/core/any/your-freedom/">あなたの自由</a>のために、自由でないCargoパッケージのリストをブラックリスト入りしなければならないでしょう。</p>
+<p><a href="https://www.gnu.org/software/gnuzilla/">IceCat</a>がFirefoxを置き換え、<a href="https://wiki.hyperbola.info/iceweasel-uxp">Iceweasel-UXP</a>がBasiliskを置き換えたように、商標の制限を避けつつRust全体を<b>再ブランド化</b>します[<a href="#note6">6</a>]。しかしRustはプログラミング言語で、Webブラウザではありません。<b>再ブランド化されたRustはGNUプロジェクトによってメンテナンスされ、FSDG互換のディストリビューションもそうなる可能性があります</b>[<a href="#note7">7</a>]。Rustはプログラミング言語なので、わたしたちはすべてのRust依存なアプリケーションを、再ブランド化されたRustのバージョンへ適応させるためのパッチを求めるでしょう。わたしたちは自由でないCargoパッケージをブラックリスト入りさせ、<a href="https://www.hyperbola.info/packages/core/any/your-freedom/">your-freedom</a>パッケージへ加えなければならないでしょう[<a href="#note8">8</a>]。</p>
 
 <p>第三の自由を尊重したうえで、どのような目的に対してもRustバイナリを修正できるよう、Rustの商標利用許諾を変えていくことも考えられます。</p>
 
@@ -61,6 +61,7 @@
 <li id="note5"><p><a href="https://www.torproject.org/">Tor</a>は専用のプロキシサーバ（SOCKSプロキシ）を何度も中継させることで、身元の特定を難しくさせ、インターネット上での匿名性を担保するソフトウェアです。</p></li>
 <li id="note6"><p>BasiliskはWebブラウザの一種です。</p></li>
 <li id="note7"><p>FSDGは<a href="https://www.gnu.org/distros/free-system-distribution-guidelines.ja.html">Free System Distribution Guidelines</a>の略です。GNUプロジェクトが指す「自由」に当てはまるディストリビューションはなにか？についてのガイドラインです。</p></li>
+<li id="note8"><p>your-freedomパッケージがインストールされていると、自由ではないパッケージやセキュアではないパッケージをインストールしようとしても、このパッケージの依存関係と衝突してインストールができないようになります。</p></li>
 </ol>
 
 <hr>
