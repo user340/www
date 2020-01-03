@@ -16,7 +16,7 @@
 <li>LinuxカーネルはHDCPを含むDRMに適応してしまった。</li>
 <li>LinuxカーネルはRustの利用を提案しているが、自由やリポジトリへのアクセスについて懸念がある。</li>
 <li>Linuxカーネルはセキュリティのことを度外視して開発されはじめた。</li>
-<li>多くのGNUアプリケーションがPulseAudio、SystemD、Rust、Javaを使わせられている。</li>
+<li>多くのGNUアプリケーションがPulseAudio、systemd、Rust、Javaを使わせられている。</li>
 </ul>
 
 <h2>DRMへの反対</h2>
@@ -38,11 +38,48 @@ This malicious feature is known as Digital Restrictions Management (DRM) (see ou
 <p>つまりDRMやHDCPのような、著作権保護を理由にユーザの自由を侵害する機能はフリーソフトウェアとは相容れないと主張しているわけです。この主張は「誰でも海賊版を再頒布できるようにせよ」という意味ではなく、ユーザの（私的利用のような）現行の著作権法において合法の活動ですら制限してしまう機能に反対しているのです。</p>
 
 <h2>Rustへの懸念</h2>
+<p>Rustはセキュアなプログラミング言語で、学習コストは確かに高いものの一定の人気があります。Linux開発チームでは、<a href="https://lwn.net/Articles/797828/">ドライバの開発にRustを使ってみてはどうかという議論が挙がっています</a>。Hyperbolaプロジェクトの決定はこれに影響されたのだと考えられますが、なぜそうRustを使うことに反発するのでしょうか？</p>
+
 <p><a href="https://news.mynavi.jp/article/20191225-945491/">日本語訳された記事</a>では単に「LinuxカーネルはRustの利用を提案されているが、セキュリティ上の懸念がある」と訳されています。ここで言われている「セキュリティ上の懸念」とはRustそのものの潜在的なバグを指しているわけではありません。もともとは<a href="https://wiki.hyperbola.info/doku.php?id=en:main:rusts_freedom_flaws">Rustの商標に関する問題</a>（拙訳は『<a href="https://e-yuuki.org/books/rusts_freedom_flaws/index.html">Rustの不自由</a>』）や、Rustのコードリポジトリへのアクセスにインターネット接続が不可欠かつ、サイバー攻撃が活発な場所でソースコードが管理されている状況を危惧しているのです。Rustパッケージを公開している<a href="https://crates.io/">crates.io</a>自体はソースコードを管理していないため、後者はおそらくGitHubを指していると思われます。</p>
 
 <p>Rustプロジェクトは標準ライブラリをなるべく小さく保ち、高機能なライブラリは有志の開発に任せる方針をとっています（<a href="https://blog.rust-lang.org/2017/05/05/libz-blitz.html#batteries-included">Batteries included?</a>）。この方針は標準ライブラリの保守を削減でき、優れたライブラリをコミュニティ開発によってすばやく提供できる点で優れています。しかしそのライブラリへアクセスするにはインターネットを経由しなければならず、ソースコードは多くがGitHubというプラットフォームで集中して管理されています。crates.ioに登録されているライブラリの何割がGitHubで管理されているのか分かりませんが、少なくともcrates.ioからもっとも多くダウンロードされているrand, libc, bitflags, syn, lazy-static, log, serde, quote, unicode-xid, rand_coreといったライブラリのソースコードはすべてGitHubで管理されています（2020年1月3日時点）。問題は、GitHubがサイバー攻撃の対象となりやすいことです。攻撃対象としてポピュラーなサービス上でコアなライブラリを管理しているこの状況は、Hyperbolaプロジェクトにとっては納得のいくものではないようです。</p>
 
 <h2>Linuxカーネルのセキュリティ</h2>
-<p>LinuxカーネルにはKSPP（<a href="https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project">Kernel Self Protection Project</a>）というLinuxカーネルのセキュリティ向上を目的としたプロジェクトがありますが、Hyperbolaプロジェクト曰くもう活発ではないとのことです。同じくセキュリティを強化する目的で<a href="https://grsecurity.net/">grsecurity</a>というLinuxカーネルのパッチセットが存在しますが、すでにフリーソフトウェアではなくなったとHyperbolaプロジェクトは主張しています。</p>
+<p>LinuxカーネルにはKSPP（<a href="https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project">Kernel Self Protection Project</a>）というLinuxカーネルのセキュリティ向上を目的としたプロジェクトがありますが、Hyperbolaプロジェクト曰くもう活発ではないとのことです。同じくセキュリティを強化する目的で<a href="https://grsecurity.net/">grsecurity</a>というLinuxカーネルのパッチセットが存在しますが、すでにフリーソフトウェアではなくなったとHyperbolaプロジェクトは主張しています。事実grsecurityは<a href="https://grsecurity.net/agree/agreement_faq">GPLv2に独自の制限を加えて</a>パッチを頒布しており、<a href="https://www.theregister.co.uk/2018/06/11/open_source_perens/">それを非難する記事を書いたBruce Perensが名誉毀損で訴訟された過去</a>もあります（Perensが敗訴しました）。</p>
+
+<h2>ユーザランドの不自由</h2>
+<p>多くのアプリケーションはPulseAudioやsystemdなどに強く依存しており、ビルドオプションに無効化のフラグすらないほどです。またJavaやRustのようなプログラミング言語にも依存するようになったのにも不満のようです。RustはMozilla Firefoxでもコアの言語として使われるようになってきましたが、Rustへの不信感は前述のとおりです。</p>
+
+<p>GNU/Linuxではinitシステムにsystemdが広く使われるようになりました。しかしその潮流に抗う集団もいます。<a href="https://www.devuan.org/os/init-freedom/">Devuan</a>はsystemdに対抗するコミュニティのひとつで、initシステムにsystemdを採用したDebian GNU/Linuxから分かれたという経緯があります。Hyperbolaプロジェクトもまたsystemdに対し強い反発を抱いているGNU/Linuxプロジェクトのひとつです。<a href="https://wiki.hyperbola.info/doku.php?id=en:start">FAQ</a>にあるとおり、移植性を考えず後方互換性を無視し、既存のサービスを置き換えさせるようなinitシステムだとしてsystemdを挙げています。</p>
+
+<h2>この決定に対するMichael Larabelの評価</h2>
+<p>このようにHyperbolaプロジェクトはOSの構成要素がFLOSSだけだとしても、なにかしらの不自由さを強いるソフトウェアには断固反対の姿勢をとるようです。しかしこれらの主張はすべて正しいものなのでしょうか。</p>
+
+<p>Michael LarabelはHyperbolaの決定について『<a href="https://phoronix.com/scan.php?page=news_item&px=Hyperbola-Linux-To-BSD">FSF-Approved Hyperbola GNU/Linux Switching Out The Linux Kernel For Hard Fork Of OpenBSD</a>』という記事をPhoronixに投稿しました。その中でLarabelは「DRM/HDCPのサポートはプロプライエタリソフトウェアを実行するのでなければユーザの自由を制限するものではない」とし、Rustについても「ドライバをRustで書くためのフレームワークに関する非公式な議論」「セキュリティについての主張は議論の余地がある」と述べています。最後はかなりの人的資源が求められることに触れています。</p>
+
+<h2>感想</h2>
+<p>このニュースに興味を惹かれ、HyperbolaプロジェクトのWikiを読み彼らのRustとChromiumに対する意見をまずいながらも翻訳しました（『<a href="../books/rusts_freedom_flaws/index.html">Rustの不自由さ</a>』と『<a href="../books/chromiums_freedom_flaws/index.html">Chromiumの不自由さ</a>』）。絶対誤訳している箇所が少なからずあるので間違いを見つけたら教えてくださいね。</p>
+
+<p>これら2本の文書は面白かったです。現場の開発者からみたフリーソフトウェア運動の実践、どうユーザの自由を担保するかについて書いてくれる人は中々いないので、貴重な資料のひとつだと思います。</p>
+
+<p>しかしGNU/LinuxからOpenBSDベースへの転換はだいぶ苦しい道のりを歩むことになるのではないでしょうか。カーネルやライブラリをまるごと入れ替えるわけですから、systemdから別のinitシステムへ転向したり、不自由なパッケージをシステムにインストールさせない仕組みを作ったりするのとでは比べ物にならない難易度です。</p>
+
+<h3>Hyperbolaの主張について</h3>
+<p>Hyperbolaプロジェクトの主張について僕の意見を書いていきます。はじめに書いておくと、この決定については反対の立場です。賛同できません。</p>
+
+<p>まずDRM/HDCPについて、Linuxカーネルがそのサポートをし始めたことに反発するのなら、どうしてungoogledなChromiumを作るようにunDRMなLinuxカーネルを作ろうとしないのでしょうか？たしかにパッチの保守や改善には人手が要りますが、カーネルを変えることに比べれば大した作業ではないでしょう。その成果を、FSDGに従おうと努力しているほかのGNU/Linuxディストリビューションと共有し、開発の輪を広げることも可能なはずです。</p>
+
+<p>Larabelにも指摘されているとおり、Rustについての判断は正しい理解がされているとは思えず粗っぽいです。確かにLWN.netの投稿を読めば、LinuxカーネルのメンテナGreg Kroah-HartmanがRust実装のドライバについて積極的な姿勢をみせているらしいのは分かりますが、そのあとに続く2つの条件（標準で有効にしないこと、実際にRustによる利点を示すこと）を読み飛ばしてはいけません。あくまでも提案段階で、公式な決定ではないのです。</p>
+
+<p>商標の問題は一利あるにせよ、Rustに限らずGo言語・Python・Perl・Rubyといった現代のほとんどのプログラミング言語を使ったプロダクトはなにかしらの第三者製ライブラリに依存していて、そのライブラリは特定のサービス（crate.io, pypi.org, CPAN, RubyGems.org）によって管理されているのが一般的ではないでしょうか。それらのライブラリが特定のソースコードホスティングサービスに集中しているのが嫌なら、自分たちで別のサーバに必要なリポジトリをcloneすればよいのです。たしかにアップストリームはGitHubに向かってしまいますが、サイバー攻撃による被害を（攻撃の種類によっては）ある程度抑えられるでしょう。そもそもインターネットを経由する必要があるのはOSのパッケージも同じことです。</p>
+
+<p>Linuxカーネル開発のセキュリティに対する意識への批判はあまり説得力があるように思えません。grsecurityはGPLv2に独自の制限を加えてパッチを提供しています。そのせいでgrsecurityがフリーソフトウェアではなくなったことと、Linuxカーネルの開発がセキュリティを意識しなくなったことは別問題のように思えます。またカーネルをOpenBSDへ移行したからといって、現在のLinuxカーネル以上のセキュリティを保てるかどうかを測定できません。</p>
+
+<p>GNU/Linuxにおいて多くのコンポーネントが特定のソフトウェアに依存してしまっている問題は、GNU/Linuxディストリビューションに限った問題ではありません。GNU/Linux上でそれら抜きのシステムを作れないならBSDでも作れないでしょう。現にHyperbolaでは脱systemdを達成できており、なぜBSDへ移行する理由に挙げるのか不明です。個人的には、これは単なる不満の後付け・かさ増しでしかないようにみえます。</p>
+
+<h2>おわりに</h2>
+<p>一見、フリーソフトウェア推進派の戦いの狼煙があがったように見えて、よく読んでみれば論理武装が十分ではありません。早急すぎる判断だと思います。せめて決定に至るまでの議論が追えるリンクも付け加えて欲しかったものです。</p>
+
+<p>この決定によってHyperbolaBSDが大成功を収め、BSDユーザの増加に寄与し、BSDコミュニティが世界的ににぎやかになるならそれに越したことはありません。しかし現時点では実装よりも思想が先行してしまったのではないかと感じます。</p>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
