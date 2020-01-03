@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>自由を妨げるものとHyperbolaプロジェクト</h1>
+<hr>
+<p>Arch Linuxベースで、FSDGにしたがったGNU/Linuxディストリビューションの<a href="https://www.hyperbola.info/">Hyperbola GNU/Linux-libre</a>が<a href="https://www.hyperbola.info/news/announcing-hyperbolabsd-roadmap/">LinuxカーネルからOpenBSDカーネルへ移行し、ユーザランドもOpenBSDベースにすると告知</a>しました。カーネルからライブラリまですべてを一新するということは既存の資産をすべて作り変えなければならないことを意味しています。Hyperbolaプロジェクトはこの大改革へ踏み切った理由を次のように説明しています。</p>
+
+<ul>
+<li>LinuxカーネルはHDCPを含むDRMに適応してしまった。</li>
+<li>LinuxカーネルはRustの利用を提案しているが、自由やリポジトリへのアクセスについて懸念がある。</li>
+<li>Linuxカーネルはセキュリティのことを度外視して開発されはじめた。</li>
+<li>多くのGNUアプリケーションがPulseAudio、SystemD、Rust、Javaを使わせられている。</li>
+</ul>
+
+<h2>DRMへの反対</h2>
+
+<p>HDCPとは<b>High-bandwidth Digital Content Protection</b>の略で「映像再生機器からディスプレイなどの表示機器にデジタル信号を送受信する経路を暗号化し、コンテンツが不正にコピーされるのを防止する著作権保護技術(コピーガード)のひとつ（<a href="https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%94%E3%83%BC%E3%82%AC%E3%83%BC%E3%83%89">コピーガード</a>より）」を意味します。DRMは<b>Digital Rights Management</b>の略で「電子機器上のコンテンツ（映画や音楽、小説など）の無制限な利用を防ぐために、オリジナルのデータを特定のソフトウェアあるいはハードウェアでしか再生できないようにすることで、第三者による複製や再利用を難しくする技術・管理方法（<a href="https://ja.wikipedia.org/wiki/%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E8%91%97%E4%BD%9C%E6%A8%A9%E7%AE%A1%E7%90%86">デジタル著作権管理</a>より）」を指します。</p>
+
+<p>Richard StallmanをはじめGNUプロジェクトはDRMに真っ向から反対の立場をとっています。Stallmanは自著『Free Software, Free Society』の中で次のように述べています。
+
+<figure>
+<blockquote>
+This malicious feature is known as Digital Restrictions Management (DRM) (see our campaign against it, at <a href="https://www.defectivebydesign.org/">DefectiveByDesign.org</a>) and is the antithesis in spirit of the freedom that free software aims to provide.
+</blockquote>
+<blockquote>
+この邪悪な機能は一般にデジタル制限管理（DRM）として知られ、フリーソフトウェアが目指す思想へのアンチテーゼです。
+</blockquote>
+<footer>&mdash; <cite>Richard M. Stallman</cite>, <cite>Free Software, Free Society Selected Essays of Richard M. Stallman Third Edition</cite>, pp.79-80</footer>
+</figure>
+
+<p>つまりDRMやHDCPのような、著作権保護を理由にユーザの自由を侵害する機能はフリーソフトウェアとは相容れないと主張しているわけです。この主張は「誰でも海賊版を再頒布できるようにせよ」という意味ではなく、ユーザの（私的利用のような）現行の著作権法において合法の活動ですら制限してしまう機能に反対しているのです。</p>
+
+<h2>Rustへの懸念</h2>
+<p><a href="https://news.mynavi.jp/article/20191225-945491/">日本語訳された記事</a>では単に「LinuxカーネルはRustの利用を提案されているが、セキュリティ上の懸念がある」と訳されています。ここで言われている「セキュリティ上の懸念」とはRustそのものの潜在的なバグを指しているわけではありません。もともとは<a href="https://wiki.hyperbola.info/doku.php?id=en:main:rusts_freedom_flaws">Rustの商標に関する問題</a>（拙訳は『<a href="https://e-yuuki.org/books/rusts_freedom_flaws/index.html">Rustの不自由</a>』）や、Rustのコードリポジトリへのアクセスにインターネット接続が不可欠かつ、サイバー攻撃が活発な場所でソースコードが管理されている状況を危惧しているのです。Rustパッケージを公開している<a href="https://crates.io/">crates.io</a>自体はソースコードを管理していないため、後者はおそらくGitHubを指していると思われます。</p>
+
+<p>Rustプロジェクトは標準ライブラリをなるべく小さく保ち、高機能なライブラリは有志の開発に任せる方針をとっています（<a href="https://blog.rust-lang.org/2017/05/05/libz-blitz.html#batteries-included">Batteries included?</a>）。この方針は標準ライブラリの保守を削減でき、優れたライブラリをコミュニティ開発によってすばやく提供できる点で優れています。しかしそのライブラリへアクセスするにはインターネットを経由しなければならず、ソースコードは多くがGitHubというプラットフォームで集中して管理されています。crates.ioに登録されているライブラリの何割がGitHubで管理されているのか分かりませんが、少なくともcrates.ioからもっとも多くダウンロードされているrand, libc, bitflags, syn, lazy-static, log, serde, quote, unicode-xid, rand_coreといったライブラリのソースコードはすべてGitHubで管理されています（2020年1月3日時点）。問題は、GitHubがサイバー攻撃の対象となりやすいことです。攻撃対象としてポピュラーなサービス上でコアなライブラリを管理しているこの状況は、Hyperbolaプロジェクトにとっては納得のいくものではないようです。</p>
+
+<h2>Linuxカーネルのセキュリティ</h2>
+<p>LinuxカーネルにはKSPP（<a href="https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project">Kernel Self Protection Project</a>）というLinuxカーネルのセキュリティ向上を目的としたプロジェクトがありますが、Hyperbolaプロジェクト曰くもう活発ではないとのことです。同じくセキュリティを強化する目的で<a href="https://grsecurity.net/">grsecurity</a>というLinuxカーネルのパッチセットが存在しますが、すでにフリーソフトウェアではなくなったとHyperbolaプロジェクトは主張しています。</p>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
