@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>vm-bhyveとZFSを使って効率的にNetBSD仮想マシンを管理する</h1>
+<hr>
+<p>ZFSはファイルシステムの一種で、ファイルシステムの差分バックアップやロールバックを簡単に操作できます。</p>
+
+<p>ZFS上で仮想マシン（VM）のディスクを管理すると、ゲストOSがZFSをサポートしていなくてもシステム全体がZFSの恩恵を受けられます。なにかVM内で注意を要する作業をおこなうとき、あらかじめホスト側でディスクのスナップショットを控えておけば、VM内のシステムが壊れても簡単に以前の状態へ復旧できます。</p>
+
+<p>毎日、あるいは毎週高い頻度でNetBSDのcurrentを追跡する場合を考えてみましょう。物理マシンにではなくVMへNetBSDをインストールしているものとします。<code>build.sh</code>から最新のカーネルとユーザランドをビルドしました。そしてインストールして再起動すると……カーネルがpanicしたりユーザランドが一部壊れていたり、pkgsrcからインストールしたソフトウェアがcoreを吐いたりするかもしれません。このようなときは原因究明のために調査が必要ですが、以前の「問題がない」状態へ切り戻すことも常に選択肢に含んでおきたいものです。アップデートする前にホスト側でスナップショットを取っておけばそれも可能となります。</p>
+
+<p>ここではホストOSをFreeBSD 12.1/amd64とし、VMの管理・操作は<a href="https://github.com/churchers/vm-bhyve">vm-bhyve</a>からおこない、ファイルシステムはZFSとして効率の良いNetBSD current追跡方法を紹介します。</p>
+
+<ol>
+<li><a href="#vmbhyve">vm-bhyveを使いスナップショットを取る</a></li>
+<li><a href="#crossbuild">ホストOSでbuild.shを実行する</a></li>
+<li><a href="#mount">仮想ディスクのマウント先へNetBSDをインストールする</a></li>
+<li><a href="#conclusion">おわりに</a></li>
+</ol>
+
+<h2 id="vmbhyve">vm-bhyveを使いスナップショットを取る</h2>
+<p><a href="https://github.com/churchers/vm-bhyve">vm-bhyve</a>はBhyveのユーザインタフェースのひとつです。<code>bhyve(8)</code>や<code>bhyvectl(8)</code>と比べ短く少ないオプションでVMを操作できます。ZFSにも対応しており、同じUIからVMのスナップショット／ロールバックを操作できます。</p>
+
+<p>インストール方法はREADMEの<a href="https://github.com/churchers/vm-bhyve#quick-start">Quick-Start</a>を参考にしてください。インストール後、次に示すようにNetBSDのVMを作成しインストールまで完了したとします。</p>
+
+<pre><code><b class="root">vm list</b>
+NAME    DATASTORE  LOADER  CPU  MEMORY  VNC  AUTOSTART  STATE
+NetBSD  default    grub    6    8192M   -    No         Stopped</code></pre>
+
+<p>ここで、<code><b>vm snapshot &lt;VM名[@スナップショット名]&gt;</b></code>を使い現時点でのスナップショットを取得します。スナップショットの名前にはNetBSDのバージョン番号をつけます。</p>
+
+<pre><code><b class="root">vm snapshot NetBSD@8.1</b></code></pre>
+
+<p><code><b>zfs list -t snap</b></code>してスナップショットの一覧を表示すると以下のようになります。</p>
+
+<pre><code><b class="root">$ zfs list -t snap</b>
+NAME                      USED  AVAIL  REFER  MOUNTPOINT
+zroot/vm/NetBSD@8.1       360M      -   629M  -
+</code></pre>
+
+<p>これでなにかVMのディスクに変更を加えても、この時点の状態へロールバックできるようになりました。もし同じバージョンで複数のスナップショットを取りたいときは、<code><b>vm snapshot NetBSD@8.1_20200111</b></code>といった具合でバージョン番号に加えて日付をつけるといいでしょう。</p>
+
+<h2 id="crossbuild">ホストOSでbuild.shを実行する</h2>
+<p>Bhyveを使っているならゲストOSよりホストOSのほうが高速にビルドできます。ここではゲストOS上で<code>build.sh</code>するのではなく、ホストOS上で<code>build.sh</code>を動かしNetBSDカーネルとユーザランドをクロスビルドします。リポジトリのHEADを常に追いかける者として、複数の環境に対応したクロスビルドの仕組みはたいへん有益です。</p>
+
+<p>NetBSD上でなくとも<code>build.sh</code>の実行方法は変わりません。toolsを作り、kernelとdistributionをビルドしてください。以下は一例です。</p>
+
+<pre><code><b class="user">cd path/to/netbsd/src</b>
+<b class="user">cvs update -dP</b>
+<b class="user">./build.sh -O ../obj -T ../tools -X ../xsrc -x -j11 -U tools</b>
+<b class="user">./build.sh -O ../obj -T ../tools -X ../xsrc -x -j11 -U kernel=GENERIC</b>
+<b class="user">./build.sh -O ../obj -T ../tools -X ../xsrc -x -j11 -U distribution</b></code></pre>
+
+<h2 id="mount">仮想ディスクのマウント先へNetBSDをインストールする</h2>
+<p><code>build.sh</code>は指定したディレクトリ下へNetBSDユーザランドをインストールできます。ビルド環境とアップデート対象が同一なら<code><b>build.sh ... install=/</b></code>といったように実行するのですが、今回はアップデート対象がVMです。そこでVMの仮想ディスクをホストOSにマウントし、マウントポイントへ向けてこのコマンドを実行します。</p>
+
+<p><code>vm-bhyve</code>は標準でdisk0.imgというrawディスクイメージを作成します。FreeBSDでこのrawイメージをマウントするには、<code>mdconfig(8)</code>でメモリディスクを作ってからそのデバイスをマウントするという手順を踏みます。たとえば<code>/zroot/vm/NetBSD/disk0.img</code>を<code>/dev/md0</code>として、<code>/mnt</code>へマウントするには次のようにコマンドを実行します。</p>
+
+<pre><code><b class="root">mdconfig -u md0 -f /zroot/vm/NetBSD/disk0.img</b>
+<b class="root">mount /dev/md0s1 /mnt</b>
+</code></pre>
+
+<p>このあと<code>/mnt</code>の中身を確認すると、たしかにNetBSDルートファイルシステムがマウントされています。</p>
+
+<pre><code><b class="user">ls /mnt</b>
+.cshrc     bin        cdrom      kern       libexec    netbsd.old root       tmp
+.profile   boot       dev        lib        mnt        proc       sbin       usr
+altroot    boot.cfg   etc        libdata    netbsd     rescue     stand      var</code></pre>
+
+<p>ではこのディレクトリへめがけて、さきほどビルドしたNetBSDバイナリをインストールしましょう。</p>
+
+<pre><code><b class="root">cd path/to/netbsd/src</b>
+<b class="root">./build.sh -O ../obj -T ../tools -X ../xsrc -x -j11 -U install=/mnt</b>
+<b class="root">mv /mnt/netbsd /mnt/netbsd.old</b>
+<b class="root">cp ../obj/sys/arch/amd64/compile/GENERIC/netbsd /mnt/netbsd</b></code></pre>
+
+<p>インストール後はアンマウントします。通常の<code>umount(8)</code>をしたあと、<code>mdconfig(8)</code>でメモリディスクをデタッチします。</p>
+
+<pre><code><b class="root">umount /mnt</b>
+<b class="root">mdconfig -d -u md0</b></code></pre>
+
+<h2 id="conclusion">おわりに</h2>
+<p>以上の操作をしたあと、<code><b>vm start NetBSD</b></code>すると<code>build.sh</code>でビルドしたカーネルとユーザランドが使えるようになっています。もしなにか問題があるようなら<code><b>vm rollback NetBSD@8.1</b></code>のようにしてロールバックすればいいのです。</p>
+
+<p>ロールバックが簡単にできるので物理マシンでは怖くてできないような操作や実験も気軽にできるようになります。vm-bhyveでは復旧のみならず、VMの複製も<code><b>vm clone</b></code>でできます。開発者にとって最高のサンドボックスです。</p>
+
+<p>一方で作業ミスが許されない操作もあるため、アップデートは手作業ではなくシェルスクリプトを書いて自動化するのが望ましいです。特に<code><b>build.sh ... install=/mnt</b></code>はインストール先の指定を間違えるとホストOS側を破壊しかねません。もっとも、速度を気にしないならゲストOS内でアップデート作業をしたほうがいいでしょう。</p>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
