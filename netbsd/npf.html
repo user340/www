@@ -7,7 +7,7 @@
 <title>e-yuuki.org</title>
 </head>
 <body><div class="tiny">
-<h1>ファイアウォール&mdash;&mdash;npf</h1>
+<h1>npfを使ってファイアウォールを設定する</h1>
 <hr>
 <p>NetBSDには<code>pf(4)</code>, <code>ipf(4)</code>, <code>bpf(4)</code>, <code>npf(7)</code>……と多数のファイアウォールが提供されています。公式には<code>npf(7)</code>が標準のファイアウォールです。NetBSDの<code>pf(4)</code>はメンテナがおらずアップストリームの追跡ができていないため、NetBSDのベースシステムから削除されるようです（『<a href="https://mail-index.netbsd.org/tech-kern/2019/03/29/msg024883.html">Removing PF</a>』）。アップストリームを追いかけられないということは、アップストリームで修正されたバグや脆弱性がそのまま残っていることを意味しています。セキュリティを考えれば、メンテナンスができないから打ち切るというのは正しい対応のように思えます。</p>
 
