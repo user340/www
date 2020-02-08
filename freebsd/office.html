@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>執務環境としてのFreeBSD</h1>
+<p>FreeBSDを使うユーザはほとんどがプログラマなので、開発環境としてのFreeBSD環境はすでに多くの記事が書かれています。エディタ・シェル・ターミナルといった開発ツールについてや、どのウィンドウマネージャを使うか、あるいはKDEを使うかGNOMEを使うか……といった話題であふれています。この点については情報に困ることはないでしょう。</p>
+
+<p>一方、GSuiteのアプリやSlackなど、開発ではなくどちらかといえば事務に使うようなツールをWindowsやGNU/Linuxディストリビューション（特にUbuntu）と同等に利用できるのか？に注目した話題は少ないようにみえます。職場では2年ほどFreeBSDをインストールしたPCで開発や事務をこなしていましたが、事務系のツールで不便だと思うときのほうが多いです。そこで、いままでの経験をもとに各種事務系ツールについて残せるだけ残しておこうと思います。</p>
+<hr>
+<ol>
+<li><a href="#browser">ブラウザの選択について</a></li>
+<li><a href="#gsuite">GSuite</a></li>
+<li><a href="#o365">O365</a></li>
+<li><a href="#slack">Slack</a></li>
+<li><a href="#printer">印刷</a></li>
+<li><a href="#conclution">おわりに</a></li>
+</ol>
+
+<h2 id="browser">ブラウザの選択について</h2>
+<p>FreeBSDではFirefoxかChrome（Chromium）の二択でしょう。どちらを選ぶか？はさほど重要ではなく個人の自由のようにみえます。しかし社内Webアプリの中にはFirefoxでアクセスすると「Chromeを使ってください」というエラーメッセージとともに利用を拒否されるケースもあります。単にユーザエージェントをもとに判別しているに過ぎないので、<a href="https://addons.mozilla.org/ja/firefox/addon/user-agent-string-switcher/">User-Agent Switcher and Manager</a>のようなユーザエージェントを偽装できる拡張機能を使えば済む場合がほとんどですが、Chromeでないと本当に利用できない機能があったりします。念のためどちらもインストールしておくのが安心でしょう。</p>
+
+<h2 id="#gsuite">GSuite</h2>
+<p>メールやその他オフィススイートのためにGSuiteを採用しているなら、FreeBSDでも安心して事務用OSとして利用できます。GMailやGoogle Drive、Meetといったアプリケーションはすべて問題なく動作するでしょう。少なくとも僕は、GSuiteのメール・オンラインストレージ・ビデオ通話・各種オフィススイートを使っているときに「このアプリケーションはこの環境に対応していません」のようなエラーメッセージを見かけたことはありません。</p>
+
+<h2 id="#o365">O365</h2>
+<p>一方でMicrosoftのO365をオフィススイートとして採用しているなら少し注意が必要です。Word・Execl・PowerPointがWeb上で利用できるのはとても便利ですが、次のような問題を見つけています。</p>
+
+<ul>
+<li>Web版のSkypeを利用できない。</li>
+<li><a href="https://outlook.uservoice.com/forums/907141/suggestions/36851050">FirefoxでO365のWeb版カレンダーにアクセスしたとき、強制的に軽量モードになる。</a>ユーザエージェントを偽装すると解決する。</li>
+</ul>
+
+<h2 id="#slack">Slack</h2>
+<p>Slackはチャットツールとして、またビデオ通話用のツールとしても高い評価を得ているようです。しかしFreeBSDではSlackのビデオ通話が使えませんでした。Firefoxではサポートされていない旨のメッセージが表示され、Chromiumでは通話画面がローディングしたまま先に進みません。チャットはなにも問題ありません。</p>
+
+<h2 id="printer">印刷</h2>
+<p>印刷は特に経費精算をするときに使いますが、ドライバや実行すべきコマンドがいっさい分かっていないのでFreeBSDからなにかを印刷したためしがありません。いつも会社支給のノートPCから印刷してしまいます。</p>
+
+<h2 id="conclution">おわりに</h2>
+<p>まだ一社しか経験しておらず、何十年も会社づとめしているわけではないのでまだ踏んでいない罠があるかもしれません。むしろ、いまは上述したことさえ気をつけていれば快適に事務作業ができるという意味でもあります。特にGSuiteは（提供元のふるまいはともかく）どんな環境でもブラウザさえあればだいたい動きます。デスクトップOSが統一されていないような組織で特に優れているサービスだと言えるでしょう。</p>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
