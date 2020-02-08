@@ -14,11 +14,11 @@
 <h2>なぜパッケージに注目するのか</h2>
 <p>パッケージ（package）はオペレーティングシステム（OS, operating system）の重要なインフラのひとつです。OSといえばプロセス管理・メモリ管理・ファイルシステムのようなカーネルの機能を連想してしまいがちです。『4.4BSDの設計と実装』『詳解Linuxカーネル』『オペレーティングシステム設計と理論およびMINIXによる実装』などの分厚い書籍を思い浮かべるかもしれません。でもそれよりももっと高いレイヤのアプリケーションだって立派にOSの一部です。プログラマにとって統合開発環境やテキストエディタ・バージョン管理システム・コンパイラは欠かせなですし、一般ユーザにとっても統合デスクトップ環境が提供する豪華なグラフィカルは欠かせません。特にWebブラウザはもうそれ無しで生活することなど考えられないような時代になっています。</p>
 
-<p>Debian GNU/LinuxやRed Hat Enterprise Linux（RHEL）のようにOS全体をパッケージで管理しているケースもあれば、NetBSDやFreeBSDのようにベースシステム（base system）に無いソフトウェアをパッケージで管理しているケースもあります。システム管理という面ではパッケージはとても便利な機能なので、FreeBSDではベースシステムをパッケージ化してパッケージマネージャから管理できるようにするPkgBase[<a href="#pkgbase">FreeBSD Wiki</a>]が開発されています（NetBSDも昔syspkgというPkgBaseと同じコンセプトの実装が進められていましたが現在は停滞しています[<a href="syspkg">NetBSD Wiki</a>]）。</p>
+<p>Debian GNU/LinuxやRed Hat Enterprise Linux（RHEL）のようにOS全体をパッケージで管理しているケースもあれば、NetBSDやFreeBSDのようにベースシステム（base system）に無いソフトウェアをパッケージで管理しているケースもあります。システム管理という面ではパッケージはとても便利な機能なので、FreeBSDではベースシステムをパッケージ化してパッケージマネージャから管理できるようにするPkgBase[<a href="#pkgbase">FreeBSD Wiki</a>]が開発されています（NetBSDも昔syspkgというPkgBaseと同じコンセプトの実装が進められていましたが現在は停滞しています[<a href="#syspkg">NetBSD Wiki</a>]）。</p>
 
 <p>このようにパッケージは一般ユーザにとって一種のインフラのようなものと言っても過言ではないでしょう。そして、それをどう作りどう配布するのか？を調べると、OSはどのような構成をしているのかおおまかに眺めることもできます。パッケージングの技術をものにすれば、自分で好きなGNU/Linuxディストリビューションあるいはデスクトップ向けのBSD Unixを作ることだってできます。</p>
 
-<p>OSに興味はなくても、パッケージには向き合わなければならないときがあります。もしなにかコードを書いてFLOSSとして公開するなら、そしてGNU/Linux向けにそれを書いたのであれば、<code>deb(5)</code>か<code>rpm</code>をいつでも（できれば両方）作れるようにしておくとそのソフトウェアを使いたいユーザにとって便利です。企業でGNU/Linux向け商用ソフトウェアを開発するときも、そのソフトウェアをパッケージにまとめ頒布する作業は必要です。</p>
+<p>OSに興味はなくても、パッケージには向き合わなければならないときがあります。もしなにかコードを書いてFLOSSとして公開するなら、そしてGNU/Linux向けにそれを書いたなら、<code>deb(5)</code>か<code>rpm</code>をいつでも（できれば両方）作れるようにしておくとそのソフトウェアを使いたいユーザにとって便利です。企業でGNU/Linux向け商用ソフトウェアを開発するときも、そのソフトウェアをパッケージにまとめ頒布する作業は必要です。</p>
 
 <h2>Unix パッケージのはじまりは？</h2>
 <p>パッケージは「荷物」や「梱包」の他にソフトウェアの管理・配布形式（形態？）も意味します。しかしこの言葉がいつからソフトウェアに対して使うようになったのか分かりません。確かに「ソフトウェアやその設定ファイル・マニュアルなどを含んだ単一のアーカイブ」は言われてみれば荷物のようであるし、実際にこれを作るときはまるで段ボールのような箱にデータを詰め込んでいる感覚があるので「パッケージ」という言葉はまさにぴったりです。</p>
@@ -27,13 +27,13 @@
 
 <p>メタデータはソフトウェアのパッケージにのみ存在するわけではありません。僕たちが引っ越しや贈り物の準備をするとき、段ボールにモノを詰め込むだけでなく、配送業者向けに宛先や送り主の名前を書いた伝票を段ボールに貼り付けますが、これもメタデータといっていいでしょう。</p>
 
-<p>おそらく、テープやCD-ROMの形態でソフトウェアを「梱包」して販売する企業が初めに「パッケージ」をソフトウェアに対しても使い始めたのだと予想しています。しかしこのような配布形態にはパッケージマネージャが読み取り可能なメタデータはおそらく含まれていないでしょう。パッケージをソフトウェア＋メタデータのアーカイブという観点からすると、起源であるにせよこれではまだ機能が不足しているわけです。現在僕たちが何気なく<code>apt(8)</code>から操作する、Unix上で扱われるパッケージの形式はいつ成立したのでしょうか。</p>
+<p>おそらく、テープやCD-ROMの形態でソフトウェアを「梱包」して販売する企業が初めに「パッケージ」をソフトウェアに対しても使い始めたのだと予想しています。しかしこのような配布形態にはパッケージマネージャが読み取り可能なメタデータはおそらく含まれていないでしょう。パッケージをソフトウェア＋メタデータのアーカイブという観点からすると、これがパッケージの起源にせよ、機能がまだ不足しているわけです。現在僕たちが何気なく<code>apt(8)</code>から操作する、Unix上で扱われるパッケージの形式はいつ成立したのでしょうか。</p>
 
 <h3>GNU/Linuxとパッケージマネージャ</h3>
 
 <p>パッケージ主体のGNU/LinuxディストリビューションはDebian GNU/Linuxが先陣を切りました。Debian 0.01から0.90までのリリースについては不明ですが、1994年1月のDebian 0.91では「このリリースは、パッケージのインストールおよび削除ができる単純なパッケージシステムを備えていました」[<a href="#debian-project-history">Debian, 2017</a>]とされています。また1995年3月のDebian 0.93R5では「基本システムのインストール後は、パッケージマネージャ (dpkg) がパッケージのインストールに使われました」[<a href="#debian-project-history">Debian, 2017</a>]とあります。</p>
 
-<p>しかしDebian GNU/Linuxがパッケージに関して独占的であったかというと、そうではなかったようです。GNU/LinuxディストリビューションをCD-ROMの形態で販売したRed Hat社が提供したRed Hat Linuxは、1994年の夏にRed Hat LinuxとそのパッケージマネージャRPPの展示のためにプレビュー版（バージョン0.8）がリリースされ、1994年10月31日にバージョン0.9となるHalloweenがリリースされました[<a href="#redhat-20-year">Red Hat, 2014</a>][<a href="#smoogespace">Stephen, 2006</a>]。Debian GNU/Linux 0.91のリリースと同じ年です。「Fully "packagized" system for fine-grained installation control, easy upgrades, and simple distribution mechanism for your applications」[<a href="#redhat-commercial">Red Hat, 1995</a>]とアピールされたのは1995年のバージョン1.1なので、Halloweenの時点でOS全体がパッケージ管理されていたのかは定かではありません。</p>
+<p>しかしDebian GNU/Linuxがパッケージに関して独占的だったかというと、そうではなかったようです。GNU/LinuxディストリビューションをCD-ROMの形態で販売したRed Hat社が提供したRed Hat Linuxは、1994年の夏にRed Hat LinuxとそのパッケージマネージャRPPの展示のためにプレビュー版（バージョン0.8）がリリースされ、1994年10月31日にバージョン0.9となるHalloweenがリリースされました[<a href="#redhat-20-year">Red Hat, 2014</a>][<a href="#smoogespace">Stephen, 2006</a>]。Debian GNU/Linux 0.91のリリースと同じ年です。「Fully "packagized" system for fine-grained installation control, easy upgrades, and simple distribution mechanism for your applications」[<a href="#redhat-commercial">Red Hat, 1995</a>]とアピールされたのは1995年のバージョン1.1なので、Halloweenの時点でOS全体がパッケージ管理されていたのかは定かではありません。</p>
 
 <p>Linuxカーネルが公開されたのは1991年の8月だった[<a href="#linus">Linus, 1991</a>]。GNU/LinuxディストリビューションそのものはDebian GNU/Linuxではなく、1993年7月にリリースされたSlackwareが本源となっています[<a href="#slackware">Slackware, 2005</a>, Chapter 1]。しかもSlackwareはRed Hat Linux（のおそらくプレビュー版以前）より先にパッケージマネージャ<code>pkgtool(8)</code>を実装していました。しかしパッケージの依存関係はチェックせず、<code>doinst.sh</code>というポストインストールスクリプトを実行する簡素なものだったようです。</p>
 
@@ -67,14 +67,12 @@ There's a myth that's been going around ever since RedHat debuted RedHat Package
 
 <h4><code>deb(5)</code>パッケージの構造</h4>
 
-<p>Debian GNU/Linux stretchのvimパッケージ vim_8.0.0197-4+deb9u1_amd64.debを例に<code>deb(5)</code>形式のパッケージの構造を眺めてみましょう。これを<code>ar(1)</code>で展開すると</p>
+<p>Debian GNU/Linux stretchのvimパッケージ vim_8.0.0197-4+deb9u1_amd64.debを例に<code>deb(5)</code>形式のパッケージの構造を眺めてみましょう。これを<code>ar(1)</code>で展開すると、以下に示すように3つのファイルが得られます。</p>
 
 <pre><code>vim_8.0.0197-4+deb9u1_amd64.deb/
 ├── control.tar.gz
 ├── data.tar.xz
 └── debian-binary</code></pre>
-
-<p>この3つのファイルが得られます。</p>
 
 <p>これらのファイルについては<code>deb(5)</code>のマニュアルを読むと詳細がわかります。</p>
 
@@ -94,7 +92,7 @@ There's a myth that's been going around ever since RedHat debuted RedHat Package
 
 <p>RHELは<code>rpm(8)</code>を通じてRPM（Red Hat package Manager）パッケージを操作します。エンドユーザ向けインタフェースにYellowdog Updater Modified（<code>yum(8)</code>）やDandified YUM（<code>dnf(8)</code>）があります。</p>
 
-<p>企業や大学のネットワークで動くGNU/Linuxは、RHELかその派生であるCentOSが採用されている場合が多く、サーバ機器製品のOSとしてRHELがあらかじめインストールされていることもあります。そのため商用製品として監視ツールやWebサーバ・メールサーバといったシステムソフトウェアを配布するのであれば<code>deb(5)</code>よりむしろRPM形式が使われるでしょう。Eric Raymondは開発者と共同作業するためのFLOSSのディストリビューション方法について次のように述べています。</p>
+<p>企業や大学のネットワークで動くGNU/Linuxは、RHELかそのクローンのCentOSが採用されている場合が多く、サーバ機器製品のOSとしてRHELがあらかじめインストールされていることもあります。そのため商用製品として監視ツールやWebサーバ・メールサーバといったシステムソフトウェアを配布するのであれば<code>deb(5)</code>よりむしろRPM形式が使われるでしょう。Eric Raymondは開発者と共同作業するためのFLOSSのディストリビューション方法について次のように述べています。</p>
 
 <blockquote>
 RPM（Red Hat Packageマネージャ）は、Linuxのもとでインストール可能なバイナリパッケージのための事実上の標準となったフォーマットである。RPMはもっともポピュラーなLinuxディストリビューションの重要な機能であり、他のほぼすべてのLinuxディストリビューションでサポートされている（DebianとSlackwareを除く。そして、DebianはRPMからインストールできる）。そこで、プロジェクトサイトは、ソースtarボールの他に、インストール可能なRPMも提供するとよい。[<a href="#raymond">Raymond,2007</a>]
@@ -102,18 +100,16 @@ RPM（Red Hat Packageマネージャ）は、Linuxのもとでインストール
 
 <h3>FreeBSD Ports Collection</h3>
 
-<p>FreeBSDのPorts Collectionは「Makefile, 修正パッチ、 説明文などの一連のファイルのこと」[<a href="#portsc">FreeBSD</a>]で、一般的には短縮して<code>ports(7)</code>と呼ばれます。パッケージのビルドやインストールなどの一連の命令はすべてBSD Makeを使います。たとえばGNU Emacsをインストールするときはroot権限で</p>
+<p>FreeBSDのPorts Collectionは「Makefile, 修正パッチ、 説明文などの一連のファイルのこと」[<a href="#portsc">FreeBSD</a>]で、一般的には短縮して<code>ports(7)</code>と呼ばれます。パッケージのビルドやインストールなどの一連の命令はすべてBSD Makeを使います。たとえばGNU Emacsをインストールするときはroot権限で次のように実行します。コンパイル時の<code>configure</code>のオプションはビルド途中に選択できます。</p>
 
 <pre><code># cd /usr/ports/editors/emacs
 # make install</code></pre>
 
-……と実行します。コンパイル時の<code>configure</code>のオプションはビルド途中に選択できます。
-
-<p>最近のFreeBSDでは、ライセンスの都合上バイナリの配布を禁じられている場合やオプションを自分で細かく制御したい場合を除き、<code>pkg(8)</code>でバイナリパッケージをインストールするのが楽です。先ほどのEmacsの例は<code>pkg(8)</code>を使うと</p>
+<p>最近のFreeBSDでは、ライセンスの都合上バイナリの配布を禁じられている場合やオプションを自分で細かく制御したい場合を除き、<code>pkg(8)</code>でバイナリパッケージをインストールするのが楽です。先ほどのEmacsの例は<code>pkg(8)</code>を使うと次のように実行できます。</p>
 
 <pre><code># pkg install emacs</code></pre>
 
-<p>……となります。この<code>pkg(8)</code>は「FreeBSD 10.X系移行で動作するように設計されて」[<a href="#fpkg">FreeBSD</a>]おり、FreeBSD 11.0では基本システムにインストールされています。</p>
+<p>この<code>pkg(8)</code>は「FreeBSD 10.X系移行で動作するように設計されて」[<a href="#fpkg">FreeBSD</a>]おり、FreeBSD 11.0では基本システムにインストールされています。</p>
 
 <p>ここで、<code>ports(7)</code>あるいは<code>pkgsrc(7)</code>におけるパッケージの表記方法について述べておきます。ここではEmacsパッケージをインストールする例を示しましたが、このパッケージは<code>/usr/ports</code>ディレクトリから見た相対パス名で<code>editors/emacs</code>と書かれるのが一般的です。このような書き方をすると、どのディレクトリに当該パッケージが存在するのか一目瞭然だからです。</p>
 
@@ -125,12 +121,10 @@ RPM（Red Hat Packageマネージャ）は、Linuxのもとでインストール
 In 1999, I was working at an investment bank in London, and needed a packaging system to manage third-party software on a fairly large network of Solaris 2.6 machines - pkgsrc fitted the bill, and so the first non-NetBSD platform was Solaris, followed closely by Linux.[<a href="#10th">Weinem</a>]
 </blockquote>
 
-<p><code>ports(7)</code>と同じく<code>pkgsrc(7)</code>上の操作はBSD Makeを使います。NetBSD以外のUnixで使うときは、はじめに<code>bootstrap/</code>ディレクトリ内の<code>bootstrap</code>スクリプトを実行します。その後、<code>bootstrap</code>でインストールされた<code>bmake(1)</code>を使ってパッケージを操作します。たとえばvimをインストールするのであれば</p>
+<p><code>ports(7)</code>と同じく<code>pkgsrc(7)</code>上の操作はBSD Makeを使います。NetBSD以外のUnixで使うときは、はじめに<code>bootstrap/</code>ディレクトリ内の<code>bootstrap</code>スクリプトを実行します。その後、<code>bootstrap</code>でインストールされた<code>bmake(1)</code>を使ってパッケージを操作します。たとえばvimをインストールするなら次のように実行します。</p>
 
 <pre><code># cd /usr/pkgsrc/editors/vim
 # make install</code></pre>
-
-<p>……と実行します。</p>
 
 <h2>まとめ</h2>
 
