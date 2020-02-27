@@ -18,6 +18,7 @@
 <li><a href="#gsuite">GSuite</a></li>
 <li><a href="#o365">O365</a></li>
 <li><a href="#slack">Slack</a></li>
+<li><a href="#headset">ヘッドセットを使う</a></li>
 <li><a href="#printer">印刷</a></li>
 <li><a href="#conclution">おわりに</a></li>
 </ol>
@@ -25,10 +26,10 @@
 <h2 id="browser">ブラウザの選択について</h2>
 <p>FreeBSDではFirefoxかChrome（Chromium）の二択でしょう。どちらを選ぶか？はさほど重要ではなく個人の自由のようにみえます。しかし社内Webアプリの中にはFirefoxでアクセスすると「Chromeを使ってください」というエラーメッセージとともに利用を拒否されるケースもあります。単にユーザエージェントをもとに判別しているに過ぎないので、<a href="https://addons.mozilla.org/ja/firefox/addon/user-agent-string-switcher/">User-Agent Switcher and Manager</a>のようなユーザエージェントを偽装できる拡張機能を使えば済む場合がほとんどです。ですが本当にChromeでないと利用できない機能があったりします。念のためどちらもインストールしておくのが安心でしょう。</p>
 
-<h2 id="#gsuite">GSuite</h2>
+<h2 id="gsuite">GSuite</h2>
 <p>メールやその他オフィススイートのためにGSuiteを採用しているなら、FreeBSDでも安心して事務用OSとして利用できます。GMailやGoogle Drive、Meetといったアプリケーションはすべて問題なく動作します。少なくとも僕は、GSuiteのメール・オンラインストレージ・ビデオ通話・各種オフィススイートを使っているときに「このアプリケーションはこの環境に対応していません」のようなエラーメッセージを見かけたことはありません。</p>
 
-<h2 id="#o365">O365</h2>
+<h2 id="o365">O365</h2>
 <p>一方でMicrosoftのO365をオフィススイートとして採用しているなら少し注意が必要です。Word・Execl・PowerPointがWeb上で利用できるのはとても便利ですが、次のような問題を見つけています。</p>
 
 <ul>
@@ -38,8 +39,45 @@
 
 <p>最近GNU/Linux版のネイティブアプリが公開されたTeamsは、ブラウザからビデオ通話が使えます。</p>
 
-<h2 id="#slack">Slack</h2>
+<h2 id="slack">Slack</h2>
 <p>Slackはチャットツールとして、またビデオ通話用のツールとしても高い評価を得ているようです。しかしFreeBSDではSlackのビデオ通話が使えませんでした。Firefoxではサポートされていない旨のメッセージが表示され、Chromiumでは通話画面がローディングしたまま先に進みません。チャットはなにも問題ありません。</p>
+
+<h2 id="headset">ヘッドセットを使う</h2>
+<p>Google MeetやMicrosoft Teamsなどでビデオ通話をする場合、ノートPC内蔵のマイクとオーディオを使うよりコールセンターで使われるような業務用のヘッドセットを使ったほうが明瞭に通話できます。僕の場合、オフィスではゼンハイザーの「<a href="https://www.senncom.jp/cco/sc60usbml">SC 60 USB ML</a>」を、自宅ではエレコムの「<a href="https://www.elecom.co.jp/products/HS-ARMA200VBK.html">HS-ARMA200VBK</a>」を使っています。どちらもFreeBSDでうまく動作します。</p>
+
+<p>FreeBSDでヘッドセットを使いはじめるときはいくつか設定する必要があります。</p>
+
+<p>ヘッドセットをマシンに繋いだあと、それがシステム上でどのように認識されているかを確認します。これは<code>/dev/sndstat</code>を読めば分かります。以下は僕の個人的なマシンでの<code>/dev/sndstat</code>の中身です。ここでは<code>pcm6</code>として認識されているようです。</p>
+
+<pre><code><b class="user">cat /dev/sndstat</b>
+pcm0: &lt;NVIDIA (0x0080) (HDMI/DP 8ch)&gt; (play)
+pcm1: &lt;NVIDIA (0x0080) (HDMI/DP 8ch)&gt; (play)
+pcm2: &lt;NVIDIA (0x0080) (HDMI/DP 8ch)&gt; (play)
+pcm3: &lt;Realtek (0x0b00) (Rear Analog)&gt; (play/rec)
+pcm4: &lt;Realtek (0x0b00) (Front Analog)&gt; (play/rec)
+pcm5: &lt;Realtek (0x0b00) (Internal Digital)&gt; (play)
+pcm6: &lt;USB audio&gt; (play/rec) default
+No devices installed from userspace.</code></pre>
+
+<p>次にデフォルトのオーディオデバイスをカーネルパラメータで設定します。ここでは<code>pcm6</code>ですので<code>/etc/sysctl.conf</code>に以下のように書きます。</p>
+
+<pre><code>hw.snd.default_unit=6</code></pre>
+
+<p>再起動しなくても<code>sysctl hw.snd.default_unit=6</code>と実行して<code>/etc/sysctl.conf</code>へ加えた設定を反映できます。</p>
+
+<p>最後に、マイクの音量を調整します。ヘッドセット側でマイク音量のホイールを回す必要があればそうします。また<code>mixer</code>コマンドからソフトウェア側でマイク音量を調整します。たとえばヘッドセット接続直後はこうなっているでしょう。</p>
+
+<pre><code><b class="user">mixer</b>
+Mixer vol      is currently set to  75:75
+Mixer pcm      is currently set to  75:75
+Mixer mic      is currently set to  0:0
+Recording source: mic</code></pre>
+
+<p><code>Recording source:</code>と示されているデバイスが現在有効なマイクです。ここでは<code>mic</code>で、音量が左右ともに0となっておりミュートされている状態です。マイクの音量は同じく<code>mixer</code>コマンドから次のように調整できます。</p>
+
+<pre><code><b class="user">mixer mic "70:70"</b></code></pre>
+
+<p>実際の値はビデオ通話の相手とやりとりしながら調整してください。</p>
 
 <h2 id="printer">印刷</h2>
 <p>印刷は特に経費精算をするときに使いますが、ドライバや実行すべきコマンドがいっさい分かっていないのでFreeBSDからなにかを印刷したためしがありません。いつも会社支給のノートPCから印刷してしまいます。</p>
