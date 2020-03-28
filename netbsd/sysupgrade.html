@@ -13,7 +13,7 @@
 
 <p>ソースコードをビルドするよりもビルド済みのバイナリを持ってきたほうがアップデートに費やす時間を短縮できます。カーネルを入れ替え、ダウンロードしてきたtarballを<code>/</code>へ展開すればいいだけなのですが、こういった取り返しがきかないような操作はなるべくツールを使って済ませたいものです。</p>
 
-<p>pkgsrcでは<b>sysutils/sysupgrade</b>が提供されています。これはtarballのダウンロードから<code>/</code>への展開、必要なくなったファイルの削除などができるツールです。</p>
+<p>pkgsrcでは<b>sysutils/sysupgrade</b>が提供されています。これはtarballのダウンロードから<code>/</code>への展開、必要なくなったファイルの削除などができるツールです[www.netbsd.org]。</p>
 
 <p>ここではユーザがNetBSD-currentを追跡していて、システムをFTPサーバにある最新のビルドへアップデートするものとします。</p>
 <hr>
@@ -49,8 +49,10 @@ ARCHIVE_EXTENSION=tar.xz</code></pre>
 
 <h2 id="reference">参考文献</h2>
 <dl>
-  <dt><b>[www.uconst.org2014]</b></dt>
-  <dd><a href="https://www.uconst.org/blog/archives/414">sysupgrade</a>, https://www.uconst.org/blog/archives/414, 2014（2020年3月28日 閲覧）</dd>
+<dt><b>[www.netbsd.org]</b></dt>
+<dd><a href="https://www.netbsd.org/docs/guide/en/chap-updating.html">Chapter 33. Updating an existing system from sources</a>, https://www.netbsd.org/docs/guide/en/chap-updating.html（2020年3月28日 閲覧）</dd>
+<dt><b>[www.uconst.org2014]</b></dt>
+<dd><a href="https://www.uconst.org/blog/archives/414">sysupgrade</a>, https://www.uconst.org/blog/archives/414, 2014（2020年3月28日 閲覧）</dd>
 </dl>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
