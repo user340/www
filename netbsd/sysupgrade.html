@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>sysupgradeを使いsets単位でバイナリアップデートをする</h1>
+<p>NetBSDのユーザランドは最低限必要なバイナリ（base）や設定ファイル（etc）、コンパイラ（comp）、マニュアル（man）……といった分類がされています。ビルド済みのバイナリはこれらの分類にしたがってtarで圧縮され配布されます。</p>
+
+<p>ソースコードをビルドするよりもビルド済みのバイナリを持ってきたほうがアップデートに費やす時間を短縮できます。カーネルを入れ替え、ダウンロードしてきたtarballを<code>/</code>へ展開すればいいだけなのですが、こういった取り返しがきかないような操作はなるべくツールを使って済ませたいものです。</p>
+
+<p>pkgsrcでは<b>sysutils/sysupgrade</b>が提供されています。これはtarballのダウンロードから<code>/</code>への展開、必要なくなったファイルの削除などができるツールです。</p>
+
+<p>ここではユーザがNetBSD-currentを追跡していて、システムをFTPサーバにある最新のビルドへアップデートするものとします。</p>
+<hr>
+
+<h2 id="install">sysupgradeをインストールする</h2>
+<p>pkgsrcから<b>sysutils/sysupgrade</b>パッケージをインストールしてください。</p>
+
+<pre><code><b class="root">cd pkgsrc/sysutils/sysupgrade</b>
+<b class="root">make install clean clean-depends</b></code></pre>
+
+<h2 id="conf">sysupgrade.confを編集する</h2>
+<p><code>/usr/pkg/etc/sysupgrade.conf</code>を編集します。</p>
+
+<pre><code>RELEASEDIR="https://nycdn.netbsd.org/pub/NetBSD-daily/HEAD/latest/$(uname -m)"
+SETS="base comp etc games misc text man modules rescue xcomp xfont xserver xbase xetc"
+ARCHIVE_EXTENSION=tar.xz</code></pre>
+
+<p><code>RELEASEDIR</code>には"<code>binary/sets</code>"を末尾に含めないかたちで指定します。<code>SETS</code>にはアップデート対象のtarballをすべて明示しなければなりません。<code>AUTO</code>と指定すると、<code>/etc/mtree/set.*</code>に該当するすべてのtarballをダウンロードして展開してくれますが「debugとgamesは含めなくていい」ような場合はこのように書く必要があります。上の例ではdebugのみ外してあります。<code>ARCHIVE_EXTENSION</code>はtarball取得先をWebブラウザから確認し、どの圧縮形式で配布されているか把握してから値を決めましょう。</p>
+
+<p>ほか、<code>KERNEL</code>をAUTOにしておくとGENERICが自動的に選択されます。カーネルコンフィグを設定しなければならない場合は、カーネルの入れ替えのみ手動でおこないましょう。</p>
+
+<h2 id="update">アップデートする</h2>
+<p>root権限で<code>sysupgrade auto</code>を実行するとアップデートが始まります。しかし、この操作はカーネルとユーザランドの更新を同時におこなうことから、再起動するまで新しいバージョンのバイナリを古いカーネルで動かすことになり不具合が発生する可能性もあります[www.uconst.org2014]。</p>
+
+<p>実際には<code>auto</code>を使わず、<code>fetch</code>でtarballをダウンロードしてから<code>modules</code>・<code>kernel</code>の順に実行してカーネルとカーネルモジュールを更新し再起動。新しいカーネルでシステムを立ち上げたあとに<code>sets</code>でユーザランド全体を更新するほうがより安全です。</p>
+
+<pre><code><b class="root">sysupgrade fetch</b>
+<b class="root">sysupgrade modules</b>
+<b class="root">sysupgrade kernel</b>
+<b class="root">reboot</b>
+...
+<b class="root">sysupgrade sets</b></code></pre>
+
+<h2 id="reference">参考文献</h2>
+<dl>
+  <dt><b>[www.uconst.org2014]</b></dt>
+  <dd><a href="https://www.uconst.org/blog/archives/414">sysupgrade</a>, https://www.uconst.org/blog/archives/414, 2014（2020年3月28日 閲覧）</dd>
+</dl>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
