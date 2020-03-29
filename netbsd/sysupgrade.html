@@ -13,7 +13,7 @@
 
 <p>ソースコードをビルドするよりもビルド済みのバイナリを持ってきたほうがアップデートに費やす時間を短縮できます。カーネルを入れ替え、ダウンロードしてきたtarballを<code>/</code>へ展開すればいいだけなのですが、こういった取り返しがきかないような操作はなるべくツールを使って済ませたいものです。</p>
 
-<p>pkgsrcでは<b>sysutils/sysupgrade</b>が提供されています。これはtarballのダウンロードから<code>/</code>への展開、必要なくなったファイルの削除などができるツールです[www.netbsd.org]。</p>
+<p>pkgsrcでは<b>sysutils/sysupgrade</b>パッケージが提供されています。これはtarballのダウンロードから<code>/</code>への展開、必要なくなったファイルの削除などができるツールです[<a href="#netbsd">www.netbsd.org</a>][<a href="#netbsdwiki">wiki.netbsd.org2013</a>]。</p>
 
 <p>ここではユーザがNetBSD-currentを追跡していて、システムをFTPサーバにある最新のビルドへアップデートするものとします。</p>
 <hr>
@@ -36,7 +36,7 @@ ARCHIVE_EXTENSION=tar.xz</code></pre>
 <p>ほか、<code>KERNEL</code>をAUTOにしておくとGENERICが自動的に選択されます。カーネルコンフィグを設定しなければならない場合は、カーネルの入れ替えのみ手動でおこないましょう。</p>
 
 <h2 id="update">アップデートする</h2>
-<p>root権限で<code>sysupgrade auto</code>を実行するとアップデートが始まります。しかし、この操作はカーネルとユーザランドの更新を同時におこなうことから、再起動するまで新しいバージョンのバイナリを古いカーネルで動かすことになり不具合が発生する可能性もあります[www.uconst.org2014]。</p>
+<p>root権限で<code>sysupgrade auto</code>を実行するとアップデートが始まります。しかし、この操作はカーネルとユーザランドの更新を同時におこなうことから、再起動するまで新しいバージョンのバイナリを古いカーネルで動かすことになり不具合が発生する可能性もあります[<a href="#uconst">www.uconst.org2014</a>]。</p>
 
 <p>実際には<code>auto</code>を使わず、<code>fetch</code>でtarballをダウンロードしてから<code>modules</code>・<code>kernel</code>の順に実行してカーネルとカーネルモジュールを更新し再起動。新しいカーネルでシステムを立ち上げたあとに<code>sets</code>でユーザランド全体を更新するほうがより安全です。</p>
 
@@ -47,11 +47,24 @@ ARCHIVE_EXTENSION=tar.xz</code></pre>
 ...
 <b class="root">sysupgrade sets</b></code></pre>
 
+<p>最後に<code>etcupdate</code>で<code>/etc</code>の更新をおこない、<code>postinstall</code>から不要なファイルやライブラリの削除をします。<code>clean</code>でアップデートに使ったキャッシュディレクトリを削除できます。</p>
+
+<p><code>etcupdate</code>は他の操作と異なり対話的な操作を求められます。ほとんどがRCS IDのマージでしょうから、メジャーアップデートでなければこの操作は省略して構いません。</p>
+
+<pre><code><b class="root">sysupgrade etcupdate</b>
+<b class="root">sysupgrade postinstall</b>
+<b class="root">sysupgrade clean</b></code></pre>
+
+<h2 id="others">その他</h2>
+<p>今回はFTPサーバからtarballを取得しましたが、<code>sysupgrade.conf</code>でコメントアウトされている設定にあるようにSSHも使えます。手元のマシンでビルドしたtarballを他のPCやVMのアップデートで使いたいときに便利です。</p>
+
 <h2 id="reference">参考文献</h2>
 <dl>
-<dt><b>[www.netbsd.org]</b></dt>
+<dt id="netbsd"><b>[www.netbsd.org]</b></dt>
 <dd><a href="https://www.netbsd.org/docs/guide/en/chap-updating.html">Chapter 33. Updating an existing system from sources</a>, https://www.netbsd.org/docs/guide/en/chap-updating.html（2020年3月28日 閲覧）</dd>
-<dt><b>[www.uconst.org2014]</b></dt>
+<dt id="netbsdwiki"><b>[wiki.netbsd.org2013]</b></dt>
+<dd><a href="https://wiki.netbsd.org/guide/upgrading/">upgrading</a>, https://wiki.netbsd.org/guide/upgrading/, 最終更新日 2013年3月21日（2020年3月29日 閲覧）</dd>
+<dt id="uconst"><b>[www.uconst.org2014]</b></dt>
 <dd><a href="https://www.uconst.org/blog/archives/414">sysupgrade</a>, https://www.uconst.org/blog/archives/414, 2014（2020年3月28日 閲覧）</dd>
 </dl>
 <hr>
