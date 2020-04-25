@@ -31,7 +31,7 @@
 SETS="base comp etc games misc text man modules rescue xcomp xfont xserver xbase xetc"
 ARCHIVE_EXTENSION=tar.xz</code></pre>
 
-<p><code>RELEASEDIR</code>には"<code>binary/sets</code>"を末尾に含めないかたちで指定します。<code>SETS</code>にはアップデート対象のtarballをすべて明示しなければなりません。<code>AUTO</code>と指定すると、<code>/etc/mtree/set.*</code>に該当するすべてのtarballをダウンロードして展開してくれますが「debugとgamesは含めなくていい」ような場合はこのように書く必要があります。上の例ではdebugのみ外してあります。<code>ARCHIVE_EXTENSION</code>はtarball取得先をWebブラウザから確認し、どの圧縮形式で配布されているか把握してから値を決めましょう。</p>
+<p><code>RELEASEDIR</code>には"<code>binary/sets</code>"を末尾に含めないかたちで指定します。<code>SETS</code>にはアップデート対象のtarballをすべて明示しなければなりません。<code>AUTO</code>と指定すると、<code>/etc/mtree/set.*</code>に該当するすべてのtarballをダウンロードして展開してくれますが「debugとgamesは含めなくていい」ような場合はこのように書く必要があります。上の例ではdebugとxdebugを外してあります。<code>ARCHIVE_EXTENSION</code>はtarball取得先をWebブラウザから確認し、どの圧縮形式で配布されているか把握してから値を決めましょう。</p>
 
 <p>ほか、<code>KERNEL</code>をAUTOにしておくとGENERICが自動的に選択されます。カーネルコンフィグを設定しなければならない場合は、カーネルの入れ替えのみ手動でおこないましょう。</p>
 
