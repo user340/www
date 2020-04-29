@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>pfを使い外部からのアクセスを内部ネットワークへリダイレクトする</h1>
+<p>FreeBSDではファイアウォールとして<code><b>pf</b></code>が標準で使えます。くわえてFreeBSDでは<code><b>bhyve</b></code>や<code><b>jail</b></code>のようなハイパーバイザやコンテナも利用できます。FreeBSD特有の連携というわけではありませんが、これらの機能を連携させることで、仮想マシンやコンテナ上のデータをそのホストで提供しているかのように振る舞えます。</p>
+<hr>
+<h2 id="nw">ネットワーク構成</h2>
+<p>今回例に挙げるネットワーク構成は図1のとおりです。</p>
+
+<figure style="text-align:center;">
+<img src="./images/pfrouting_001.png" alt="PF routing example">
+<figcaption><b>図1: </b>LAN内のデスクトップPCに内部ネットワークをつくり仮想マシンやコンテナなどをそのネットワークに所属させる構成</figcaption>
+</figure>
+
+<p>あるLAN（ここでは172.16.0.0/24のネットワーク）にはおもにデスクトップPCやノートPC、スマートフォンが接続されます。物理マシンは基本的にこのネットワークに所属するわけです。</p>
+
+<p>一方「PC A」では内部ネットワーク192.168.1.0/24をつくり、そのネットワークにゲストの仮想マシンやコンテナを接続させるようにしています。ようはNATです。「PC A」がゲートウェイの役割も果たすため「仮想マシン A」や「仮想マシン B」からインターネットに出ることはできます。しかし172.16.0.0/24内の「PC B」から「仮想マシン A」には直接アクセスできません。</p>
+
+<h2 id="pf">リダイレクトのためのpf.conf</h2>
+<p>ここで「PC B」から「仮想マシン A」「仮想マシン B」へアクセスするには、「PC A」で<code>pf</code>を動かしリダイレクトの設定をします。具体的には、<code><b>/etc/pf.conf</b></code>を書き、<code><b>service pf start</b></code>するだけです。まずは<code>pf.conf</code>を書きましょう。</p>
+
+<pre><code>ext_if = "re0" # 「PC A」のネットワークインタフェース
+bhyve_internal_network = "192.168.1.0/24" # 仮想マシンの内部NW
+vm_A = "192.168.1.20" # 「仮想マシン A」のIPアドレス
+vm_B = "192.168.1.50" # 「仮想マシン B」のIPアドレス
+
+# 192.168.1.0/24と「PC A」のネットワークインタフェースとでNATします
+nat on $ext_if from { $bhyve_internal_network } to any -&gt; $ext_if
+
+# リダイレクトの設定
+# re0へのTCP通信が特定のポートへ来たのであれば内部NWのVMへそれぞれ
+# 転送します
+rdr on $ext_if proto tcp from any to $ext_if port 80 -&gt; $vm_A port 80
+rdr on $ext_if proto tcp from any to $ext_if port 443 -&gt; $vm_A port 443
+rdr on $ext_if proto tcp from any to $ext_if port 22 -&gt; $vm_B port 22
+
+# はじめにre0への通信はすべてブロックします
+block in on $ext_if all
+
+# 外向きのパケットはすべて許可します
+pass out all
+
+# 許可する通信を宣言します
+# 192.168.1.20の80番・443番へのアクセスと、
+# 192.168.1.50の22番へのアクセスは許可します
+pass in on $ext_if inet proto tcp from any to $vm_A port 80
+pass in on $ext_if inet proto tcp from any to $vm_A port 443
+pass in on $ext_if inet proto tcp from any to $vm_B port 22</code></pre>
+
+<p>リダイレクトの設定を<code>rdr</code>ルールで記述しても、<code>pass</code>ルールで通信を許可することを忘れないでください。</p>
+
+<p>また<code>nat</code>や<code>rdr</code>、<code>pass</code>といった各ルールは一定の順序にしたがって書くよう標準で強制されています。詳細はオンラインマニュアル<code>pf.conf(5)</code>に譲りますが、ここではTranslationのルール<code>nat</code>・<code>rdr</code>はPacket Filteringのルール<code>block</code>・<code>pass</code>よりも先に書かなければいけません。</p>
+
+<h2 id="run">pfを動かす</h2>
+<p><code>/etc/pf.conf</code>に不備がなければpfデーモンを動かしルーティングを開始してください。文法エラーなどなにかしらの不備がある場合、pfは動かずエラーメッセージを出力して終了します。</p>
+
+<pre><code><b class="root">service pf start</b></code></pre>
+
+<h2 id="conclution">おわりに</h2>
+<p>上記のように通信を別ホストに転送する設定によって、ホストPCで直接なにかしらのデータやコンテンツを管理することなく、比較的安全なVMの上で任意のサーバを運用できます。今回はホストOSがFreeBSDという前提で話を進めましたが、仮想マシンのOSは自由に選択できます。「NATでネットワークを隔離したいけれど、ときどきLAN内のマシンからアクセスしたい」というニーズをうまく満たせられるでしょう。</p>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
