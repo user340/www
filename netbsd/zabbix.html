@@ -104,9 +104,12 @@ Hostname=Zabbix server</b></code></pre>
 <pre><code><b class="root">service zabbix_agentd start</b></code></pre>
 
 <h3 id="server">Zabbix Serverの設定と起動</h3>
-<p>ここではZabbix Serverとデータベースを動かすホストが同一だとします。NetBSD標準の設定ではセマフォ（semaphore）が足りなくなりZabbix Serverかデータベースのどちらかが動きません。そこで<code>sysctl(8)</code>からシステム中のセマフォの数を増やす設定をします。実際の数字はトライアンドエラーで調整してください。</p>
+<p>ここではZabbix Serverとデータベースを動かすホストが同一だとします。NetBSD標準の設定ではセマフォ（semaphore）が足りなくなりZabbix Serverかデータベースのどちらかが動きません。そこで<code>sysctl(8)</code>からシステム中のセマフォの数を増やす設定をします。<a href="https://www.postgresql.jp/document/8.1/html/kernel-resources.html">PostgreSQL 8.1のドキュメント</a>にはNetBSDおよびOpenBSDでのパラメータ設定の例が挙げられています。ここではこの例にしたがい設定します。</p>
 
-<pre><code><b class="root">sysctl -w kern.ipc.semmns=80</b></code></pre>
+<pre><code><b class="root">sysctl -w kern.ipc.shmseg=256</b>
+<b class="root">sysctl -w kern.ipc.semmns=512</b>
+<b class="root">sysctl -w kern.ipc.shmmni=256</b>
+<b class="root">sysctl -w kern.ipc.semmnu=256</b></code></pre>
 
 <p>PostgreSQLを起動します。</p>
 
@@ -114,14 +117,14 @@ Hostname=Zabbix server</b></code></pre>
 
 <p>PostgreSQLにZabbix Server用のユーザとデータベースを作成します。<b>database/postgresql95-server</b>パッケージは標準ではpgsqlユーザがPostgreSQLの管理者なようです。ここでzabbixユーザに設定したパスワードは後で利用します。</p>
 
-<pre><code><b class="root">sudo -u pgsql createuser --pwprompt zabbix</b>
-<b class="root">sudo -u pgsql createdb -O zabbix zabbix</b></code></pre>
+<pre><code><b class="root">createuser -O pgsql --pwprompt zabbix</b>
+<b class="root">createdb -O zabbix zabbix</b></code></pre>
 
 <p>データベース作成後はZabbix用のデータベースを初期化します。初期化用のSQL文はパッケージで提供されています。</p>
 
-<pre><code><b class="root">sudo -u zabbix psql zabbix &lt; /usr/pkg/share/zabbix/schema.sql</b>
-<b class="root">sudo -u zabbix psql zabbix &lt; /usr/pkg/share/zabbix/images.sql</b>
-<b class="root">sudo -u zabbix psql zabbix &lt; /usr/pkg/share/zabbix/data.sql</b></code></pre>
+<pre><code><b class="root">psql -O zabbix zabbix &lt; /usr/pkg/share/zabbix/schema.sql</b>
+<b class="root">psql -O zabbix zabbix &lt; /usr/pkg/share/zabbix/images.sql</b>
+<b class="root">psql -O zabbix zabbix &lt; /usr/pkg/share/zabbix/data.sql</b></code></pre>
 
 <p>データベースの設定完了後はZabbix Serverの設定ファイル<code>/usr/pkg/etc/zabbix_server.conf</code>を編集します。確認すべき設定項目は以下のとおりです。</p>
 
@@ -256,7 +259,7 @@ Alias /zabbix /usr/pkg/share/zabbix/php
 +IncludeOptional etc/httpd/httpd-php.conf
 +IncludeOptional etc/httpd/httpd-mpm.conf</b></code></pre>
 
-<p>最後に<code>/usr/pkg/share/zabbix/php/conf/zabbix.conf.php</code>を次のように編集します。</p>
+<p>最後に<code>/usr/pkg/share/zabbix/php/conf/zabbix.conf.php</code>を次のように編集します。このファイルは通常、Zabbix Webフロントエンドの初期設定画面で自動的に作成されますが、pkgsrcからインストールしたパッケージではこのパスへの書き込み権限が無くエラーになります。</p>
 
 <pre><code><b>
 &lt;?php
