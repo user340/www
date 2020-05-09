@@ -38,7 +38,7 @@ ARCHIVE_EXTENSION=tar.xz</code></pre>
 <h2 id="update">アップデートする</h2>
 <p>root権限で<code>sysupgrade auto</code>を実行するとアップデートが始まります。しかし、この操作はカーネルとユーザランドの更新を同時におこなうことから、再起動するまで新しいバージョンのバイナリを古いカーネルで動かすことになり不具合が発生する可能性もあります[<a href="#uconst">www.uconst.org2014</a>]。</p>
 
-<p>実際には<code>auto</code>を使わず、<code>fetch</code>でtarballをダウンロードしてから<code>modules</code>・<code>kernel</code>の順に実行してカーネルとカーネルモジュールを更新し再起動。新しいカーネルでシステムを立ち上げたあとに<code>sets</code>でユーザランド全体を更新するほうがより安全です。</p>
+<p>実際には<code>auto</code>を使わず、<code>fetch</code>でtarballをダウンロードしてから<code>modules</code>・<code>kernel</code>の順に実行してカーネルとカーネルモジュールを更新し再起動。新しいカーネルでシステムを立ち上げたあとに<code>sets</code>でユーザランド全体を更新するほうがより安全です。古いカーネルは<code>/onetbsd</code>としてバックアップされます。もし新しいカーネルで不具合があれば<code>onetbsd</code>でブートしシステムを復元しましょう。</p>
 
 <pre><code><b class="root">sysupgrade fetch</b>
 <b class="root">sysupgrade modules</b>
