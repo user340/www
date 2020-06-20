@@ -26,12 +26,12 @@
 </ol>
 
 <h1 id="rust_freedom_flaws">Rustの不自由</h1>
-<p>フリーソフトウェア活動家と同じく、わたしたちHyperbolaプロジェクトは新しくて最高のフリーソフトウェアを使うことを楽しんでいます。ただしわたしたちは<b>そのソフトウェアが本当にフリーソフトウェア運動における自由を尊重しているか</b>を確認しなければなりません。Rustが完全なフリーソフトウェアのように見える頃から、たくさんの人たちが対し<b>Rustを使いたいんだという願望</b>をわたしたちに表明しています。しかしいまだRustはいくつかの点で失敗しています。</p>
+<p>フリーソフトウェア活動家として、わたしたちHyperbolaプロジェクトは新しくて最高のフリーソフトウェアを使うことを楽しんでいます。ただしわたしたちは<b>そのソフトウェアが本当にフリーソフトウェア運動における自由を尊重しているか</b>を確認しなければなりません。多くのユーザがわたしたちに、Rustは完璧にフリーソフトウェアのようなので<b>Rustを使いたい</b>と述べています。しかしいまだRustはいくつかの点で失敗しています。</p>
 
 <h2 id="what_are_the_issue">なにが問題なのか？</h2>
-<p>RustとCargo（Rustのパッケージマネージャ）は「明確な」同意なしに再配布できる自由に違反しています。<b>これらの商標ライセンスは、変更されたバージョンの再配布物に対しいくつかの要件を負わせています</b>[<a href="#note0">1</a>]。これは第三の自由&mdash;&mdash;プログラムを改良し、改良点を公開して、コミュニティ全体の利益を図る自由[<a href="#note2">2</a>]&mdash;&mdash;にとって不都合なことです。『<a href="https://www.rust-lang.org/policies/media-guide">Rust's Media Guide</a>』には「この文書は公式のMozilla商標ポリシーの補足です[<a href="#note3">3</a>]」とあり、<b>Mozilla商標ポリシーを置き換えていません</b>。彼らの商標ポリシーを適用したときから、なにもかもが<a href="https://www.mozilla.org/en-US/foundation/trademarks/list/">Mozillaの商標リスト</a>へ登録されることになり、<b>FirefoxやThunderbirdも同じ問題に引きずり込まれています</b>[<a href="#note4">4</a>]。</p>
+<p>RustとCargo（Rustのパッケージマネージャ）は「明確な」同意なしに再配布できる自由に違反しています。<b>これらの商標ライセンスは、変更されたバージョンの再配布物に対しいくつかの要件を負わせています</b>[<a href="#note0">1</a>]。これは第三の自由&mdash;&mdash;プログラムを改良し、改良点を公開して、コミュニティ全体の利益を図る自由[<a href="#note2">2</a>]&mdash;&mdash;にとって不都合なことです。『<a href="https://www.rust-lang.org/policies/media-guide">Rust's Media Guide</a>』には「この文書は公式のMozilla商標ポリシーの補足です[<a href="#note3">3</a>]」とあり、<b>Mozilla商標ポリシーに代わるものではありません</b>。彼らの商標ポリシーを適用した時点で、なにもかもが<a href="https://www.mozilla.org/en-US/foundation/trademarks/list/">Mozillaの商標リスト</a>へ登録されることになります。<b>FirefoxやThunderbirdも同じ問題に引きずり込まれています</b>[<a href="#note4">4</a>]。</p>
 
-<p>要するに、<b>非商用での利用を除けば</b>、<b>Mozillaは「明確な同意」なしに、Mozillaが商標権をもつプログラミング言語に対してわたしたちのパッチを適用したり修正を加えたりすることを喜ばないでしょう</b>。<b>これは自由に関する問題です</b>。さらなる参考文献として<a href="https://github.com/rust-lang/rust/issues/53287">Rustの商標に関するGitHub Issue</a>と<a href="https://github.com/rust-lang/rust/issues/53287#issuecomment-414472372">Nikoの反応（Rust弁護団のひとり）</a>をご覧ください。</p>
+<p>要するに、<b>非商用での利用を除けば</b>、<b>Mozillaは自身が商標権を持つプログラミング言語に対して、「明確な同意」なしにパッチを適用したり修正を加えたりすることを喜ばないでしょう</b>。<b>これは自由に関する問題です</b>。さらなる参考文献として<a href="https://github.com/rust-lang/rust/issues/53287">Rustの商標に関するGitHub Issue</a>と<a href="https://github.com/rust-lang/rust/issues/53287#issuecomment-414472372">Nikoの反応（Rust弁護団のひとり）</a>をご覧ください。</p>
 
 <h2 id="big_picture">世の中の動き</h2>
 <p>第一級のプログラミング言語としてRustと統合している重要なアプリケーションがあります。Torはそのひとつで、<a href="https://trac.torproject.org/projects/tor/wiki/RustInTor">将来的にTor開発チームは、Rustが必要になるリリースとその日時を告知することを計画しています</a>[<a href="#note5">5</a>]。Linuxカーネル開発チームもまた、<a href="https://lwn.net/Articles/797828/">Rust実装のモジュールを提供することに関心を抱いています</a>。</p>
@@ -41,12 +41,12 @@
 </div>
 
 <h2 id="solutions">解決手段</h2>
-<p><a href="https://www.gnu.org/software/gnuzilla/">IceCat</a>がFirefoxを置き換え、<a href="https://wiki.hyperbola.info/iceweasel-uxp">Iceweasel-UXP</a>がBasiliskを置き換えたように、商標の制限を避けつつRust全体を<b>再ブランド化</b>します[<a href="#note6">6</a>]。しかしRustはプログラミング言語で、Webブラウザではありません。<b>再ブランド化されたRustはGNUプロジェクトによってメンテナンスされ、FSDG互換のディストリビューションもそうなる可能性があります</b>[<a href="#note7">7</a>]。Rustはプログラミング言語なので、わたしたちはすべてのRust依存なアプリケーションを、再ブランド化されたRustのバージョンへ適応させるためのパッチを求めるでしょう。わたしたちは自由でないCargoパッケージをブラックリスト入りさせ、<a href="https://www.hyperbola.info/packages/core/any/your-freedom/">your-freedom</a>パッケージへ加えなければならないでしょう[<a href="#note8">8</a>]。</p>
+<p><a href="https://www.gnu.org/software/gnuzilla/">IceCat</a>がFirefoxを置き換え、<a href="https://wiki.hyperbola.info/iceweasel-uxp">Iceweasel-UXP</a>がBasiliskを置き換えたように、商標の制限を避けつつRust全体を<b>再ブランド化</b>します[<a href="#note6">6</a>]。しかしRustはWebブラウザではなくプログラミング言語です。<b>再ブランド化されたRustはGNUプロジェクトとFSDG互換のディストリビューションによってメンテナンスされるでしょう</b>[<a href="#note7">7</a>]。わたしたちには、Rustで実装されたすべてのアプリケーションを、再ブランド化されたRustへ作り替えるためのパッチが必要です。<a href="https://www.hyperbola.info/packages/core/any/your-freedom/">your-freedom</a>パッケージのために、自由でないCargoパッケージの一覧をブラックリストに登録しなければなりません[<a href="#note8">8</a>]。</p>
 
 <p>第三の自由を尊重したうえで、どのような目的に対してもRustバイナリを修正できるよう、Rustの商標利用許諾を変えていくことも考えられます。</p>
 
 <h2 id="comparisons_with_other_software_trademarks">他のソフトウェア商標との比較</h2>
-<p>何人かから「他のほとんどのソフトウェアパッケージにも商標があるけど、あなたがたはそれらをすべて取り除こうとしているの？」と質問されます。いいえ、わたしたちはすべての商標に抗うわけではありません。通常の利用やパッチの適用、変更を明確に禁止している商標にだけ抗います。</p>
+<p>何人かから「他のほとんどのソフトウェアパッケージにも商標があるけど、あなたがたはそれらをすべて取り除こうとしているの？」と質問されます。いいえ。わたしたちはすべての商標に抗うわけではありません。通常の利用やパッチの適用、変更を明確に禁止している商標にだけ抗います。</p>
 
 <p>例として、<a href="https://www.python.org/psf/trademarks/">Python PSF</a>や<a href="https://www.perlfoundation.org/trademarks.html">Perl Trademarks</a>は、いまのところ事前の承認なしにソースコードへパッチを適用することを禁止していません。これらプロジェクトは商標の悪用を禁止しています。悪用とは、たとえばあなたは「Python株式会社」を設立できない、といったようなものです。この制限はPythonやPerlのソースコードを変更したり、パッチを適用したりすることに対しなんら影響を及ぼしていません。</p>
 
