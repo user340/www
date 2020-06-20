@@ -11,7 +11,7 @@
 <article class="book">
 <p>原文は<a href="https://wiki.hyperbola.info/doku.php?id=en:main:chromiums_freedom_flaws">Chromium's Freedom Flaws</a>。Wikiなので翻訳と原文がズレるかもしれません。当訳は<code>2019/10/13 19:59 by emulatorman</code>時点のものです。かなり怪しい箇所が多いので、誤訳の指摘や翻訳の提案などがあればぜひuki@e-yuuki.orgへご連絡ください。</p>
 
-<p>Googleは偉大なエンジニアリング集団で、僕たちのほとんどが（少なくとも僕は）毎日Googleの製品やサービスをなにかしらのかたちで享受しています。しかしメディアでよく槍玉に挙げられるようにGoogleはなにかしらの問題をつねに抱えています。</p>
+<p>Googleは偉大なエンジニアリング集団で、僕たちのほとんどが（少なくとも僕は）毎日Googleの製品やサービスをなにかしらのかたちで享受しています。しかしメディアでよく槍玉に挙げられるようにGoogleは常になにかしらの問題を抱えています。</p>
 
 <p>フリーソフトウェア運動から見たGoogleの製品にはどのような問題があり、フリーソフトウェア推進派はいかにしてその問題に立ち向かっているのか？が分かります。構造は巨大な権力を持つ大企業 対 理想主義者集団のようで、一見後者が劣勢のようにみえますが、それでも希望はあるようです。</p>
 <hr>
@@ -36,7 +36,7 @@
 </ol>
 
 <h1 id="chromium_freedom_flaws">Chromiumの不自由</h1>
-<p>フリーソフトウェア活動家と同じく、わたしたちHyperbolaプロジェクトは新しくて最高のフリーソフトウェアを使うことを楽しんでいます。ただしわたしたちは<b>そのソフトウェアが本当にフリーソフトウェア運動における自由を尊重しているか</b>を確認しなければなりません。Chromiumが完全なフリーソフトウェアのように見える頃から、たくさんの人たちが対し<b>Chromiumを使いたいんだという願望</b>をわたしたちに表明しています。しかしいまだChromiumはいくつかの点で失敗しています。</p>
+<p>フリーソフトウェア活動家として、わたしたちHyperbolaプロジェクトは新しい最高のフリーソフトウェアを使うことを楽しんでいます。ただしわたしたちは<b>そのソフトウェアが本当にフリーソフトウェア運動における自由を尊重しているか</b>を確認しなければなりません。多くのユーザがわたしたちに、Chromiumは完璧にフリーソフトウェアだと思うので、<b>Chromiumを使いたい</b>と述べています。しかしいまだChromiumはいくつかの点で失敗しています。</p>
 
 <p>われわれの調査では、状況は好転しているとわかりました。ほんの数年前は、<b><u>自由ではないとみるべき</u>1,000以上のライセンスされていないファイルがありました</b>。<b>この問題は解決されたように見えます</b>。DebianのLintianレポートと努力に感謝します[<a href="#note1">1</a>]。</p>
 
@@ -45,13 +45,13 @@
 <h2 id="what_are_the_issue">なにが問題なのか？</h2>
 
 <h3 id="queries_to_google">Googleへのクエリ</h3>
-<p><b>当初から、Chromiumのソースコードはいまだに多くのコードがGoogleへ直接インターネット接続をしています</b>。パッチが適用されていない状態でビルドしたとき、あなたのブラウジング体験の大部分はGoogleのオンラインWebサービスの管理下にあります。すでに『<a href="https://www.gnu.org/philosophy/who-does-that-server-really-serve.html">Who does that server really serve?</a>』で述べられているように、フリーソフトウェアはあなたが主導権を握っているか第三者製のWebサービスに依存する必要がないときのみ自由なのです。<a href="ihttps://www.pcworld.com/article/2940499/ok-google-hotword-detection-yanked-from-chromium-after-user-revolt.html">音声認識のためのGoogle Webサービスプラグイン</a>の削除を含め、この問題からChromiumを解放すべくいくつかの作業はすでに完了しています。</p>
+<p><b>当初から、Chromiumのソースコードはいまだに多くのコードがGoogleへ直接インターネットアクセスをしています</b>。パッチが適用されていない状態でビルドしたとき、あなたのブラウジング体験の大部分はGoogleのオンラインWebサービスの管理下にあります。すでに『<a href="https://www.gnu.org/philosophy/who-does-that-server-really-serve.html">Who does that server really serve?</a>』で述べられているように、フリーソフトウェアはあなたが主導権を握っているか第三者製のWebサービスに依存する必要がないときのみ自由なのです。<a href="ihttps://www.pcworld.com/article/2940499/ok-google-hotword-detection-yanked-from-chromium-after-user-revolt.html">音声認識のためのGoogle Webサービスプラグイン</a>の削除を含め、この問題からChromiumを解放すべくいくつかの作業はすでに完了しています。</p>
 
 <h3 id="pre_built_binaries">あらかじめビルドされたバイナリ</h3>
-<p><b>当初からChromiumはコンパイルの高速化のために<u>いくつかのあらかじめビルドされた（pre-built）バイナリを含んでいます</u>。</b>完全なフリーソフトウェアのために、<b>わたしたちはソースコードからソフトウェアをビルドしなければなりません</b>。パッケージャはコンパイルオプションに "use_prebuilt" オプションを使うべきではありません。</p>
+<p><b>当初からChromiumはコンパイルの高速化のために<u>あらかじめビルドされた（pre-built）バイナリをいくつか含んでいます</u>。</b>完璧なフリーソフトウェアのために、<b>わたしたちはソースコードからソフトウェアをビルドしなければなりません</b>。パッケージメンテナはコンパイルオプションに "use_prebuilt" オプションを使うべきではありません。</p>
 
 <h3 id="drm_and_proprietary_codecs">DRMとプロプライエタリコーデック</h3>
-<p><b>Chromiumは<u>Widevine DRMやAdobe Pepper Flashそして自由でない第三者製のコーデック</u>をサポートしています</b>。パッケージャはフリーソフトウェアを実現するため、コンパイルするよりも前に<b>ソースコードからこれらを削除することを保証しなければなりません</b>。<b>無効にするだけでは不十分です</b>。『<a href="https://www.gnu.org/distros/free-system-distribution-guidelines.en.html">FSDG</a>』のとおり<b>ソースコードから（それらへ対するサポートや参照も込みで）削除する必要があります</b>。</p>
+<p><b>Chromiumは<u>Widevine DRMやAdobe Pepper Flashそして自由でない第三者製のコーデック</u>をサポートしています</b>。パッケージメンテナはフリーソフトウェアを実現するため、コンパイルするよりも前に<b>ソースコードからこれらを削除することを保証しなければなりません</b>。<b>無効にするだけでは不十分です</b>。『<a href="https://www.gnu.org/distros/free-system-distribution-guidelines.en.html">FSDG</a>』のとおり<b>ソースコードから（それらへ対するサポートや参照も込みで）削除する必要があります</b>。</p>
 
 <h3 id="privacy_problems"></h3>
 <p>フリーソフトウェアとは関係なく、<b>わたしたちはユーザが自身の個人情報を管理できるようにしたいと考えています</b>。Chromiumには<a href="https://trac.torproject.org/projects/tor/wiki/doc/ImportantGoogleChromeBugs">Torと組み合わせて使うのにふさわしくない、プライバシーに対する懸念がいくつも報告されています</a>。<b>プロキシにユーザのIPアドレスが流出してしまうバグが残っている問題</b>や、<b>コンピュータのホスト名とハードウェアが流出する</b>フィンガープリントの問題、そしてブラウザがシークレットモードのとき<b>タイミング攻撃を許してしまう</b>問題です[<a href="#note2">2</a>]。<b>フリーソフトウェアユーザはこれらの問題に気づき</b>、必要に応じてアップストリームとパッケージにパッチを適用しなければなりません。</p>
