@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="./book.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="book">
+<h1>Hyperbola GNU/LinuxがHyperbola BSDへ転向する理由を明らかにする</h1>
+<p style="text-align:right">最終更新日 2020年1月16日 <a href="https://itsfoss.com/author/john/">John Paul</a></p>
+
+<p>2019年12月下旬、<a href="https://www.hyperbola.info/">Hyperbola</a>は<a href="https://www.hyperbola.info/news/announcing-hyperbolabsd-roadmap/">プロジェクトに対する重大な変更を発表しました</a>。OpenBSDカーネルを支持しLinuxカーネルを使わないと決断したのです。この発表はProject Tridentが<a href="https://itsfoss.com/bsd-project-trident-linux/">BSDからLinuxへ移行すると発表</a>してからわずか一ヶ月後のことです。</p>
+
+<p>また、HyperbolaはGPLv3に準拠していないソフトウェアをすべて一新する計画もしています。</p>
+
+<p>この真新しいプロジェクトの未来についてもっと深く理解するため、わたし（John Paul）はHyperbola創設者のAndreにインタビューしました。</p>
+
+<h2>なぜHyperbola GNU/LinuxはHyperbola BSDへ切り替えるのか</h2>
+
+<p><b><i>It's FOSS：「あなたがたの発表では、Linuxカーネルは『ぐらついた道のりへと駆け足で向かっている』状態とのことですが、どういうことなのか説明していただけないでしょうか？」</i></b></p>
+
+<p><b>Andre：</b>「まずはじめに、この言葉は<a href="https://patchwork.kernel.org/patch/10084131/">HDCP</a>（High-bandwidth Digital Content Protection）のようなDRM機能に適応していることを含意しています。現在この機能をビルド時に無効化するオプションが存在するものの、このオプションが永久に選択可能なことを保証してくれるポリシーはありません」</p>
+
+<p>「歴史的に、いくつかの実装は完璧な機能性にいたるまでは選択可能なものとして扱われます。その後は強制的に使わされ、パッチで取り除くのは難しくなります。仮にHDCPではそのような事態に陥らないとしても、わたしたちとしてはこのような実装に対して慎重にならざるを得ません」</p>
+
+<p>「そのほかにも、<b>Linuxカーネルはセキュリティの脆弱性に対して適切に対処しなくなりました</b>。数年前に<a href="https://grsecurity.net/">Grsecurity</a>は公開パッチを提供しなくなりましたが、わたしたちのシステムのセキュリティはそのパッチが頼りだったのです。高価なサブスクリプションを契約しているあいだはGrsecurityのパッチを使い続けることもできましたが、パッチを公開してしまうとそのサブスクリプション契約は中断されてしまいます」</p>
+
+<p>「これらのような制約は完全なソースコードの提供やプロプライエタリ・ソフトウェアの排除[<a href="#note1" id="ref1">1</a>]、利用に制約がないことを要件とするFSDG[<a href="#note2" id="ref2">2</a>]の哲学に反しています」</p>
+
+<p>「KSPP[<a href="#note3" id="ref3">3</a>]はGrsecurityに対抗する目的のプロジェクトですが、GrsecurityやPaX[<a href="#note4" id="ref4">4</a>]とは見劣りします。最近はあまり開発が活発でもないので、ほとんど停滞したプロジェクトになってしまっただろうと考えています」</p>
+
+<p>「最後に、<a href="https://lwn.net/Articles/797828/">カーネルへRustモジュールを組み込められるようになった</a>のはわたしたちにとって不都合なことです。なぜならRustの商標の制約事項では、特別な許可なしにディストリビューションへパッチを適用することを禁止しているからです。わたしたちは自由でないソフトウェアや認可されていないファイルを取り除き、ユーザのプライバシの保護を強めるために改良を加えます。また、わたしたちのユーザが制約事項や許可を求めることなくわたしたちのソースコードを利用できるよう望んでいます」</p>
+
+<p>「これはわたしたちが完璧に自由なUXP[<a href="#note5" id="ref5">5</a>]というRust不使用のブラウザエンジンを採用している理由にもなっています」</p>
+
+<p>「以上のような制限と、いずれHDCPが強制的にビルドに含まれてしまうかもしれないという懸念から、わたしたちには別の選択肢が必要となったのです」</p>
+
+<p><b><i>It's FOSS：「あなたはOpenBSDカーネルからフォークすると発表しましたね。なぜFreeBSDやDragonflyBSDあるいはMidnightBSDではなくOpenBSDを選んだのでしょうか？」</i></b></p>
+
+<h2>訳者注</h2>
+
+<ol>
+<li id="note1">
+<p>原文では<b>deblobbed</b>。<a href="https://en.wikipedia.org/wiki/Binary_blob">英語版Wikipedia</a>によると、FLOSSの文脈では、クローズドなソフトウェアは<b>blob</b>や<b>binary blob</b>と呼ばれそしられるようです（blobは小さなインクの染みという意味）。Wikipediaに示されていた参考文献から一部引用します。</p>
+
+<figure>
+<blockquote><p>there is still a binary blob -- similar to AMD and their Radeon firmware blobs within the kernel --</p></blockquote>
+<footer>&mdash; <cite>Michael Larabel</cite>, <i><a href="https://www.phoronix.com/scan.php?page=news_item&px=MTE1NDc">Coreboot: Replacing Intel's Binary Video BIOS Blob</a></i></footer>
+</figure>
+
+<figure>
+<blockquote><p>Modern UEFI firmware is a closed-source, proprietary blob of software baked into your PC’s hardware.</p></blockquote>
+<footer>&mdash; <cite>Chris Hoffman</cite>, <i><a href="https://www.pcworld.com/article/2883903/how-intel-and-pc-makers-prevent-you-from-modifying-your-pcs-firmware.html">How Intel and PC makers prevent you from modifying your laptop's firmware</a></i></footer>
+</figure>
+</li>
+<li id="note2">Free System Distribution Guidelinesの略。ガイドラインの日本語訳は『<a href="https://www.gnu.org/distros/free-system-distribution-guidelines.ja.html">自由なシステム・ディストリビューションのガイドライン（GNU FSDG）</a>』です。</li>
+
+<li id="note3"><a href="https://kernsec.org/wiki/index.php/Kernel_Self_Protection_Project">Kernel Self Protection Project</a>の略。</li>
+</ol>
+
+<li><a href="https://pax.grsecurity.net/">https://pax.grsecurity.net/</a></li>
+
+<li>Unified XUL Platformの略。調べて真っ先に見つかるのは<a href="https://www.basilisk-browser.org/">Basilisk web browser</a>か。</li>
+<footer>
+<div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div>
+<p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p>
+</footer>
+</article>
+</body>
+</html>
