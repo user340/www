@@ -8,9 +8,9 @@
 </head>
 <body>
 <article class="book">
-<h1>Hyperbola GNU/LinuxがHyperbola BSDへ転向する理由を明らかにする</h1>
 <p>John Paul『<a href="https://itsfoss.com/hyperbola-linux-bsd/">Insights into Why Hyperbola GNU/Linux is Turning into Hyperbola BSD</a>』の日本語訳です。</p>
-<hr>
+
+<h1>Hyperbola GNU/LinuxがHyperbola BSDへ転向する理由を明らかにする</h1>
 <p style="text-align:right">最終更新日 2020年1月16日 <a href="https://itsfoss.com/author/john/">John Paul</a></p>
 
 <p>2019年12月下旬、<a href="https://www.hyperbola.info/">Hyperbola</a>は<a href="https://www.hyperbola.info/news/announcing-hyperbolabsd-roadmap/">プロジェクトに対する重大な変更を発表しました</a>。OpenBSDカーネルを支持しLinuxカーネルを使わないと決断したのです。この発表はProject Tridentが<a href="https://itsfoss.com/bsd-project-trident-linux/">BSDからLinuxへ移行すると発表</a>してからわずか一ヶ月後のことです。</p>
@@ -18,6 +18,8 @@
 <p>またHyperbolaはGPLv3に準拠していないソフトウェアをすべて一新する計画もしています。</p>
 
 <p>この真新しいプロジェクトの未来についてもっとよく理解するため、わたしはHyperbola創設者のAndreにインタビューしました。</p>
+
+<hr>
 
 <h2>なぜHyperbola GNU/LinuxはHyperbola BSDへ切り替えるのか</h2>
 
@@ -61,7 +63,7 @@
 
 <p><b><i>It's FOSS：「あなたはOpenBSDカーネルやユーザ空間のGPL非互換なコードと自由でないコードをGPLに準拠したものに置き換えるつもりだと表明しました。GPLでないコードは何割ほどでしょうか？」</i></b></p>
 
-<p><b>Andre：</b>「OpenBSDカーネルとユーザ空間を合わせて約二割ほどです</p>
+<p><b>Andre：</b>「OpenBSDカーネルとユーザ空間を合わせて約二割ほどです。</p>
 
 <p>GPL準拠ではないコードのほとんどは、『四条項BSDライセンス』とも呼ばれる旧BSDライセンスで提供されているコードです。このライセンスには『不愉快な宣伝条項』が含まれているという欠点があります。BSDライセンスにとってこの条項を含めることが失敗だったわけではありません。しかしGPLv3やLGPLv3といった、宣伝条項によって互換が失われるライセンスで提供されるコードを開発しているわたしたちにとっては問題です。</p>
 
@@ -98,6 +100,44 @@
 <p>Hypermanはpacmanからのforkですが、pacmanはBSDではまだ動作しません。pacmanにはBSDをサポートするためのコードはあったようですが最近のバージョンでは削除されてしまいました。HypermanはLibreSSLを使える実装がありBSDのサポートもされています。</p>
 
 <p>HyperRCはOpenRC initにパッチを加えるものになるでしょう。HyperBLibCはBSDのLibCからforkするつもりです」</p>
+
+<p><b><i>It's FOSS：「はじめからLinuxはGPLを、BSDはBSDライセンスを支持していていました。いまHyperbolaはBSDをGPLライセンスで開発しようとしています。BSDコミュニティの中でこの動きに反対する人らに対してどのように反応しますか？」</i></b></p>
+
+<p><b>Andre：</b>「GPL派とBSD派のあいだで意見の不一致があるのはわかっています。同じく齟齬が生じている話は、わたしたちのLinuxカーネルを使ったHyperbolaディストリビューションのことを単に『Linux』とは呼ばず『GNU/Linux』と呼ぶことですかね。『Linux』という呼び方は、Linus Torvaldsが開発を始めたLinuxカーネルに先立ち、1984年に作られたGNUのユーザランドを無視した定義です。GNUのユーザランドとLinuxカーネルが組み合わさってひとつのシステムとなるのです。</p>
+
+<p>BSDと目立って異なる点は、GPLは将来のバージョンに至るまでソースコードを公開する義務がある点、ライセンスの互換性があるファイルとしか組み合わせて利用できない点です。BSDのシステムはソースコードを公開しなくてもいいですし、様々なライセンスのソフトウェアや自由ではないソフトウェアを制限なく組み込められます。</p>
+
+<p>無論わたしたちはフリーソフトウェア活動を熱心に支持していて、将来にわたってソースコードが公に残っていてほしいと願っています。だからGPLを選ぶのです」</p>
+
+<p><b><i>It's FOSS：「なるほど。HyperbolaBSDの開発を始めているというのはわかりましたが、いつごろ利用できるようになるのでしょうか？」</i></b></p>
+
+<p><b>Andre：</b>「2021年の6〜8月にはalpha版をリリースしたいですね」</p>
+
+<p><b><i>It's FOSS：「いまリリースしているGNU/Linux版のHyperbolaはいつまでサポートし続けるのでしょうか？いまのユーザが簡単に移行できるようにする予定ですか？」</i></b></p>
+
+<p><b>Andre：</b>「告知どおり、2022年末（Q4）までHyperbola GNU/Linux-libreをサポートします。ABIの違いがあるのでシステムの移行は難しそうですが、移行にあたっての告知と情報提供はWikiに載せるつもりです」</p>
+
+<p><b><i>It's FOSS：「もし興味を持った誰かがHyperbolaBSDの助けになりたいとしたらどうすればいいのでしょうか？あなたが求めているスキルはなんでしょうか？」</i></b></p>
+
+<p><b>Andre：</b>「Hyperbolaに興味を抱き、向上心がある方を歓迎します。わたしたちはC言語のプログラマと、ソフトウェアのセキュリティとプライバシ保護を高めることに関心を持つユーザを求めています。Hyperbolaの開発者はFSDGの原則とYAGNIの原則&mdash;必要となったときにだけ新しい機能を追加する原則&mdash;にしたがわなければなりません。</p>
+
+<p>ユーザはわたしたちのGitリポジトリをforkしてパッチを提出できます」</p>
+
+<p><b><i>It's FOSS：「ZFSをサポートすることについてなにか計画はありますか？なんのファイルシステムをサポートすることになるのでしょうか？」</i></b></p>
+
+<p><b>Andre：</b>「ZFSのサポートはまだ計画にありません。ZFSはCommon Development and Distribution License version 1.0（CDDL）でリリースされています。このライセンスはGPLと互換性がありません。</p>
+
+<p>GPLv3のもとにコードを書き直して新しい名前で（たとえばHyperZFSとか）リリースすることも可能かもしれませんが、現時点ではHyperbolaBSにDZFS互換の機能を含める決定はありません。</p>
+
+<p>ファイルシステムはGPLv3と互換性のあるBTRFS・JFS2・NetBSDのCHFS・DragonFlyBSDのHAMMERおよびHAMMER2・LinuxカーネルのJFFS2を移植するつもりです。長期的には、Ext4・F2FS・ReiserFS・Reiser4もサポートするかもしれないです。ただこれらのファイルシステムはGPLv3を適用できないGPLv2なので書き直さないといけません。ファイルシステムは開発をしよくテストする必要があります。なので最初のバージョンからではなく後々のリリースで使えるようになるでしょう」</p>
+
+<hr>
+
+<p>わたしの質問に答えHyperbolaBSDの将来を明かすために時間を割いてくれたAndreに感謝します。</p>
+
+<p>HyperbolaがBSDカーネルへ移行することについてどう感じましたか？BSDをGPLライセンスのもとでリリースすると聞いてどう思いましたか？ぜひコメントをください。</p>
+
+<p>もしこの記事が面白ければソーシャルメディアかHacker NewsあるいはRedditでシェアをお願いします。</p>
 
 <h2>訳者注</h2>
 
