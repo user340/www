@@ -161,7 +161,7 @@ qemu-system-x86_64: failed to initialize HAX: Operation not supported by device
 
 <h2 id="references">参考文献</h2>
 <dl>
-<dt>Kamil Rytarowski, <i><a href="https://doi.asiabsdcon.org/10.25263/asiabsdcon2019/p04b">Intel HAXM &mdash; a hardware-assisted acceleration engine in the NetBSD kernel</a></i></dt>
+<dt>Kamil Rytarowski, <i><a href="https://doi.asiabsdcon.org/10.25263/asiabsdcon2019/p04b">Intel HAXM &mdash;&mdash;a hardware-assisted acceleration engine in the NetBSD kernel</a></i></dt>
 <dd>pkgsrc(7)にHAXMを取り込んだKamil Rytarowskiによる報告の論文です。これを読むとHAXMの概要についておおまかに理解できるのではないかと思います。</dd>
 <dt><a href="http://polprog.net/blog/netbsd-hax/">HOWTO set up QEMU with HAX acceleration on NetBSD</a></dt>
 <dd>実際にNetBSD上でQEMU-HAXMを動かすにはどのような手順を踏むのかが説明されています。カーネルにパッチを当ててビルドしたり、GitHubからHAXMのソースコードをcloneしてビルドする項目は読み飛ばして構いません。pkgsrc-wipをcloneする必要もありません。HAXMデバイスの作成は、上述した<code>haxm-mknod</code>スクリプトを一度実行すれば良いです。</dd>
