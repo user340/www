@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>pkgsrcのたのしさ、FLOSSのたのしさ</h1>
+<hr>
+<p>NetBSDのほうはまるで作業が進んでおらず、syspkgに対してやりたいことはあるけれどもなかなか先に進まない／進めない。その代わり、近頃ではpkgsrcのパッケージに対する更新のパッチを投げたりpkgsrc-wipにcommitしたりしている。仕事の延長線上にあることをこなしているだけのような気もするが達成感はある。</p>
+
+<p><code>sysutils/zabbix</code>をバージョンアップデートするパッチを<code>pkgsrc-users@</code>に投稿したのが2020年6月20日で、Greg Troxelが手直ししてpkgsrcにcommitしてくれた。そのときのパッチではバージョン4.0.9から4.0.21へ上げた。<a href="https://www.zabbix.com/rn/rn4.0.9">Zabbix 4.0.9</a>は2019年6月6日にリリースされたから、約一年分の変更が入っていることになる。</p>
+
+<p>私的に運用するシステムはNetBSDを使って構築する主義なので、ソフトウェアのインストールには自然とpkgsrcを使うようになる。くわえてZabbixに関わりのある仕事をしている都合上、余暇でも訓練がてらZabbixを触るのは自然のなりゆきだ。こういうわけで、pkgsrcで提供されているZabbixは古いバージョンだとわかり、またバージョン番号から察するに最新バージョンのZabbixを使いたい人間が更新しようとしない限りずっとこのままだろうと察するにいたったのだった。さいわいにもpkgsrcを使うだけでなくどうやってパッケージを提供するかについても初歩的には知ってはいた。『<a href="https://www.netbsd.org/docs/pkgsrc/">The pkgsrc guide</a>』をお伴に作業をしてみるとZabbixにあてるパッチを書く必要もなくすんなりビルドが通ったのも運が良かった。メールを書き、パッケージへのパッチを添付してメーリングリストに投稿するとすぐに反応があった。</p>
+
+<p>2020年3月11日にZabbix 5.0がリリースされていたがpkgsrcではwip含め誰も作業していなかったので、2020年8月8日にwipへ<code>zabbix50-*</code>パッケージをcommitした。これも動機は上と同じようなものだった。ただ、パッケージがビルドできるところまでは進んだものの実際にZabbix Serverを動かしてみるとエラーが出てうまく動かなかった。原因は分からなかったがCentOS 7と8では動くのがわかっていたので、NetBSD固有の問題だろうと見込んで質問のメールを<code>pkgsrc-users@</code>に投稿した。するとJuraj Lutterが反応して三週間後には正常にZabbix Serverが動くところまで直してもらえた（スタックサイズの問題らしくRCスクリプトが変更されていた）。Gitのログを読むとぼくがcommitしたあとにも色々とコードの修正をしてくれていたようだった。</p>
+
+<p>LutterはSmartOSへZabbixをデプロイするためにパッケージが必要だったらしく、それが半端なパッケージのコードを引き継いでリファクタリングしたり不具合修正したりする強いモチベーションだったように思える。そしてここに、pkgsrcでパッケージをメンテナンスするたのしさがあると思う。pkgsrcはNetBSDに限らずUnix系OSならほとんど使えるように設計されており、たとえ使うOSがまるっきり違っていてもあるパッケージに対して連帯はできる。pkgsrcで提供してしまえばNetBSDユーザに限らず恩恵をこうむるユーザが存在する可能性は、pkgsrcに対してなにか貢献をする強い動機づけになるのではないだろうか（GNU/Linuxだとディストリビューションに応じてパッケージのメンテナンス方式が違うのでこうもいかないが、あちらはいかんせん全体的なユーザ数が多い）。</p>
+
+<p>そして世界に対してなにか貢献できた気になること、達成感を味わえることはFLOSSのたのしさのひとつだろう。上の活動はすべてGitやメーリングリストを介しているので複数人で強調して作業するたのしさもFLOSSにはある。<code>sysutils/zabbix</code>へのパッチを直して実際にpkgsrcのリポジトリへcommitしてくれたのはTroxelだし、<code>wip/zabbix50-server</code>がうまく動かない問題はLutterが片をつけた。一人ひとりができることをしている。これらはFLOSS活動の文脈で言及されすぎて手垢がついているものだが、体験してみればやはりまあまあたのしい。</p>
+
+<p>こういうたのしさを感じたところで調子づいて一歩進んで本命のプロジェクトを進めたくなる気持ちになる。「世界に対してなにかしてやった感覚」はやる気を引き出してくれるのかもしれない。FLOSS活動の普及についていえば、なんらかのプロジェクトのcommitterになるには仕事で関わっているソフトウェアのメンテナを目指してみるのが技術的な障壁は低くていいのかもなと思う。探してみるとインターネットはメンテンスすべきコードがたくさんあるしバザールは賑わうに越したことはないのだから、挑戦してみても誰も文句は言わないだろう。</p>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
