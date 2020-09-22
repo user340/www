@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>NetBSDにJenkinsをインストールする</h1>
+<hr>
+<p><a href="https://www.jenkins.io/">Jenkins</a>はMITライセンスのFLOSSです。おもにシェルやGroovyスクリプトでタスクを定義し、その実行を自動化できるソフトウェアです。</p>
+
+<p>本稿ではJenkinsのインストール対象をNetBSD 9.0/amd64とします。</p>
+
+<ol>
+  <li>
+    <a href="#install">pkgsrcからJenkinsをインストールする</a>
+    <ol>
+      <li><a href="#release">通常版かLTS版か</a></li>
+      <li><a href="#install_step">インストール</a></li>
+    </ol>
+  </li>
+  <li>
+    <a href="#config">設定</a>
+    <ol>
+      <li><a href="#tomcat">Tomcatの設定</a></li>
+      <li><a href="#home">Jenkinsホームディレクトリの作成</a></li>
+      <li><a href="#daemon">デーモンの設定と起動</a></li>
+    </ol>
+  </li>
+  <li><a href="#https">httpsに対応するには</a></li>
+  <li><a href=""></a></li>
+  <li><a href=""></a></li>
+  <li><a href=""></a></li>
+</ol>
+
+<h2 id="install">pkgsrcからJenkinsをインストールする</h2>
+
+<h3 id="release">通常版かLTS版か</h3>
+
+<p>通常版（<code>devel/jenkins</code>）とLTS版（<code>devel/jenkins-lts</code>）いずれかのJenkinsをpkgsrcからインストールできます。通常版のJenkinsは2020年9月時点では週次でリリースされます。いっぽうLTS版は12週間に一度、通常版から選ばれたリリースをもとにテストやパッチのバックポートを経てリリースされます。</p>
+
+<p>どちらを選ぶかは運用方針や好み次第ですが、現実的にはLTS版（<code>devel/jenkins-lts</code>）を選ぶのが良いでしょう。pkgsrc-stableは1年に4回リリースされるため、Jenkins LTS版の更新を追いかけるスケジュールに無理はありません。しかし毎週リリースされる通常版を&mdash;&mdash;裏を返せば年に4回しか更新されないpkgsrc-stableで&mdash;&mdash;選んだとしても、3ヶ月以上前の比較的不安定なリリースを使わされるだけです。また仮にpkgsrc-currentを使っていたとしても、パッケージメンテナが毎週リリースされるJenkinsの更新に追いつけなければ通常版を選ぶ利点はありません。pkgsrcの更新頻度とパッケージメンテナの負担を考慮すれば通常版を選ぶ利点は少なく、消極的な理由ではありますがLTS版を選ぶのが無難という結論になります。</p>
+
+<h3 id="install_step">インストール</h3>
+
+<p>pkgsrcからインストールしたJenkinsを運用するには次の4つのパッケージが必要になるでしょう。</p>
+
+<ul>
+<li><code>devel/jenkins-lts</code></li>
+<li><code>lang/openjdk8</code></li>
+<li><code>www/apache-tomcat9</code></li>
+<li><code>www/apache24</code></li>
+</ul>
+
+<p>それぞれのパッケージを<code>make install</code>でインストールしてください。また<code>pkgin</code>を使うのなら以下のようにインストールできます。<code>pkgin search</code>からJenkins LTS版のバージョンを調べ、次にそのバージョンを明示して<code>pkgin install</code>に渡しています。</p>
+
+<pre><code>
+<b class="root">pkgin search jenkins</b>
+jenkins-2.73         Open source continuous integration server (weekly release)
+jenkins-2.60.2       Open source continuous integration server (LTS release)
+p5-Digest-JHash-0.10nb3  Perl extension for 32 bit Jenkins Hashing Algorithm
+
+=: package is installed and up-to-date
+&lt;: package is installed but newer version is available
+&gt;: installed package has a greater version than available package
+<b class="root">pkgin install apache apache-tomcat openjdk8 jenkins-2.60.2</b>
+</code></pre>
+
+<h2 id="config">設定</h2>
+<h3 id="tomcat">Tomcatの設定</h3>
+
+<p>Jenkinsパッケージのインストール時や<code>pkg_info -D jenkins</code>で表示されるメッセージにしたがって<code>/usr/pkg/share/tomcat/conf/server.xml</code>を編集します。ただし、<b><code>Context</code>タグの<code>docBase</code>には<code>jenkins.war</code>への絶対パスを渡します</b>。</p>
+
+<p>したがって<code>Connector</code>タグの変更はメッセージどおり以下のようにします。</p>
+
+<pre><code>
+&lt;Connector port="8080" protocol="HTTP/1.1"
+    connectionTimeout="20000"
+    redirectPort="8443" URIEncoding="UTF-8" /&gt;
+</code></pre>
+
+<p>いっぽう<code>Host</code>タグの中に追加する<code>Context</code>タグは以下のように書きます。</p>
+
+<pre><code>
+&lt;Context path="/jenkins" docBase="/usr/pkg/share/jenkins/jenkins.war"
+    debug="0" reloadable="true"&gt;
+&lt;/Context&gt;
+</code></pre>
+
+<h3 id="home">Jenkinsホームディレクトリの作成</h3>
+
+<p>標準では<code>/usr/pkg/share/tomcat/.jenkins</code>がJenkinsのホームディレクトリです。jenkinsパッケージインストール時にはこのディレクトリは自動で作成されないため、手動で作りパーミッションを適切に設定しなければなりません。</p>
+
+<pre><code>
+<b class="root">mkdir /usr/pkg/share/tomcat/.jenkins</b>
+<b class="root">chown tomcat:tomcat /usr/pkg/share/tomcat/.jenkins</b>
+</code></pre>
+
+<p>Jenkinsのホームディレクトリのパスは変更できます。<code>/usr/pkg/share/tomcat/conf/server.xml</code>を編集し、<code>Context</code>タグの中で環境変数<code>JENKINS_HOME</code>の値を設定してください。当該パスは上記のようにパーミッションの設定を忘れずにおこなってください。以下は<code>JENKINS_HOME</code>を<code>/usr/pkg/share/jenkins/home</code>に設定する例です。</p>
+
+<pre><code>
+&lt;Context path="/jenkins" docBase="/usr/pkg/share/jenkins/jenkins.war"
+         debug="0" reloadable="true"&gt;
+  &lt;Environment name="JENKINS_HOME" value="/usr/pkg/share/jenkins/home"
+               type="java.lang.String"/&gt;
+&lt;/Context&gt;
+</code></pre>
+
+<h3 id="daemon">デーモンの設定と起動</h3>
+
+<p>ApacheとTomcatのRCスクリプトを<code>/etc/rc.d</code>へコピーします。</p>
+
+<pre><code>
+<b class="root">cp /usr/pkg/share/examples/rc.d/apache /etc/rc.d</b>
+<b class="root">cp /usr/pkg/share/examples/rc.d/tomcat /etc/rc.d</b>
+</code></pre>
+
+<p>JenkinsのバージョンによってはOpenJDK 11はサポートされていません。Jenkinsのバージョンが2.73以下の場合はOpenJDK 8を代わりに使う必要があります。そのため次に示す差分のとおり<code>/etc/rc.d/tomcat</code>を編集します。</p>
+
+<pre><code>
+--- /etc/rc.d/tomcat    2020-09-22 09:14:25.404229833 +0900
++++ /usr/pkg/share/examples/rc.d/tomcat 2020-07-19 01:00:05.000000000 +0900
+@@ -30,7 +30,7 @@
+
+ if [ -z "${JAVA_HOME}" ]
+ then
+-       JAVA_HOME="/usr/pkg/java/openjdk11"
++       JAVA_HOME="/usr/pkg/java/openjdk8"
+        export JAVA_HOME
+ fi
+</code></pre>
+
+<p>システム起動時にデーモンが自動で実行されるよう<code>/etc/rc.conf</code>に以下を追加します。</p>
+
+<pre><code>
+apache=YES
+tomcat=YES
+</code></pre>
+
+<p><code>service</code>からApacheとTomcatを動かします。</p>
+
+<pre><code>
+<b class="root">service apache start</b>
+<b class="root">service tomcat start</b>
+</code></pre>
+
+<p>Webブラウザから、<code>http://IPアドレス:8080/jenkins</code>へアクセスします。あとは画面どおりにセットアップを完了させてください。</p>
+
+<p>なおJenkinsのバージョンが古い場合、Jenkinsが推奨するプラグインのインストールにすべて失敗する可能性があります。</p>
+
+<h2 id="https">httpsに対応するには</h2>
+
+<p>Jenkins WebフロントエンドへはID／パスワードでログインします。そのためTLSでサーバ・クライアント間の通信を暗号化したい場合もあるでしょう。本稿ではApacheのプロキシでJenkinsへのアクセスを受けて、Apache側でTLS通信することによりJenkinsそのものを設定することなくhttps化する例を紹介します。ここではサーバ証明書はすでに発行されているものとして進めます。</p>
+
+<p>はじめに<code>/usr/pkg/etc/httpd/httpd.conf</code>を編集し、次のモジュールを有効にします。これらのモジュールは<code>www/apache24</code>パッケージですべて提供されているので別途のインストールは必要ありません。</p>
+
+<ul>
+<li>socache_shmcb_module</li>
+<li>proxy_module</li>
+<li>proxy_http_module</li>
+<li>ssl_module</li>
+</ul>
+
+<p><code>/usr/pkg/etc/httpd/httpd-ssl.conf</code>を編集し、秘密鍵（<code>SSLCertificateKeyFile</code>）やサーバ証明書（<code>SSLCertificateFile</code>）、中間CA証明書（<code>SSLCertificateChainFile</code>）、ルートCA証明書（<code>SSLCertificateFile</code>）へのパスを設定します。ルートCAを自己署名で構築したなら、中間CANONとルートCAは同一でしょう。そして<code>VirtualHost</code>タグの中に以下の設定を追加します。<code>https://IPアドレス/jenkins</code>へアクセスするとローカルホストの8080番ポートを経由して<code>/jenkins</code>へ飛ばすようプロキシの設定をしています。</p>
+
+<pre><code>
+ProxyPass           /jenkins http://localhost:8080/jenkins nocanon
+ProxyPassReverse    /jenkins http://localhost:8080/jenkins
+ProxyRequests       Off
+AllowEncodedSlashes NoDecode
+RequestHeader       set X-Forwarded-Proto "https"
+RequestHeader       set X-Forwarded-Port  "443"
+
+&lt;Proxy http://localhost:8080/jenkins*&gt;
+  Order deny,allow
+  Allow from all
+&lt;/Proxy&gt;
+</code></pre>
+
+<p>この設定が終わったあと、<code>/usr/pkg/etc/httpd/httpd.conf</code>に戻り<code>/usr/pkg/etc/httpd/httpd-ssl.conf</code>をインクルードするよう設定します。最終的に、<code>/usr/pkg/etc/httpd/httpd.conf</code>には次のような変更が加わります。</p>
+
+<pre><code>
+--- /usr/pkg/etc/httpd/httpd.conf.orig    2020-08-24 04:54:56.000000000 +0900
++++ /usr/pkg/etc/httpd/httpd.conf       2020-09-22 13:21:21.239037438 +0900
+@@ -88,7 +88,7 @@
+ #LoadModule cache_module lib/httpd/mod_cache.so
+ #LoadModule cache_disk_module lib/httpd/mod_cache_disk.so
+ #LoadModule cache_socache_module lib/httpd/mod_cache_socache.so
+-#LoadModule socache_shmcb_module lib/httpd/mod_socache_shmcb.so
++LoadModule socache_shmcb_module lib/httpd/mod_socache_shmcb.so
+ #LoadModule socache_dbm_module lib/httpd/mod_socache_dbm.so
+ #LoadModule socache_memcache_module lib/httpd/mod_socache_memcache.so
+ #LoadModule socache_redis_module lib/httpd/mod_socache_redis.so
+@@ -127,10 +127,10 @@
+ LoadModule setenvif_module lib/httpd/mod_setenvif.so
+ LoadModule version_module lib/httpd/mod_version.so
+ #LoadModule remoteip_module lib/httpd/mod_remoteip.so
+-#LoadModule proxy_module lib/httpd/mod_proxy.so
++LoadModule proxy_module lib/httpd/mod_proxy.so
+ #LoadModule proxy_connect_module lib/httpd/mod_proxy_connect.so
+ #LoadModule proxy_ftp_module lib/httpd/mod_proxy_ftp.so
+-#LoadModule proxy_http_module lib/httpd/mod_proxy_http.so
++LoadModule proxy_http_module lib/httpd/mod_proxy_http.so
+ #LoadModule proxy_fcgi_module lib/httpd/mod_proxy_fcgi.so
+ #LoadModule proxy_scgi_module lib/httpd/mod_proxy_scgi.so
+ #LoadModule proxy_uwsgi_module lib/httpd/mod_proxy_uwsgi.so
+@@ -145,7 +145,7 @@
+ #LoadModule session_dbd_module lib/httpd/mod_session_dbd.so
+ #LoadModule slotmem_shm_module lib/httpd/mod_slotmem_shm.so
+ #LoadModule slotmem_plain_module lib/httpd/mod_slotmem_plain.so
+-#LoadModule ssl_module lib/httpd/mod_ssl.so
++LoadModule ssl_module lib/httpd/mod_ssl.so
+ #LoadModule dialup_module lib/httpd/mod_dialup.so
+ #LoadModule http2_module lib/httpd/mod_http2.so
+ #LoadModule lbmethod_byrequests_module lib/httpd/mod_lbmethod_byrequests.so
+@@ -512,7 +512,7 @@
+ &lt;/IfModule&gt;
+
+ # Secure (SSL/TLS) connections
+-#Include etc/httpd/httpd-ssl.conf
++Include etc/httpd/httpd-ssl.conf
+ #
+ # Note: The following must must be present to support
+ #       starting without SSL on platforms with no /dev/random equivalent
+</code></pre>
+
+<p>設定後、apacheデーモンを再起動します。Webブラウザから<code>https://IPアドレス/jenkins</code>へアクセスし、https化された状態でJenkins Webフロントエンドが見れることを確認してください。</p>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
