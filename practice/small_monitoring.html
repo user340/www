@@ -8,24 +8,31 @@
 </head>
 <body>
 <article class="tiny">
-<h1>監視項目が多すぎる&mdash;&mdash;必要最小限のシステム監視のために</h1>
+<h1>アラートが多すぎる&mdash;&mdash;必要最小限のシステム監視のために</h1>
 <figure>
   <blockquote>
     <p style="text-indent:0em">「十時までに三十四人。午後二時には四十八人になりました。男性が四十二人、女性が六人」</p>
     <p>スティーブ・アムゼルが突然叫んだ。「探偵が多すぎる、ハイアット！　免許を取り消せるものなら、やってみろ！　探偵が多すぎる！」</p>
   </blockquote>
   <footer style="text-align:right">
-    &mdash;&mdash;<cite>Rex Stout</cite>, <cite>直良和美（訳）</cite>, 「<cite>探偵が多すぎる</cite>」, <cite>小森収（編）</cite>, 『短編ミステリの二百年２』, 創元推理文庫, p308
+    &mdash;&mdash;<cite>Rex Stout</cite>, <cite>直良和美 訳</cite>, 「<cite>探偵が多すぎる</cite>」, <cite>小森収 編</cite>, 『短編ミステリの二百年２』, 創元推理文庫, p308
   </footer>
 </figure>
-
 <hr>
 
 <h2>必要最小限のシステム監視とは？</h2>
 
 <p>「必要最小限のシステム監視」とは文字通り必要なものしか監視をしない主義のシステム監視設計と運用です。監視設計の時点では想定していなかったような異常を取り逃がす可能性がありますが、無駄な監視項目のヒストリがディスク容量を逼迫させたり、過多なアラートによる監視システムの狼少年化を防ぐことができます。</p>
 
-<p>必要なものしか監視しない設計を実現するには「監視したいシステムではなにが動いていればいいのか？」「動いているとはどういう状態か？」を自問し続ける道のりを歩みます。単にCPU使用率が90％を超えただけでアラートを発報する監視システムは作りません。「アラート数が多すぎる、ハイアット！」と叫ばないために漠然とした監視設計を止め、無駄のない監視の美学を追求しませんか。</p>
+<p>OSの基本的なメトリクスだけでも監視可能な項目は膨大ですが、その中であなたのシステムで監視すべきものはごくわずかです。その監視すべき項目の中でアラートを発報しなければならないものはさらに限られるでしょう。Mike Julianが『入門 監視』（松浦隼人 訳）の中で「MySQLが継続的にCPU全部を使っていたとしても、レスポンスタイムが許容範囲に収まっていれば何も問題ありません」（p13）と述べたように、ひとつひとつのメトリクスに基準&mdash;&mdash;メモリ使用量が90％を超えたら・CPU使用率が80％以上なら・……など&mdash;&mdash;を設けるよりも全体的なパフォーマンスやユーザからみたふるまいを監視すべきです。</p>
+
+<p>このように考えれば、システム監視ソフトウェアを導入するときは「監視したいシステムではなにが動いていればいいのか？」「動いているとはどういう状態か？」を自問しなければなりません。なにをどう監視すればいいのかさえ分かれば、監視項目のひとつひとつに理由付けができ無駄のない最小限のシステム監視を実現できるでしょう。</p>
+
+<h2>参考文献</h2>
+
+<ul>
+  <li><cite>Mike Julian</cite>, <cite>松浦隼人 訳</cite>, 『<cite>入門 監視</cite>』, オライリー・ジャパン, 2019</li>
+</ul>
 
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
