@@ -9,7 +9,7 @@
 <body>
 <article class="tiny">
 <h1>pfを使い外部からのアクセスを内部ネットワークへリダイレクトする</h1>
-<p>FreeBSDではファイアウォールとして<code><b>pf</b></code>が標準で使えます。くわえてFreeBSDでは<code><b>bhyve</b></code>や<code><b>jail</b></code>のようなハイパーバイザやコンテナも利用できます。FreeBSD特有の連携というわけではありませんが、これらの機能を連携させることで、仮想マシンやコンテナ上のデータをそのホストで提供しているかのように振る舞えます。</p>
+<p>FreeBSDではファイアウォールとして<code><b>pf</b></code>を使えます。くわえてFreeBSDでは<code><b>bhyve</b></code>や<code><b>jail</b></code>のようなハイパーバイザやコンテナも利用できます。FreeBSD特有の連携というわけではありませんが、これらの機能を連携させることで、仮想マシンやコンテナ上のデータをそのホストで提供しているかのように振る舞えます。</p>
 <hr>
 <h2 id="nw">ネットワーク構成</h2>
 <p>今回例に挙げるネットワーク構成は図1のとおりです。</p>
@@ -64,6 +64,6 @@ pass in on $ext_if inet proto tcp from any to $vm_B port 22</code></pre>
 <pre><code><b class="root">service pf start</b></code></pre>
 
 <h2 id="conclution">おわりに</h2>
-<p>上記のように通信を別ホストに転送する設定によって、ホストPCで直接なにかしらのデータやコンテンツを管理することなく、比較的安全なVMの上で任意のサーバを運用できます。今回はホストOSがFreeBSDという前提で話を進めましたが、仮想マシンのOSは自由に選択できます。「NATでネットワークを隔離したいけれど、ときどきLAN内のマシンからアクセスしたい」というニーズをうまく満たせられるでしょう。</p>
+<p>上記のように通信を別ホストに転送する設定によって、ホストPCで直接なにかしらのデータやコンテンツを管理することなく、比較的安全なVMの上で任意のサーバを運用できます。今回はホストOSがFreeBSDという前提で話を進めましたが、仮想マシンのOSは自由に選択できます。「NATでネットワークを隔離したいけれど、LAN内から外部アクセスを受け付けたい」要求をうまく満たせられるでしょう。</p>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
