@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>AnsibleホストとしてNetBSDを扱う</h1>
+<p style="text-align:right;">2021年3月5日 初稿</p>
+<ol>
+  <li><a href="#ansible">Ansibleとは</a></li>
+  <li><a href="#netbsd_as_ansible_client">NetBSDをAnsible実行機として扱う</a></li>
+  <li><a href="#netbsd_as_ansible_host">NetBSDをAnsibleホストとして扱う</a>
+    <ol>
+      <li><a href="#tree">ディレクトリ構造</a></li>
+      <li><a href="#bootstrap">ブートストラップ</a></li>
+      <li><a href="#setup_pkgin">pkginをセットアップする例</a></li>
+    </ol>
+  </li>
+</ol>
+<hr>
+<h2 id="ansible">Ansibleとは</h2>
+<p><a href="https://github.com/ansible/ansible">Ansible</a>はサーバを構成管理するためのツールです。ユーザはYAML形式でタスク（task）を記述し、Ansibleはそのタスクを自動的に実行します。ここで、Ansibleは&mdash;&mdash;ほとんどの場合において&mdash;&mdash;冪等性（べきとうせい）を保証します。つまりAnsibleが同じタスクを何回実行しても、タスクが実行されたサーバは常に同じ状態・結果を保ちます。</p>
+
+<p>タスクはある役割（role）単位で分割して記述されます。ひとつ以上の役割をホスト（host）として対応付け、最終的にはどのサーバがどのホストに含まれるのかをインベントリ（inventory）とプレイブック（playbook）で表現します。</p>
+
+<h2 id="netbsd_as_ansible_client">NetBSDをAnsible実行機として扱う</h2>
+<p>AnsibleはPythonで実装されています。したがってPythonがインストールできればあとは簡単です。</p>
+
+<p>pkgsrcでは<code>sysutils/ansible</code>パッケージが提供されていますが、Pythonパッケージはなるべく<code>pip</code>を使ってインストールしたほうがいいでしょう。<code>venv</code>のようなPython仮想環境と併せて利用することで、システムへの影響を最小限にしたうえで最新のパッケージをroot権限なしに利用できます。</p>
+
+<p>したがって、NetBSDでAnsibleを動かすにはpkgsrcから<code>lang/python</code>パッケージだけをインストールすればいいです。Python 3.4以上なら<code>pip</code>と<code>venv</code>どちらもPythonのモジュールとして標準で利用できるからです。Pythonインストール後は次のようにPython仮想環境を作り、その中にAnsibleをインストールします。</p>
+
+<pre><code>
+<b class="user">python3.8 -m venv ~/.venv/ansible</b>
+<b class="user">source ~/.venv/ansible/bin/activate</b>
+<b class="user">pip install ansible</b>
+</code></pre>
+
+<h2 id="netbsd_as_ansible_host">NetBSDをAnsibleホストとして扱う</h2>
+
+<p>反対に、NetBSDがインストールされたマシンをAnsibleで構成管理したいときを考えます。</p>
+
+<p>Ansibleはホスト側にもPythonがインストールされていないと機能のほとんどが制限されます。RHELやUbuntuといったGNU/Linuxディストリビューションの多くは標準でPythonがインストールされていますが、NetBSDのベースシステムにPythonは含まれていません。ホスト側にPythonがインストールされていない場合、ホストの情報を集めたり、高機能なモジュールを利用したりできません。YAML形式のファイルの中でシェルスクリプトを書くのも同然です。</p>
+
+<p>そのため、NetBSDをAnsibleホストとして扱う場合、（1）PythonなしでPythonをインストールするタスクを動かしてから、（2）NetBSDもサポートされているモジュールを使って構成管理を進めることになります。</p>
+
+<h3 id="tree">ディレクトリ構造</h3>
+
+<p>Ansible Playbookを使って構成管理するにあたり、ディレクトリ構造を提示します。</p>
+
+<pre><code>
+workdir_root/
+├── hosts
+├── roles/
+│   ├── bootstrap
+│   │   └── tasks
+│   │       └── main.yml
+│   ├── pkgin
+│        ├── tasks
+│        │   └── main.yml
+│        └── templates
+│            └── repositories.conf
+└── site.yml
+</code></pre>
+
+<p><code>workdir_root</code>はディレクトリ構造のルートを表します。名前はなんでもいいです。このディレクトリには<code>hosts</code>というインベントリファイルと、<code>site.yml</code>というマスタープレイブック（master playbook）があります。<code>roles</code>ディレクトリに各役割ごとのロールが格納されており、ここでは初期化用の<code>bootstrap</code>ロールと、<code>pkgin</code>をセットアップするための<code>pkgin</code>ロールがあります。</p>
+
+<h3 id="bootstrap">ブートストラップ</h3>
+
+<p><code>bootstrap</code>ロールを含む<code>bootstrap</code>ホストで、PythonとNetBSD用の高機能なパッケージ管理マネージャpkginをインストールします。<code>roles/bootstrap/tasks/main.yml</code>へ次のように書きます。</p>
+
+<pre><code>---
+
+- name: Install Packages for Ansible
+  raw: "/usr/sbin/pkg_add https://cdn.netbsd.org/pub/pkgsrc/packages/$(uname)/$(uname -m)/$(uname -r)/All/{{ item }}"
+  with_items:
+    - python38-3.8.6nb1.tgz
+    - pkgin-20.12.1.tgz
+</code></pre>
+
+<p>https://cdn.netbsd.orgからバイナリパッケージをインストールするようにタスクを書いています。パッケージの名前やバージョンは適宜確認し変更してください。このタスクをPythonを使わない<code>raw</code>モジュールを使い、<code>with_items</code>で列挙された各パッケージを<code>pkg_add</code>コマンドでインストールしています。</p>
+
+<p>次にマスタープレイブック<code>site.yml</code>を書き、<code>bootstrap</code>ロールに対応するホスト<code>netbsd_bootstrap</code>を定義します。</p>
+
+<pre><code>---
+
+- name: Bootstrap NetBSD host for Ansible
+  gather_facts: no
+  hosts: netbsd_bootstrap
+  roles:
+    - bootstrap
+</code></pre>
+
+<p>ここのポイントは、<code>gather_facts</code>に<code>no</code>を指定することで、Ansibleによるホスト情報の収集をさせないことです。この機能はPythonが必要なので、このように指定しないとAnsibleの実行が失敗します。</p>
+
+<p>インベントリ<code>hosts</code>を編集し、<code>netbsd_bootstrap</code>ホストに属するマシンのIPアドレスかドメインを列挙します。ここではIPアドレス<code>192.0.2.1</code>がAnsibleで構成管理するNetBSDマシンとします。</p>
+
+<pre><code>
+[netbsd_bootstrap]
+192.0.2.1
+</code></pre>
+
+<p>最後に<code>ansible-playbook</code>を動かして、このタスクを<code>192.0.2.1</code>に対し実行します。<code>-i</code>でインベントリへのパスを、<code>-u</code>でSSHログインするときのユーザ名を指定します。<code>--ask-pass</code>オプションをつけると、コマンド実行直後に、SSHログインのためのパスフレーズを尋ねられます。公開鍵認証の設定が済んでいる場合は、このオプションは不要です。</p>
+
+<pre><code>
+<b class="user">ansible-playbook -i hosts -u root site.yml --ask-pass</b>
+</code></pre>
+
+<h3 id="setup_pkgin">pkginをセットアップする例</h3>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
