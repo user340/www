@@ -9,7 +9,7 @@
 <body>
 <article class="tiny">
 <h1>AnsibleホストとしてNetBSDを扱う</h1>
-<p style="text-align:right;">2021年3月5日 初稿</p>
+<p style="text-align:right;">2021年3月7日 初稿</p>
 <ol>
   <li><a href="#ansible">Ansibleとは</a></li>
   <li><a href="#netbsd_as_ansible_client">NetBSDをAnsible実行機として扱う</a></li>
@@ -20,6 +20,7 @@
       <li><a href="#setup_pkgin">pkginをセットアップする例</a></li>
     </ol>
   </li>
+  <li><a href="#more">より便利に使うために</a></li>
 </ol>
 <hr>
 <h2 id="ansible">Ansibleとは</h2>
@@ -110,7 +111,85 @@ workdir_root/
 <b class="user">ansible-playbook -i hosts -u root site.yml --ask-pass</b>
 </code></pre>
 
+<p>この<code>ansible-playbook</code>が正常に終了すれば、再度実行する必要はありません。仮想マシンで動かしているなら、このブートストラップのタスクが走った仮想マシンをテンプレートとして保存しておくといいでしょう。</p>
+
 <h3 id="setup_pkgin">pkginをセットアップする例</h3>
+
+<p><a href="https://docs.ansible.com/ansible/latest/collections/community/general/pkgin_module.html"><code>pkgin</code></a>モジュールを使い、パッケージのインストールができます。このモジュールを使うためには、ホストOSに<code>pkgin</code>がインストールされており、<code>repositories.conf</code>が適切に設定されていなければなりません。</p>
+
+<p>各ホストごとに<code>pkgin</code>の設定が同一とします。Ansibleの<code>template</code>モジュールで設定ファイルをデプロイし、リポジトリのキャッシュを更新する<code>pkgin</code>ロールを定義します。</p>
+
+<p><code>roles/pkgin/templates/repositories.conf</code>の内容は以下のとおりです。<code>{{ ansible_distribution }}</code>では変数を展開しています。この変数はAnsibleがOSの情報を収集したときに定義される特別な変数のひとつです。ホストがNetBSDの場合は<code>NetBSD</code>と展開されます。</p>
+
+<pre><code>https://cdn.netbsd.org/pub/pkgsrc/packages/{{ ansible_distribution }}/$arch/9.1/All</code></pre>
+
+<p><code>roles/pkgin/tasks/main.yml</code>を次のように書きます。</p>
+
+<pre><code>---
+
+- name: Deploy repositories.conf
+  template:
+    src: repositories.conf
+    dest: /usr/pkg/etc/pkgin/repositories.conf
+    owner: root
+    group: wheel
+    mode: '0644'
+
+- name: Update repository cache
+  pkgin:
+    update_cache: yes
+</code></pre>
+
+<p>マスタープレイブック<code>site.yml</code>はこのようになります。前節で書いたブートストラップ用の定義はそのまま残して構いません。</p>
+
+<pre><code>- name: Setup NetBSD host
+  hosts: netbsd
+  roles:
+    - pkgin
+</code></pre>
+
+<p>インベントリ<code>hosts</code>を編集します。ここで、<code>netbsd</code>ホスト用に変数<code>ansible_python_interpreter</code>を定義しています。Pythonインタプリタが<code>/usr/bin/python</code>など一般的なパスではない場合はこのようにユーザがパスを指定します。</p>
+
+<pre><code>
+[netbsd]
+192.0.2.1
+
+[netbsd:vars]
+ansible_python_interpreter=/usr/pkg/bin/python3.8
+</code></pre>
+
+<p>前節でインベントリに書いたグループの定義ですが、<code>netbsd_bootstrap</code>からIPアドレス・ドメインを削除しておけばいいです。そのようにすることでそのホストに紐付いたタスクは実行されなくなります。</p>
+
+<p><code>ansible-playbook</code>を実行しタスクを動かします。前述したように、公開鍵認証が設定されているなら<code>--ask-pass</code>オプションは不要です。</p>
+
+<pre><code><b class="user">ansible-playbook -i hosts -u root site.yml --ask-pass</b></code></pre>
+
+<p>これで準備は完了です。あとは以下のように<code>pkgin</code>モジュールが使えます。</p>
+
+<pre><code>- name: Install git
+  pkgin:
+    name:
+      - git
+      - mozilla-rootcerts
+    state: present
+</code></pre>
+
+<h2 id="more">より便利に使うために</h2>
+
+<p>以上、NetBSDマシンをAnsibleホストとして扱うための手順を紹介しました。はじめに<code>raw</code>モジュールを使ってPythonなしにPythonをインストールすることで、Ansibleを&mdash;&mdash;シェルスクリプトではなく&mdash;&mdash;Ansibleとして使えるようにしました。次に、<code>pkgin</code>モジュールを使うための準備として、<code>repositories.conf</code>をデプロイしキャッシュを更新するタスクを書きました。これはほんの手始めです。自動化のためにはもっとやれることがあります。</p>
+
+<dl>
+  <dt><b>仮想マシンテンプレートの作成と保守</b></dt>
+  <dd><p>仮想マシンなら、ブートストラップ済みのマシンは一旦テンプレートとして保存することで、新しくマシンを作る時にブートストラップ部分を省略できます。SSHの設定と公開鍵の登録も済ませておくといいでしょう。</p></dd>
+  <dt><b>IPアドレスとホスト名の自動登録</b></dt>
+  <dd><p>本稿ではIPアドレスやホスト名がすでにマシンに設定されていることが前提となっていました。仮想化基盤やOS次第ですが<a href="https://github.com/vmware/open-vm-tools">open-vm-tools</a>や<a href="https://cloudinit.readthedocs.io/en/latest/topics/availability.html">cloud-init</a>のようなソフトウェアを使うことで指定されたIPアドレスやホスト名の設定を自動的におこなえます。</p></dd>
+  <dt><b>仮想マシンそのものの構成管理化</b></dt>
+  <dd><p>Ansibleはソフトウェアの構成管理ツールにすぎません。これも仮想化基盤に依存しますが、<a href="https://www.terraform.io/">Terraform</a>のように仮想マシンそのものをコードとして表現しデプロイできるツールもあります。</p></dd>
+  <dt><b>CI/CD</b></dt>
+  <dd><p>書いたタスクをバージョン管理システムで管理し、そのリポジトリを<a href="https://docs.gitlab.com/runner/">GtiLab Runner</a>や<a href="https://www.jenkins.io/">Jenkins</a>などと連携させれば、リポジトリに変更が加わるたびに<a href="https://github.com/ansible-community/ansible-lint">ansible-lint</a>によるコードの検査や<code>ansible-playbook</code>の実行などを自動化できます。</p></dd>
+  <dt><b>高機能なAnsibleインタフェース</b></dt>
+  <dd><p><a href="https://github.com/ansible/awx">AWX</a>やその商用版の<a href="https://www.ansible.com/products/tower">Red Hat Ansible Tower</a>はWebベースのAnsible用ユーザインタフェースです。もっとも、これらアプリケーションは必須というわけでもありません。普通に使う分にはCLIで<code>ansible-playbook</code>を動かせばいいでしょう。</p></dd>
+</dl>
 
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
