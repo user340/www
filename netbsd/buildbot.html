@@ -50,9 +50,9 @@
 <h3 id="pip">pip?</h3>
 <p><code>pkgsrc(7)</code>では<b>py-XXX</b>というパッケージを提供しています。<code>pkgsrc(7)</code>からPythonのパッケージをインストールする場合<code>pip</code>を使うことはありません。Pythonのバージョンは変数<code>PYTHON_VERSION_DEAULT</code>で決定されますが、標準ではPython 2.7が使われます。パッケージは/usr/pkg/lib/pythonX.Y/site-packagesディレクトリ下にインストールされます。</p>
 
-<p>BuildBotのインストールは公式文書では<code>pip</code>による手順が紹介されています。しかしここでは<code>pip</code>ではなく<code>pkgsrc(7)</code>を採用します。パッケージの管理インタフェースをむやみに増やしたくないからです。</p>
+<p>BuildBotのインストールは公式文書では<code>pip</code>による手順が紹介されています。しかしここでは<code>pip</code>の代わりに<code>pkgsrc(7)</code>を採用します。パッケージの管理インタフェースをむやみに増やしたくないからです。</p>
 
-<p><b>しかし</b><code>pkgsrc(7)</code>のStable版から提供されるソフトウェアは、そのリリース頻度に影響してアップストリームの最新版より古い可能性があります。最新のBuildbotを使いたいのであれば、<code>pkgsrc(7)</code>ではなく<code>pip</code>を使うべきです。</p>
+<p><b>しかし</b><code>pkgsrc(7)</code>のStable版から提供されるソフトウェアは、そのリリース頻度に影響してアップストリームの最新版より古い可能性があります。最新のBuildbotを使いたいなら、<code>pkgsrc(7)</code>ではなく<code>pip</code>を使うべきです。</p>
 
 <h2 id="firstrun">First Run</h2>
 <p>本節は<a href="http://docs.buildbot.net/current/tutorial/firstrun.html#first-run-label">1.1. First Run</a>に従います。</p>
@@ -92,7 +92,7 @@ c['buildbotURL'] = "http://localhost:8010/"
 c['www'] = dict(port=8010,
                 plugins=dict(waterfall_view={}, console_view={}, grid_view={}))</code></pre>
 
-<p>master.cfgの一部を抜粋しました。この記述から、プロジェクトのタイトルは「Hello World CI」で、BuildbotのURLは「http://localhost:8010」であるとわかります。MasterのWebフロントエンドの情報を編集したければ、これらのエントリを変更すればいいわけです。</p>
+<p>master.cfgの一部を抜粋しました。この記述から、プロジェクトのタイトルは「Hello World CI」で、BuildbotのURLは「http://localhost:8010」とわかります。MasterのWebフロントエンドの情報を編集したければ、これらのエントリを変更すればいいわけです。</p>
 
 <p>Buildbot Masterを動かします。</p>
 
@@ -111,7 +111,7 @@ c['www'] = dict(port=8010,
 
 <pre><code>$ buildbot-worker-3.7 create-worker $HOME/buildbot/worker localhost NetBSD 'netbsd'</code></pre>
 
-<p>Woker作成後、Buildbot Master側の設定ファイルmaster.cfgを編集し、作成したWorkerと同じ情報を書きます。上記のように「NetBSD」というWorkerをパスワード「netbsd」で作成したのであれば、以下のようにmaster.cfgを編集します。</p>
+<p>Woker作成後、Buildbot Master側の設定ファイルmaster.cfgを編集し、作成したWorkerと同じ情報を書きます。上記のように「NetBSD」というWorkerをパスワード「netbsd」で作成したなら、以下のようにmaster.cfgを編集します。</p>
 
 <pre><code>--- master/master.cfg.sample    2019-03-19 08:50:16.915754634 +0900
 +++ master/master.cfg   2019-03-19 10:36:09.132270759 +0900
@@ -134,7 +134,7 @@ c['www'] = dict(port=8010,
 
  ####### BUILDBOT SERVICES</code></pre>
 
-<p>Masterが既に動いているのであれば、再起動します。</p>
+<p>すでにMasterが動いている場合は再起動します。</p>
 
 <pre><code>$ buildbot-3.7 restart $HOME/buildbot/master</code></pre>
 
@@ -158,7 +158,7 @@ c['www'] = dict(port=8010,
 <p>master.cfgを変更し、Workerがなにをすべきかをプログラミングしていきます。まずはWorkerが実行するデプロイ用コマンドを書きます。これはシェルスクリプトです。</p>
 
 <pre><code>#!/bin/sh
-ssh USERNAME@www.servername.org "cd /path/to/html &amp;&amp; git pull"</code></pre>
+ssh USERNAME@www.servername.org "cd /path/to/html_dir &amp;&amp; git pull"</code></pre>
 
 <p>このスクリプトを<b>web_deploy.sh</b>として保存し、<code>chmod +x</code>コマンドを実行して実行権限を付与します。</p>
 
