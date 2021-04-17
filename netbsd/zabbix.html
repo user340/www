@@ -61,11 +61,13 @@ zabbix_agentd=YES
 zabbix_server=YES</b></code></pre>
 
 <h3 id="sysutils-zabbix-frontend">sysutils/zabbix-frontendのインストール</h3>
-<p>Zabbix Webフロントエンドを使うには<b>sysutils/zabbix-frontend</b>パッケージをインストールします。pkgsrc-2019Q3ではこのパッケージはPHP 7.1に依存していますが、Apache上でPHP 7のスクリプトを実行するにはモジュールではなくCGIを使うように標準の設定が変更されました。そこで<b>www/php-fpm</b>パッケージも一緒にインストールしなければなりません。これはPHPのFastCGI実装です。</p>
+<p>Zabbix Webフロントエンドを使うには<b>sysutils/zabbix-frontend</b>パッケージをインストールします。pkgsrc-2019Q3ではこのパッケージはPHP 7.1に依存していますが、Apache上でPHP 7のスクリプトを実行するにはモジュールではなくCGIを使うように標準の設定が変更されました。そこで<b>www/php-fpm</b>パッケージも一緒にインストールしなければなりません。これはPHPのFastCGI実装です。また、PHPからPostgreSQLを操作するためのライブラリ<b>databases/php-pgsql</b>もインストールします。</p>
 
 <pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix-frontend</b>
 <b class="root">make install clean clean-depends</b>
 <b class="root">cd /usr/pkgsrc/www/php-fpm</b>
+<b class="root">make install clean clean-depends</b>
+<b class="root">cd /usr/pkgsrc/databases/php-fpm</b>
 <b class="root">make install clean clean-depends</b></code></pre>
 
 <p>Webサーバとphp-fpmのRCファイルを用意します。</p>
@@ -111,20 +113,23 @@ Hostname=Zabbix server</b></code></pre>
 <b class="root">sysctl -w kern.ipc.shmmni=256</b>
 <b class="root">sysctl -w kern.ipc.semmnu=256</b></code></pre>
 
-<p>PostgreSQLを起動します。</p>
+<p><code>/etc/sysctl.conf</code>にも同様の設定を追加します。PostgreSQLを起動します。</p>
 
-<pre><code><b class="root">service pgsql start</b></code></pre>
+<pre><code>
+<b class="root">/etc/rc.d/pgsql initdb -E unicode</b>
+<b class="root">service pgsql start</b>
+</code></pre>
 
 <p>PostgreSQLにZabbix Server用のユーザとデータベースを作成します。<b>database/postgresql95-server</b>パッケージは標準ではpgsqlユーザがPostgreSQLの管理者なようです。ここでzabbixユーザに設定したパスワードは後で利用します。</p>
 
-<pre><code><b class="root">createuser -O pgsql --pwprompt zabbix</b>
-<b class="root">createdb -O zabbix zabbix</b></code></pre>
+<pre><code><b class="root">createuser -U pgsql --pwprompt zabbix</b>
+<b class="root">createdb -U pgsql -O zabbix -E UTF8 --template=template0 zabbix</b></code></pre>
 
 <p>データベース作成後はZabbix用のデータベースを初期化します。初期化用のSQL文はパッケージで提供されています。</p>
 
-<pre><code><b class="root">psql -O zabbix zabbix &lt; /usr/pkg/share/zabbix/schema.sql</b>
-<b class="root">psql -O zabbix zabbix &lt; /usr/pkg/share/zabbix/images.sql</b>
-<b class="root">psql -O zabbix zabbix &lt; /usr/pkg/share/zabbix/data.sql</b></code></pre>
+<pre><code><b class="root">psql -U zabbix zabbix &lt; /usr/pkg/share/zabbix-server-postgresql/schema.sql</b>
+<b class="root">psql -U zabbix zabbix &lt; /usr/pkg/share/zabbix-server-postgresql/images.sql</b>
+<b class="root">psql -U zabbix zabbix &lt; /usr/pkg/share/zabbix-server-postgresql/data.sql</b></code></pre>
 
 <p>データベースの設定完了後はZabbix Serverの設定ファイル<code>/usr/pkg/etc/zabbix_server.conf</code>を編集します。確認すべき設定項目は以下のとおりです。</p>
 
@@ -224,7 +229,7 @@ Alias /zabbix /usr/pkg/share/zabbix/php
 	&lt;/files&gt;
 &lt;/Directory&gt;</b></code></pre>
 
-<p>最後に<code>/usr/pkg/etc/httpd.conf</code>を編集します。以下の差分のように変更してください（僕がCGIアプリケーションを走らせるときにした変更が一部残っていますが気にしないでください）。</p>
+<p>最後に<code>/usr/pkg/etc/httpd/httpd.conf</code>を編集します。以下の差分のように変更してください。</p>
 
 <pre><code><b>--- /usr/pkg/share/examples/httpd/httpd.conf	2019-11-17 10:53:36.000000000 +0900
 +++ httpd/httpd.conf	2019-11-17 11:56:43.538984425 +0900
@@ -247,7 +252,7 @@ Alias /zabbix /usr/pkg/share/zabbix/php
  #
  &lt;IfModule dir_module&gt;
 -    DirectoryIndex index.html
-+    DirectoryIndex index.html index.cgi index.php
++    DirectoryIndex index.html index.php
  &lt;/IfModule&gt;
  
  #
