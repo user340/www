@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>gossを使ってFreeBSDサーバの設定をテストする</h1>
+
+<p style="text-align:right;">2021年10月16日 初稿</p>
+
+<ol>
+  <li><a href="#about">gossの概要</a></li>
+  <li><a href="#installation">gossをFreeBSDにインストールする</a></li>
+  <li><a href="#example">gossによるテスト例</a>
+    <li><a href="#simple">簡単な例</a></li>
+    <li><a href="#server">ヘルスチェックエンドポイントとして待ち受ける</a></li>
+  </li>
+  <li><a href="#docs">より詳細な情報のために</a></li>
+</ol>
+
+<hr>
+
+<h2 id="about">gossの概要</h2>
+
+<p><a href="https://github.com/aelsabbahy/goss">goss</a>はサーバの設定をテストするツールです。YAML形式でテストコードを書き、<code>goss</code>を実行したホストがそのテスト通りに設定されているかを確認できます。</p>
+
+<p>実装言語はGo言語でライセンスはApache-2.0です。2015年10月3日にv0.0.1がリリースされ、2020年12月19日にリリースされたv0.3.16が初稿時点での最新バージョンです。</p>
+
+<p>同じくサーバの設定をテストするツールに<a href="https://serverspec.org/">Serverspec</a>があります。gossと比べてサポートされているプラットフォームはServerspecのほうが多様かつリリース頻度も高めです。初稿時点では、Serverspecの最新バージョンは2021年6月24日のv2.41.8です。</p>
+
+<p>よりメンテナンスされているほうを選ぶならServerspecですが、テストコードをYAMLで書いて手早くテストしたいときやgossの機能だけで要求を満たせられるならgossも有力な選択肢となるでしょう。</p>
+
+<h2 id="installation">gossをFreeBSDにインストールする</h2>
+
+<p>gossのビルドにはGNU makeとGoが必要です。</p>
+
+<pre><code class="root"><b>pkg install gmake go</b></code></pre>
+
+<p>初稿時点ではgossはFreeBSDをサポートしていません。FreeBSDである程度使えるように直したブランチがあるので、それを<code>git clone</code>してビルドします。</p>
+
+<pre>
+<code class="user"><b>git clone -b develop/support-freebsd-build https://github.com/user340/goss.git</b></code>
+<code class="user"><b>cd goss</b></code>
+<code class="user"><b>gmake build</b>
+./release-build.sh alpha-darwin-amd64
+./release-build.sh linux-386
+./release-build.sh linux-amd64
+./release-build.sh linux-arm
+./release-build.sh alpha-windows-amd64
+./release-build.sh freebsd-amd64
+</code>
+</pre>
+
+<p><code>release</code>ディレクトリに<code>goss-freebsd-amd64</code>が生成されています。これがgossの実行バイナリです。実際にサーバの設定をテストするときは、テスト対象のホストにこのバイナリとYAMLのテストコードを転送しテスト対象側で実行します。</p>
+
+<h2 id="example">gossによるテスト例</h2>
+
+<p>ApacheがインストールされWebサーバとして運用されているFreeBSDサーバがあるとします。gossの実行バイナリは<code>root</code>ユーザのホームディレクトリに配置されています。ここで、Apacheのパッケージがインストールされており、サービスが意図どおりに動いているかをテストします。YAMLのテストコードは次のようになります。</p>
+
+<pre><code>
+package:
+  apache24:
+    installed: true
+    versions:
+      - 2.4.51
+    skip: false
+
+service:
+  apache24:
+    enabled: true
+    running: true
+</code></pre>
+
+<p>このコードをテスト対象のホストに転送するか、あるいはテスト対象のホストで直接書くなどして用意します。名前は<code>goss.yaml</code>にしてください。</p>
+
+<h3 id="simple">簡単な例</h3>
+
+<p>上で用意した<code>goss.yaml</code>が存在するディレクトリで<code>goss-freebsd-amd64 validate</code>を実行します。もっとも簡単かつ一般的な使い方です。</p>
+
+<pre><code class="root"><b>./goss-freebsd-amd64 validate</b>
+....
+
+Total Duration: 0.006s
+Count: 4, Failed: 0, Skipped: 0</code></pre>
+
+<p>テストはすべて通りました。</p>
+
+<h3 id="server">ヘルスチェックエンドポイントとして待ち受ける</h3>
+
+<p>gossテストの実行をサーバとして待ち受けることも可能です。gossサーバがヘルスチェックエンドポイントとしてのHTTPサーバを建て、クライアントがアクセスするとgossによるテスト結果が返ってくるようにできます。</p>
+
+<p><code>goss.yaml</code>が存在するディレクトリで<code>goss-freebsd-amd64 serve</code>を実行します。</p>
+
+<pre><code class="root"><b>./goss-freebsd-amd64 serve</b>
+2021/10/16 10:22:43 Starting to listen on: :8080</code></pre>
+
+<p>別ターミナル等から<code>ホストへのIPかドメイン:8080/healthz</code>にアクセスします。</p>
+
+<pre><code class="user"><b>curl 192.0.2.1:8080/healthz</b>
+....
+
+Total Duration: 0.005s
+Count: 4, Failed: 0, Skipped: 0</code></pre>
+
+<p>さきほど手動実行したときと同じ出力がHTTPクライアントから返ってきました。</p>
+
+<p>このように、gossサーバを常時稼働させておき、パッケージアップデートやデプロイ後にヘルスチェックエンドポイントを叩いてテストする……といった運用も可能です。</p>
+
+<h2 id="docs">より詳細な情報のために</h2>
+
+<p>gossの完全なドキュメントは<a href="https://github.com/user340/goss/blob/develop/support-freebsd-build/docs/manual.md">manual.md</a>を、プラットフォームごとの機能の制限などについては<a href="https://github.com/user340/goss/blob/develop/support-freebsd-build/docs/platform-feature-parity.md">platform-feature-parity.md</a>参照してください。これらのドキュメントはアップストリームのものではなくFreeBSD対応版のものです。</p>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
