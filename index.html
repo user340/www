@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <link rel="stylesheet" type="text/css" href="/css/my.css">
+<style type="text/css">
+<!--
+th.date{text-align:left;padding: 0 0 1em 0;}
+th.article{text-align:left;padding:0 0 1em 2em;}
+td.article{padding:0 0 0 2em;}
+-->
+</style>
 <title>e-yuuki.org</title>
 </head>
 <body><div class="tiny">
@@ -28,57 +35,85 @@
 <h2 id="articles">記事</h2>
 
 <h3 id="netbsd">NetBSD</h3>
-<ul>
-<li><a href="./netbsd/podman.html">NetBSDでPodmanからLinuxコンテナを動かす</a></li>
-<li><a href="./netbsd/ansible.html">AnsibleホストとしてNetBSDを扱う</a></li>
-<li><a href="./netbsd/jenkins.html">NetBSDにJenkinsをインストールする</a></li>
-<li><a href="./netbsd/sysupgrade.html">sysupgradeを使いsets単位でバイナリアップデートをする</a></li>
-<li><a href="./netbsd/testing_with_bhyve.html">vm-bhyveとZFSを使って効率的にNetBSD仮想マシンを管理する</a></li>
-<li><a href="./netbsd/xen.html">Xenで準仮想化環境を構築する</a></li>
-<li><a href="./netbsd/haxm.html">QEMUとHAXMによるハイパーバイザの利用</a></li>
-<li><a href="./netbsd/nvmm.html">QEMUとNVMMによるハイパーバイザの利用</a></li>
-<li><a href="./netbsd/update_pkgsrc.html">pkg_comp(8)による安全なpkgsrc(7)パッケージの更新</a></li>
-<li><a href="./netbsd/pkgsrc-wip.html">pkgsrc-wip上での作業</a></li>
-<li><a href="./netbsd/pkg_install.html">pkg_installについて</a></li>
-<li><a href="./netbsd/chroot.html">chroot(8)を使ってホストから分離された環境を作る</a></li>
-<li><a href="./netbsd/buildbot.html">Buildbot on NetBSD</a></li>
-<li><a href="./netbsd/how_to_be_developer.html">NetBSD開発者になる方法</a></li>
-<li><a href="./netbsd/conoha.html">ConoHa VPS上でNetBSDを動かす</a></li>
-<li><a href="./netbsd/npf.html">npfを使ってファイアウォールを設定する</a></li>
-<li><a href="./netbsd/zfs.html">ZFS on NetBSD</a></li>
-<li><a href="./netbsd/zabbix.html">ZabbixによるNetBSDシステム監視</a></li>
-<li><a href="./netbsd/homebuilt_computer.html">NetBSDビルド環境を自作パソコンで作る</a></li>
-</ul>
+<table style="border: 0;">
+  <thead>
+    <tr>
+      <th class="date">更新日</th><th class="article">記事</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>2021/10/30</td><td class="article"><a href="./netbsd/podman.html">NetBSDでPodmanからLinuxコンテナを動かす</a></td></tr>
+    <tr><td>2021/03/07</td><td class="article"><a href="./netbsd/ansible.html">AnsibleホストとしてNetBSDを扱う</a></td></tr>
+    <tr><td>2020/09/22</td><td class="article"><a href="./netbsd/jenkins.html">NetBSDにJenkinsをインストールする</a></td></tr>
+    <tr><td>2020/05/09</td><td class="article"><a href="./netbsd/sysupgrade.html">sysupgradeを使いsets単位でバイナリアップデートをする</a></td></tr>
+    <tr><td>2020/01/11</td><td class="article"><a href="./netbsd/testing_with_bhyve.html">vm-bhyveとZFSを使って効率的にNetBSD仮想マシンを管理する</a></td></tr>
+    <tr><td>2020/04/01</td><td class="article"><a href="./netbsd/xen.html">Xenで準仮想化環境を構築する</a></td></tr>
+    <tr><td>2020/07/18</td><td class="article"><a href="./netbsd/haxm.html">QEMUとHAXMによるハイパーバイザの利用</a></td></tr>
+    <tr><td>2019/12/29</td><td class="article"><a href="./netbsd/nvmm.html">QEMUとNVMMによるハイパーバイザの利用</a></td></tr>
+    <tr><td>2019/04/20</td><td class="article"><a href="./netbsd/update_pkgsrc.html">pkg_comp(8)による安全なpkgsrc(7)パッケージの更新</a></td></tr>
+    <tr><td>2020/04/04</td><td class="article"><a href="./netbsd/pkgsrc-wip.html">pkgsrc-wip上での作業</a></td></tr>
+    <tr><td>2020/07/18</td><td class="article"><a href="./netbsd/pkg_install.html">pkg_installについて</a></td></tr>
+    <tr><td>2019/09/08</td><td class="article"><a href="./netbsd/chroot.html">chroot(8)を使ってホストから分離された環境を作る</a></td></tr>
+    <tr><td>2021/04/01</td><td class="article"><a href="./netbsd/buildbot.html">Buildbot on NetBSD</a></td></tr>
+    <tr><td>2019/08/06</td><td class="article"><a href="./netbsd/how_to_be_developer.html">NetBSD開発者になる方法</a></td></tr>
+    <tr><td>2019/04/27</td><td class="article"><a href="./netbsd/conoha.html">ConoHa VPS上でNetBSDを動かす</a></td></tr>
+    <tr><td>2019/05/21</td><td class="article"><a href="./netbsd/npf.html">npfを使ってファイアウォールを設定する</a></td></tr>
+    <tr><td>2019/08/06</td><td class="article"><a href="./netbsd/zfs.html">ZFS on NetBSD</a></td></tr>
+    <tr><td>2021/04/17</td><td class="article"><a href="./netbsd/zabbix.html">ZabbixによるNetBSDシステム監視</a></td></tr>
+    <tr><td>2019/12/27</td><td class="article"><a href="./netbsd/homebuilt_computer.html">NetBSDビルド環境を自作パソコンで作る</a></td></tr>
+  </tbody>
+</table>
 
 <h3 id="freebsd">FreeBSD</h3>
-<ul>
-<li><a href="./freebsd/goss.html">gossを使ってFreeBSDサーバの設定をテストする</a></li>
-<li><a href="./freebsd/pfrouting.html">pfを使い外部からのアクセスを内部ネットワークへリダイレクトする</a></li>
-<li><a href="./freebsd/office.html">執務環境としてのFreeBSD</a></li>
-</ul>
+<table>
+  <thead>
+    <tr>
+      <th class="date">更新日</th><th class="article">記事</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>2021/10/16</td><td class="article"><a href="./freebsd/goss.html">gossを使ってFreeBSDサーバの設定をテストする</a></td></tr>
+    <tr><td>2021/02/22</td><td class="article"><a href="./freebsd/pfrouting.html">pfを使い外部からのアクセスを内部ネットワークへリダイレクトする</a></td></tr>
+    <tr><td>2020/02/27</td><td class="article"><a href="./freebsd/office.html">執務環境としてのFreeBSD</a></td></tr>
+  </tbody>
+</table>
 
 <h3 id="practice">プラクティス</h3>
-<ul>
-<li><a href="./practice/html.html">私家版HTML文書執筆ガイド</a></li>
-<li><a href="./practice/shellscript.html">私家版ShellScript Coding Style</a></li>
-<li><a href="./practice/remotework.html">リモートワークのプラクティス</a></li>
-<li><a href="./practice/monitoring.html">アラートが多すぎる&mdash;&mdash;システム監視について</a></li>
-</ul>
+<table style="border: 0;">
+  <thead>
+    <tr>
+      <th class="date">更新日</th><th class="article">記事</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>2020/07/18</td><td class="article"><a href="./practice/html.html">私家版HTML文書執筆ガイド</a></td></tr>
+    <tr><td>2019/12/17</td><td class="article"><a href="./practice/shellscript.html">私家版ShellScript Coding Style</a></td></tr>
+    <tr><td>2020/10/10</td><td class="article"><a href="./practice/remotework.html">リモートワークのプラクティス</a></td></tr>
+    <tr><td>2020/11/22</td><td class="article"><a href="./practice/monitoring.html">アラートが多すぎる&mdash;&mdash;システム監視について</a></td></tr>
+  </tbody>
+</table>
 
 <h3 id="essay">エッセイ</h3>
-<ul>
-<li><a href="./essay/pkgsrc-fun.html">pkgsrcのたのしさ、FLOSSのたのしさ</a></li>
-<li><a href="./essay/free_flaws.html">自由を妨げるものとHyperbolaプロジェクト</a></li>
-<li><a href="./essay/github_actions.html">GitHub ActionsでホームページのCIを確立した</a></li>
-<li><a href="./essay/freeware_or_freesoftware.html">フリーウェアはフリーソフトウェアであるべきか？</a></li>
-<li><a href="./essay/floss_reading.html">FLOSS書籍について</a></li>
-<li><a href="./essay/remote_work.html">リモートワーカーになった</a></li>
-<li><a href="./essay/practice_tdd.html">初めてのテスト駆動開発（TDD）と感想</a></li>
-<li><a href="./essay/cc0code.html">CC0 HTMLコードを直す</a></li>
-<li><a href="./essay/work_life_barance.html">会社員とFLOSS趣味プログラマの両立について</a></li>
-<li><a href="./essay/pkgintro.html">GNU/LinuxとBSD Unixのパッケージ概観</a></li>
-<li><a href="./essay/webpage.html">動的Webページから静的Webページへの移行</a></li>
-</ul>
+<table style="border: 0;">
+  <thead>
+    <tr>
+      <th class="date">更新日</th><th class="article">記事</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>2020/09/12</td><td class="article"><a href="./essay/pkgsrc-fun.html">pkgsrcのたのしさ、FLOSSのたのしさ</a></td></tr>
+    <tr><td>2020/07/18</td><td class="article"><a href="./essay/free_flaws.html">自由を妨げるものとHyperbolaプロジェクト</a></td></tr>
+    <tr><td>2019/12/30</td><td class="article"><a href="./essay/github_actions.html">GitHub ActionsでホームページのCIを確立した</a></td></tr>
+    <tr><td>2019/08/19</td><td class="article"><a href="./essay/freeware_or_freesoftware.html">フリーウェアはフリーソフトウェアであるべきか？</a></td></tr>
+    <tr><td>2019/08/18</td><td class="article"><a href="./essay/floss_reading.html">FLOSS書籍について</a></td></tr>
+    <tr><td>2019/06/26</td><td class="article"><a href="./essay/remote_work.html">リモートワーカーになった</a></td></tr>
+    <tr><td>2021/04/01</td><td class="article"><a href="./essay/practice_tdd.html">初めてのテスト駆動開発（TDD）と感想</a></td></tr>
+    <tr><td>2019/04/13</td><td class="article"><a href="./essay/cc0code.html">CC0 HTMLコードを直す</a></td></tr>
+    <tr><td>2019/04/14</td><td class="article"><a href="./essay/work_life_barance.html">会社員とFLOSS趣味プログラマの両立について</a></td></tr>
+    <tr><td>2020/02/08</td><td class="article"><a href="./essay/pkgintro.html">GNU/LinuxとBSD Unixのパッケージ概観</a></td></tr>
+    <tr><td>2020/02/08</td><td class="article"><a href="./essay/webpage.html">動的Webページから静的Webページへの移行</a></td></tr>
+  </tbody>
+</table>
 
 <h2 id="links">外部リンク</h2>
 <dl>
@@ -133,7 +168,7 @@
 
 <p>このサイトに関する批判・議論・指摘・改善案は榎本までメールで連絡してください。各文書のライセンスはページ下部（footer）に記載しています。</p>
 
-<p>内容は予告なく変更されます。文書の変更差分や変更日時は<a href="https://github.com/user340/www">https://github.com/user340/www</a>リポジトリから確認できます。</p>
+<p>内容は予告なく変更されます。文書の正確な変更差分や変更日時は<a href="https://github.com/user340/www">https://github.com/user340/www</a>リポジトリから確認できます。</p>
 
 <hr>
 <footer>
