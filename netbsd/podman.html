@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>NetBSDでPodmanからLinuxコンテナを動かす</h1>
+<p style="text-align:right;">2021年10月30日 初稿</p>
+<p>注: 技術検証記事ではありません。</p>
+<hr>
+<p><a href="https://podman.io/">Podman</a>はコンテナエンジンのひとつです。Red Hat Enterprise Linuxがバージョン7から8にメジャーアップデートしたさい、Dockerから標準のコンテナエンジンとして置き換わった実績があります。Dockerと比べ裏でデーモンを動かすことなく（daemonless）、かつルート権限不要（rootless mode）で動作します。</p>
+
+<p>2021年9月4日、coypuがnetbsd-usersに投稿した『<a href="https://mail-index.netbsd.org/netbsd-users/2021/09/04/msg027645.html">Running docker containers with podman (on NetBSD!)</a>』のとおり、pkgsrc-currentにPodmanパッケージが追加されNetBSDでもPodmanを利用できるようになりました[<a href="#podman-mail">1</a>]。</p>
+
+<p>pkgsrc自体はNetBSDとは独立したパッケージ管理システムですから、NetBSDカーネルでOCI Runtime準拠のコンテナを動かせられるようになったというわけではありません。Podmanは<code>podman machine</code>コマンドからコンテナを動かす仮想マシン（VM）を管理できます。NetBSDにインストールされたPodmanはこの機能を活用し、QEMU-NVMMからFedoraが動くVMを用意してコンテナそのものはFedora OSの中で動作させます。</p>
+
+<p>VMを経由させるので、ネイティブなLinuxディストリビューションで動かすより性能面で見劣りする可能性があります。ただしVMはNVMMでハードウェアアクセラレーションしているのでアプリケーションの開発や動作検証用途ならほとんど影響はないでしょう。またこれもほとんど問題にならないとは思いますが、NVMMの都合上アーキテクチャがx86_64に制限されます。</p>
+
+<p>
+インストールはメールに書いてあるとおり
+
+<ol>
+  <li><code>pkgsrc/sysutils/podman</code>をインストールする</li>
+  <li><code><b>podman machine init</b></code>して<code><b>podman machine start</b></code>する</li>
+</ol>
+
+で完了します。<code>podman machine</code>のマニュアルは<a href="https://docs.podman.io/en/latest/markdown/podman-machine.1.html">https://docs.podman.io/en/latest/markdown/podman-machine.1.html</a>で公開されています。</p>
+
+<p>既知の問題として、Podman用のLinux VMがAPIC関連のカーネルパニックを起こすことが知られています。NetBSDカーネルに<code>options HZ=1000</code>を設定してビルドするか、VMのGRUBでブートエントリに<code>noapic</code>を与えることで回避できます。Podman用Linux VMのブートエントリを手動で編集する方法はLeonardo Taccariが返信しているメールから確認できます[<a href="#how-to-edit-boot-entry">2</a>]。大まかには
+
+<ol>
+  <li>Podman VMのイグニションファイル（ignition file）を編集して<code>noapic</code>オプションがブートエントリに存在することを保証させる。</li>
+  <li>Podman VMを手動で起動しブートエントリに<code>noapic</code>を追加する。</li>
+</ol>
+
+……とします。</p>
+
+<p>OCIコンテナのネイティブサポートでないとはいえ、PodmanのインタフェースからDocker／Podmanコンテナを使えるようになったことで別プラットフォームを対象にした開発がやりやすくなったのではないかと思います。なにか即席でアプリケーションを動かしたいときもDocker Hubからダウンロードしてきてすぐに使えるようになったのも便利でしょう。</p>
+
+<p>僕のPCではCPUがNested Virtualizationに対応していないおかげでbhyveから動かしているNetBSDではコンテナの動作確認ができませんでした。というわけでこの話はもう終わりです。</p>
+
+<h2 id="ref">参考文献</h2>
+
+<h3 id="podman-mail">netbsd-usersに投稿されたPodmanパッケージ追加を知らせるメール全文</h3>
+
+<blockquote>
+<pre>
+To: netbsd-users%netbsd.org@localhost
+Subject: Running docker containers with podman (on NetBSD!)
+From: coypu%sdf.org@localhost
+Date: Sat, 4 Sep 2021 21:06:02 +0000
+
+Hi all,
+
+I added a package to pkgsrc called Podman.
+It's a tool for running OCI containers, and it has the same command line
+behaviour as the docker command line argument.
+
+There are some selling points for it over docker, but the most important
+for us is the fact it has a mode where it spawns a Linux VM to talk to
+for you, so it runs on NetBSD!
+
+One caveat is that NetBSD somewhat struggles running virtualized Linux
+by default. The virtualized ticks are just too slow, so it panics with:
+  Kernel panic - not syncing: IO-APIC + timer doesn't work! Boot with
+  apic=debug and send a report. Then try booting with the 'noapic' option.
+
+One way to work around it, convenient for this purpose, is to rebuild
+your kernel with "options HZ=1000" added, then you don't need to edit
+the command line arguments in the VM.
+
+Usage instructions:
+Install pkgsrc/sysutils/podman from pkgsrc-current
+Initialize and start a VM with:
+podman machine init
+podman machine start
+
+And then you can use it much like the docker command:
+&gt; podman run -it alpine sh -c "apk add file; file -L /bin/sh"
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.14/main/x86_64/APKINDEX.tar.gz
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.14/community/x86_64/APKINDEX.tar.gz
+(1/2) Installing libmagic (5.40-r1)
+(2/2) Installing file (5.40-r1)
+Executing busybox-1.33.1-r3.trigger
+OK: 13 MiB in 16 packages
+/bin/sh: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib/ld-musl-x86_64.so.1, stripped
+</pre>
+</blockquote>
+
+<h3 id="how-to-edit-boot-entry">Leonardo TaccariによるPodman VMのブートエントリ編集手順</h3>
+
+<blockquote>
+<pre>
+  coypu%sdf.org@localhost writes:
+&gt; Hi all,
+&gt;
+
+Hello coypu!
+
+&gt; I added a package to pkgsrc called Podman.
+&gt; It's a tool for running OCI containers, and it has the same command line
+&gt; behaviour as the docker command line argument.
+&gt;
+&gt; There are some selling points for it over docker, but the most important
+&gt; for us is the fact it has a mode where it spawns a Linux VM to talk to
+&gt; for you, so it runs on NetBSD!
+&gt;
+
+That's really nice, thank you very much for working on it!
+
+&gt; One caveat is that NetBSD somewhat struggles running virtualized Linux
+&gt; by default. The virtualized ticks are just too slow, so it panics with:
+&gt;   Kernel panic - not syncing: IO-APIC + timer doesn't work! Boot with
+&gt;   apic=debug and send a report. Then try booting with the 'noapic' option.
+&gt;
+&gt; One way to work around it, convenient for this purpose, is to rebuild
+&gt; your kernel with "options HZ=1000" added, then you don't need to edit
+&gt; the command line arguments in the VM.
+&gt; [...]
+
+I was tempted to try the other workaround, i.e. append `noapic'
+directly at the boot but... that was a bit challenging! :)  So here all
+the notes that I have collected.
+
+ 1. Download the image via:
+     podman machine init
+ 2. After the image is downloaded and extracted SSH keys will be
+    generated under ~/.ssh and there will be a Ignition config in
+    ~/.config/containers/podman/machine/qemu/podman-machine-default.ign.
+    In order to append `noapic' to the kernel arguments we need to
+    adjust the following in podman-machine-default.ign:
+	2a. Reindent the JSON to be a bit easier to edit, e.g. via
+            `jq .'
+	2b. Bump .ignition.version to "3.3.0" (it is "3.2.0")
+	2c. At the end, after systemd object add a comma `,' and then
+	    another JSON object:
+                "kernelArguments": {
+                  "shouldExist": ["noapic"]
+                }
+ 3. Manually run the image via QEMU in order to initialize it via the
+    ignite config so that `noapic' is appended.  Assuming we are in our
+    home directory, e.g.:
+     qemu-system-x86_64 -accel nvmm -nographic -m 1G -smp 1 \
+	 -fw_cfg name=opt/com.coreos/config,file=.config/containers/podman/machine/qemu/podman-machine-default.ign \
+         -drive if=virtio,file=.local/sif=virtio,file=.local/share/containers/podman/machine/qemu/podman-machine-default_fedora-coreos-34.20210821.1.1-qemu.x86_64.qcow2
+ 4. In GRUB press `e' in order to edit the boot entry.  In the kernel
+    line append at the end `noapic' and press Ctrl-x to boot it
+ 5. The ignition config will be applied and it will reboot
+ 6. In GRUB press `c' and then `halt' in order to poweroff the machine
+    (we're done!)
+ 7. Start the machine as usual via `podman machine start'
+</pre>
+</blockquote>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
