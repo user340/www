@@ -20,24 +20,19 @@
 
 <p>VMを経由させるので、ネイティブなLinuxディストリビューションで動かすより性能面で見劣りする可能性があります。ただしVMはNVMMでハードウェアアクセラレーションしているのでアプリケーションの開発や動作検証用途ならほとんど影響はないでしょう。またこれもほとんど問題にならないとは思いますが、NVMMの都合上アーキテクチャがx86_64に制限されます。</p>
 
-<p>
-インストールはメールに書いてあるとおり
+<p>インストールはメールに書いてあるとおり以下の手順で完了します。<code>podman machine</code>のマニュアルは<a href="https://docs.podman.io/en/latest/markdown/podman-machine.1.html">https://docs.podman.io/en/latest/markdown/podman-machine.1.html</a>で公開されています。</p>
 
 <ol>
   <li><code>pkgsrc/sysutils/podman</code>をインストールする</li>
   <li><code><b>podman machine init</b></code>して<code><b>podman machine start</b></code>する</li>
 </ol>
 
-で完了します。<code>podman machine</code>のマニュアルは<a href="https://docs.podman.io/en/latest/markdown/podman-machine.1.html">https://docs.podman.io/en/latest/markdown/podman-machine.1.html</a>で公開されています。</p>
-
-<p>既知の問題として、Podman用のLinux VMがAPIC関連のカーネルパニックを起こすことが知られています。NetBSDカーネルに<code>options HZ=1000</code>を設定してビルドするか、VMのGRUBでブートエントリに<code>noapic</code>を与えることで回避できます。Podman用Linux VMのブートエントリを手動で編集する方法はLeonardo Taccariが返信しているメールから確認できます[<a href="#how-to-edit-boot-entry">2</a>]。大まかには
+<p>既知の問題として、Podman用のLinux VMがAPIC関連のカーネルパニックを起こすことが知られています。NetBSDカーネルに<code>options HZ=1000</code>を設定してビルドするか、VMのGRUBでブートエントリに<code>noapic</code>を与えることで回避できます。Podman用Linux VMのブートエントリを手動で編集する方法はLeonardo Taccariが返信しているメールから確認できます[<a href="#how-to-edit-boot-entry">2</a>]。大まかには次のようにします。</p>
 
 <ol>
   <li>Podman VMのイグニションファイル（ignition file）を編集して<code>noapic</code>オプションがブートエントリに存在することを保証させる。</li>
   <li>Podman VMを手動で起動しブートエントリに<code>noapic</code>を追加する。</li>
 </ol>
-
-……とします。</p>
 
 <p>OCIコンテナのネイティブサポートでないとはいえ、PodmanのインタフェースからDocker／Podmanコンテナを使えるようになったことで別プラットフォームを対象にした開発がやりやすくなったのではないかと思います。なにか即席でアプリケーションを動かしたいときもDocker Hubからダウンロードしてきてすぐに使えるようになったのも便利でしょう。</p>
 
