@@ -14,11 +14,12 @@
 <li><a href="#zabbix">Zabbixについて</a></li>
 <li><a href="#installation">インストール</a>
 <ol>
+<li><a href="#postgresql">PostgreSQLのセットアップ</a></li>
 <li><a href="#sysutils-zabbix">sysutils/zabbixのインストール</a></li>
-<li><a href="#sysutils-zabbix-frontend">sysutils/zabbix-frontendのインストール</a></li>
-<li><a href="#agent">Zabbix Agentの設定と起動</a></li>
 <li><a href="#server">Zabbix Serverの設定と起動</a></li>
+<li><a href="#sysutils-zabbix-frontend">sysutils/zabbix-frontendのインストール</a></li>
 <li><a href="#frontend">Zabbix Webフロントエンドの設定</a></li>
+<li><a href="#agent">Zabbix Agentの設定と起動</a></li>
 </ol></li>
 </ol>
 
@@ -37,76 +38,22 @@
 <p>Zabbix LLC.からはGNU/Linuxディストリビューション向けにServerおよびAgentのパッケージが提供されており、FreeBSD・OpenBSD・MacOS・Windows・AIX・HP-UXなどの環境に対してはAgentのパッケージのみ提供されています。NetBSD向けパッケージは提供されておらず、<code>pkgsrc(7)</code>から<b>sysutils/zabbix</b>パッケージをインストールする必要があります。Zabbix Webフロントエンドは別途<b>sysutils/zabbix-frontend</b>パッケージをインストールしなければなりません。</p>
 
 <h2 id="installation">インストール</h2>
-<h3 id="sysutils-zabbix">sysutils/zabbixのインストール</h3>
-<p><b>sysutils/zabbix</b>パッケージをインストールします。このパッケージにはZabbix Agent・Zabbix Server・Zabbix Proxyが含まれています。pkgsrc-2019Q3時点ではZabbix 4.0.9が提供されるようですが、4.0.9ではZabbix側のNetBSD依存のコードが古くビルドに失敗します。そこで、このパッケージは修正パッチがあるpkgsrc-currentブランチを使ってください。</p>
 
-<p>また、Zabbix Serverを動かすホストと同じホストでデータベースも動かす場合は、別途データベースを用意します。標準では<b>sysutils/zabbix</b>パッケージは<b>database/postgresql95-client</b>パッケージに依存しているため、<b>database/postgresql95-server</b>をインストールしてください。</p>
+<h3 id="postgresql">PostgreSQLのセットアップ</h3>
+<p>ここではZabbix Serverとデータベースを動かすホストが同一だとします。標準では<b>sysutils/zabbix</b>パッケージは<b>database/postgresql95-client</b>パッケージに依存しているため、<b>database/postgresql95-server</b>をインストールしてください。</p>
 
-<pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix</b>
-<b class="root">cvs update -dP -A</b>
-<b class="root">make install clean clean-depends</b>
 <b class="root">cd /usr/pkgsrc/database/postgresql95-server</b>
 <b class="root">make install clean clean-depends</b></code></pre>
 
-<p>必要なデーモンのRCファイルを用意します。ここではPostgreSQLとZabbix AgentおよびZabbix Serverにします。</p>
+<p>PostgreSQLパッケージのRCスクリプトを<code>/etc/rc.d</code>にコピーします。</p>
 
-<pre><code><b class="root">cp /usr/pkg/share/examples/rc.d/pgsql /etc/rc.d</b>
-<b class="root">cp /usr/pkg/share/examples/rc.d/zabbix_agentd /etc/rc.d</b>
-<b class="root">cp /usr/pkg/share/examples/rc.d/zabbix_server /etc/rc.d</b></code></pre>
+<pre><code><b class="root">cp /usr/pkg/share/examples/rc.d/pgsql /etc/rc.d</b></code></pre>
 
-<p><code>/etc/rc.conf</code>に以下を追記します。</p>
+<p><code>/etc/rc.conf</code>でPostgreSQLの自動起動を有効にします。</p>
 
-<pre><code><b>pgsql=YES
-zabbix_agentd=YES
-zabbix_server=YES</b></code></pre>
+<pre><code><b>pgsql=YES</b></code></pre>
 
-<h3 id="sysutils-zabbix-frontend">sysutils/zabbix-frontendのインストール</h3>
-<p>Zabbix Webフロントエンドを使うには<b>sysutils/zabbix-frontend</b>パッケージをインストールします。pkgsrc-2019Q3ではこのパッケージはPHP 7.1に依存していますが、Apache上でPHP 7のスクリプトを実行するにはモジュールではなくCGIを使うように標準の設定が変更されました。そこで<b>www/php-fpm</b>パッケージも一緒にインストールしなければなりません。これはPHPのFastCGI実装です。また、PHPからPostgreSQLを操作するためのライブラリ<b>databases/php-pgsql</b>もインストールします。</p>
-
-<pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix-frontend</b>
-<b class="root">make install clean clean-depends</b>
-<b class="root">cd /usr/pkgsrc/www/php-fpm</b>
-<b class="root">make install clean clean-depends</b>
-<b class="root">cd /usr/pkgsrc/databases/php-fpm</b>
-<b class="root">make install clean clean-depends</b></code></pre>
-
-<p>Webサーバとphp-fpmのRCファイルを用意します。</p>
-
-<pre><code><b class="root">cp /usr/pkg/share/examples/rc.d/apache /etc/rc.d</b>
-<b class="root">cp /usr/pkg/share/examples/rc.d/php_fpm /etc/rc.d</b></code></pre>
-
-<p><code>/etc/rc.conf</code>に以下を追記します。</p>
-
-<pre><code><b>apache=YES
-php_fpm=YES</b></code></pre>
-
-<h3 id="agent">Zabbix Agentの設定と起動</h3>
-<p>Zabbix Agentの設定ファイルは<code>/usr/pkg/etc/zabbix_agentd.conf</code>です。基本的には以下の設定項目を確認します。</p>
-
-<dl>
-<dt><code>LogFile</code></dt>
-<dd>Zabbix Agentのログファイルのパスです。</dd>
-<dt><code>Server</code></dt>
-<dd>Zabbix ServerのDNS名かIPアドレスです。</dd>
-<dt><code>ServerActive</code></dt>
-<dd>Active Checkの監視データを送信する先のZabbix ServerのDNS名かIPアドレスです。基本的には<code>Server</code>の設定と同じになるかと思われます。</dd>
-<dt><code>Hostname</code></dt>
-<dd>Zabbix Agentのホスト名です。Zabbix AgentがインストールされているOSのホスト名ではありません。</dd>
-</dl>
-
-<p>ここでは次のように設定をしました。なお、<code>/var/log/zabbix</code>ディレクトリは新規作成し、ディレクトリのオーナとグループをzabbix.zabbixに変更しています。</p>
-
-<pre><code><b>LogFile=/var/log/zabbix/zabbix_agentd.log
-Server=127.0.0.1
-ServerActive=127.0.0.1
-Hostname=Zabbix server</b></code></pre>
-
-<p>設定後はZabbix Agentデーモンを実行してください。</p>
-
-<pre><code><b class="root">service zabbix_agentd start</b></code></pre>
-
-<h3 id="server">Zabbix Serverの設定と起動</h3>
-<p>ここではZabbix Serverとデータベースを動かすホストが同一だとします。NetBSD標準の設定ではセマフォ（semaphore）が足りなくなりZabbix Serverかデータベースのどちらかが動きません。そこで<code>sysctl(8)</code>からシステム中のセマフォの数を増やす設定をします。<a href="https://www.postgresql.jp/document/8.1/html/kernel-resources.html">PostgreSQL 8.1のドキュメント</a>にはNetBSDおよびOpenBSDでのパラメータ設定の例が挙げられています。ここではこの例にしたがい設定します。</p>
+<p>NetBSD標準の設定ではセマフォ（semaphore）が足りなくなりZabbix Serverかデータベースのどちらかが動きません。そこで<code>sysctl(8)</code>からシステム中のセマフォの数を増やす設定をします。<a href="https://www.postgresql.jp/document/8.1/html/kernel-resources.html">PostgreSQL 8.1のドキュメント</a>にはNetBSDおよびOpenBSDでのパラメータ設定の例が挙げられています。ここではこの例にしたがい設定します。</p>
 
 <pre><code><b class="root">sysctl -w kern.ipc.shmseg=256</b>
 <b class="root">sysctl -w kern.ipc.semmns=512</b>
@@ -131,7 +78,25 @@ Hostname=Zabbix server</b></code></pre>
 <b class="root">psql -U zabbix zabbix &lt; /usr/pkg/share/zabbix-server-postgresql/images.sql</b>
 <b class="root">psql -U zabbix zabbix &lt; /usr/pkg/share/zabbix-server-postgresql/data.sql</b></code></pre>
 
-<p>データベースの設定完了後はZabbix Serverの設定ファイル<code>/usr/pkg/etc/zabbix_server.conf</code>を編集します。確認すべき設定項目は以下のとおりです。</p>
+<h3 id="sysutils-zabbix">sysutils/zabbixのインストール</h3>
+<p><b>sysutils/zabbix</b>パッケージをインストールします。このパッケージにはZabbix Agent・Zabbix Server・Zabbix Proxyが含まれています。pkgsrc-2019Q3時点ではZabbix 4.0.9が提供されるようですが、4.0.9ではZabbix側のNetBSD依存のコードが古くビルドに失敗します。そこで、このパッケージは修正パッチがあるpkgsrc-currentブランチを使ってください。</p>
+
+<pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix</b>
+<b class="root">cvs update -dP -A</b>
+<b class="root">make install clean clean-depends</b>
+
+<p>必要なRCファイルを用意します。</p>
+
+<pre><code><b class="root">cp /usr/pkg/share/examples/rc.d/zabbix_agentd /etc/rc.d</b>
+<b class="root">cp /usr/pkg/share/examples/rc.d/zabbix_server /etc/rc.d</b></code></pre>
+
+<p><code>/etc/rc.conf</code>に以下を追記します。</p>
+
+<pre><code><b>zabbix_agentd=YES
+zabbix_server=YES</b></code></pre>
+
+<h3 id="server">Zabbix Serverの設定と起動</h3>
+<p>Zabbix Serverの設定ファイル<code>/usr/pkg/etc/zabbix_server.conf</code>を編集します。確認すべき設定項目は以下のとおりです。</p>
 
 <dl>
 <dt><code>LogFile</code></dt>
@@ -147,6 +112,26 @@ Hostname=Zabbix server</b></code></pre>
 <p>設定後はZabbix Serverデーモンを実行してください。</p>
 
 <pre><code><b class="root">service zabbix_server start</b></code></pre>
+
+<h3 id="sysutils-zabbix-frontend">sysutils/zabbix-frontendのインストール</h3>
+<p>Zabbix Webフロントエンドを使うには<b>sysutils/zabbix-frontend</b>パッケージをインストールします。pkgsrc-2019Q3ではこのパッケージはPHP 7.1に依存していますが、Apache上でPHP 7のスクリプトを実行するにはモジュールではなくCGIを使うように標準の設定が変更されました。そこで<b>www/php-fpm</b>パッケージも一緒にインストールしなければなりません。これはPHPのFastCGI実装です。また、PHPからPostgreSQLを操作するためのライブラリ<b>databases/php-pgsql</b>もインストールします。</p>
+
+<pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix-frontend</b>
+<b class="root">make install clean clean-depends</b>
+<b class="root">cd /usr/pkgsrc/www/php-fpm</b>
+<b class="root">make install clean clean-depends</b>
+<b class="root">cd /usr/pkgsrc/databases/php-fpm</b>
+<b class="root">make install clean clean-depends</b></code></pre>
+
+<p>Webサーバとphp-fpmのRCファイルを用意します。</p>
+
+<pre><code><b class="root">cp /usr/pkg/share/examples/rc.d/apache /etc/rc.d</b>
+<b class="root">cp /usr/pkg/share/examples/rc.d/php_fpm /etc/rc.d</b></code></pre>
+
+<p><code>/etc/rc.conf</code>に以下を追記します。</p>
+
+<pre><code><b>apache=YES
+php_fpm=YES</b></code></pre>
 
 <h3 id="frontend">Zabbix Webフロントエンドの設定</h3>
 <p>Zabbix Webフロントエンドを使うには、Apacheとphp-fpmの設定が必要です。はじめにphp-fpmの設定をおこないます。<code>/usr/pkg/etc/php-fpm.d/zabbix.conf</code>を新規作成し、次のように編集してください。</p>
@@ -313,6 +298,31 @@ $IMAGE_FORMAT_DEFAULT	= IMAGE_FORMAT_PNG;
 <img src="./images/zabbix_003.png" alt="Zabbix web frontend dashboard">
 <figcaption><b>図3: </b>Zabbix Webフロントエンドにログインした直後のダッシュボードページ。</figcaption>
 </figure>
+
+<h3 id="agent">Zabbix Agentの設定と起動</h3>
+<p>Zabbix Agentの設定ファイルは<code>/usr/pkg/etc/zabbix_agentd.conf</code>です。基本的には以下の設定項目を確認します。</p>
+
+<dl>
+<dt><code>LogFile</code></dt>
+<dd>Zabbix Agentのログファイルのパスです。</dd>
+<dt><code>Server</code></dt>
+<dd>Zabbix ServerのDNS名かIPアドレスです。</dd>
+<dt><code>ServerActive</code></dt>
+<dd>Active Checkの監視データを送信する先のZabbix ServerのDNS名かIPアドレスです。基本的には<code>Server</code>の設定と同じになるかと思われます。</dd>
+<dt><code>Hostname</code></dt>
+<dd>Zabbix Agentのホスト名です。Zabbix AgentがインストールされているOSのホスト名ではありません。</dd>
+</dl>
+
+<p>ここでは次のように設定をしました。なお、<code>/var/log/zabbix</code>ディレクトリは新規作成し、ディレクトリのオーナとグループをzabbix.zabbixに変更しています。</p>
+
+<pre><code><b>LogFile=/var/log/zabbix/zabbix_agentd.log
+Server=127.0.0.1
+ServerActive=127.0.0.1
+Hostname=Zabbix server</b></code></pre>
+
+<p>設定後はZabbix Agentデーモンを実行してください。</p>
+
+<pre><code><b class="root">service zabbix_agentd start</b></code></pre>
 
 <h2>後注</h2>
 <ol>
