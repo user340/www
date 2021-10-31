@@ -42,8 +42,10 @@
 <h3 id="postgresql">PostgreSQLのセットアップ</h3>
 <p>ここではZabbix Serverとデータベースを動かすホストが同一だとします。標準では<b>sysutils/zabbix</b>パッケージは<b>database/postgresql95-client</b>パッケージに依存しているため、<b>database/postgresql95-server</b>をインストールしてください。</p>
 
+<pre><code>
 <b class="root">cd /usr/pkgsrc/database/postgresql95-server</b>
-<b class="root">make install clean clean-depends</b></code></pre>
+<b class="root">make install clean clean-depends</b>
+</code></pre>
 
 <p>PostgreSQLパッケージのRCスクリプトを<code>/etc/rc.d</code>にコピーします。</p>
 
@@ -55,10 +57,12 @@
 
 <p>NetBSD標準の設定ではセマフォ（semaphore）が足りなくなりZabbix Serverかデータベースのどちらかが動きません。そこで<code>sysctl(8)</code>からシステム中のセマフォの数を増やす設定をします。<a href="https://www.postgresql.jp/document/8.1/html/kernel-resources.html">PostgreSQL 8.1のドキュメント</a>にはNetBSDおよびOpenBSDでのパラメータ設定の例が挙げられています。ここではこの例にしたがい設定します。</p>
 
-<pre><code><b class="root">sysctl -w kern.ipc.shmseg=256</b>
+<pre><code>
+<b class="root">sysctl -w kern.ipc.shmseg=256</b>
 <b class="root">sysctl -w kern.ipc.semmns=512</b>
 <b class="root">sysctl -w kern.ipc.shmmni=256</b>
-<b class="root">sysctl -w kern.ipc.semmnu=256</b></code></pre>
+<b class="root">sysctl -w kern.ipc.semmnu=256</b>
+</code></pre>
 
 <p><code>/etc/sysctl.conf</code>にも同様の設定を追加します。PostgreSQLを起動します。</p>
 
@@ -69,8 +73,10 @@
 
 <p>PostgreSQLにZabbix Server用のユーザとデータベースを作成します。<b>database/postgresql95-server</b>パッケージは標準ではpgsqlユーザがPostgreSQLの管理者なようです。ここでzabbixユーザに設定したパスワードは後で利用します。</p>
 
-<pre><code><b class="root">createuser -U pgsql --pwprompt zabbix</b>
-<b class="root">createdb -U pgsql -O zabbix -E UTF8 --template=template0 zabbix</b></code></pre>
+<pre><code>
+<b class="root">createuser -U pgsql --pwprompt zabbix</b>
+<b class="root">createdb -U pgsql -O zabbix -E UTF8 --template=template0 zabbix</b>
+</code></pre>
 
 <p>データベース作成後はZabbix用のデータベースを初期化します。初期化用のSQL文はパッケージで提供されています。</p>
 
