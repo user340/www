@@ -87,9 +87,11 @@
 <h3 id="sysutils-zabbix">sysutils/zabbixのインストール</h3>
 <p><b>sysutils/zabbix</b>パッケージをインストールします。このパッケージにはZabbix Agent・Zabbix Server・Zabbix Proxyが含まれています。pkgsrc-2019Q3時点ではZabbix 4.0.9が提供されるようですが、4.0.9ではZabbix側のNetBSD依存のコードが古くビルドに失敗します。そこで、このパッケージは修正パッチがあるpkgsrc-currentブランチを使ってください。</p>
 
-<pre><code><b class="root">cd /usr/pkgsrc/sysutils/zabbix</b>
+<pre><code>
+<b class="root">cd /usr/pkgsrc/sysutils/zabbix</b>
 <b class="root">cvs update -dP -A</b>
 <b class="root">make install clean clean-depends</b>
+</code></pre>
 
 <p>必要なRCファイルを用意します。</p>
 
