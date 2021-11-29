@@ -10,10 +10,10 @@
 <article class="tiny">
 <h1>私家版HTML文書執筆ガイド</h1>
 <hr>
-<p>e-yuuki.orgの文書を書くときに気をつけていることをまとめます。したがってHTML5の範疇を超える話題も含まれます。ベストプラクティスを集めたわけではありません。W3Cの勧告やValidatorの更新によって都度変更される可能性があります。</p>
+<p>e-yuuki.orgの文書を書くときに気をつけていることをまとめます。したがってHTML Living Standardの範疇を超える話題も含まれます。ベストプラクティスを集めたわけではありません。WHATWGの勧告やValidatorの更新によって都度変更される可能性があります。</p>
 <nav>
 <ol>
-<li><a href="#version">HTML 5</a></li>
+<li><a href="#version">HTML Living Standard</a></li>
 <li><a href="#validator">Validator</a></li>
 <li><a href="#textlint">日本語校正</a></li>
 <li><a href="#codestyle">一行あたりの文字数とインデント</a></li>
@@ -24,16 +24,16 @@
 <li><a href="#tips">Tips</a>
 <ol>
 <li><a href="#cite">引用の方法</a></li>
-<li><a href="#vimrc">HTML5コーディングのための$HOME/.vimrc</a></li>
+<li><a href="#vimrc">HTMLコーディングのための$HOME/.vimrc</a></li>
 <li><a href="#nuhtml">NetBSDでNu HTML Checkerをビルドする</a></li>
 </ol>
 </li>
 </ol>
 </nav>
-<h2 id="version">HTML 5</h2>
-<p>HTML5はW3C Recommendationに従って書きます。最新のRecommendationは<a href="https://www.w3.org/TR/html52/">HTML 5.2</a>。<a href="https://www.w3.org/TR/html53/">HTML 5.3</a>がWorking DraftからRecommendationになり次第ソースコードをアップデートします。</p>
+<h2 id="version">HTML Living Standard</h2>
+<p>HTMLはWHATWGのHTML Living Standardに従って書きます。人力で規格どおりに書けているかをチェックするのは非現実的です。実際にはvalidatorにチェックを委託します。</p>
 
-<p>HTML5のテンプレートは以下のとおりです。ここでは読みやすさのためインデントをしていますが、<a href="#codestyle">下記で述べるように</a>実際に公開するコードはインデントを削除します。</p>
+<p>HTMLのテンプレートは以下のとおりです。ここでは読みやすさのためインデントをしていますが、<a href="#codestyle">下記で述べるように</a>実際に公開するコードはインデントを削除します。</p>
 
 <pre><code><b>
 &lt;!DOCTYPE html&gt;
@@ -68,14 +68,21 @@
     &lt;/article&gt;
   &lt;/body&gt;
 &lt;/html&gt;</b></code></pre>
+
 <div class="colum">
 <div class="title">「正しい」HTML5</div>
-<div class="text"><p>W3Cの勧告どおりにHTML5をコーディングするのはとても大変です。原文が英語なので、なにか調べるのにも非英語ネイティブからすれば一苦労です。くわえてHTML5について書いている記事は無数にあるためにどれを信用していいのかわかりません。</p>
+<div class="text"><p>W3Cの勧告どおりにHTML5をコーディングするのはとても大変です。原文が英語なので、なにか調べるのにも非英語ネイティブからすれば一苦労です。くわえてHTML5について書いている記事は無数にありどれを信用していいのかわかりません。</p>
 <p>しかし一番大変なのは、HTML5の変更に追従していくことでしょう。こればかりはどうしようもないので、もとのテキストをMarkdownなどの軽量マークアップ言語で書いて、PandocのようなコンバータでHTML5に変換する運用をとるのがもっとも楽かと思われます。事実僕もHTML5らしいコーディングスタイルに完全に移行できていません。</p>
 </div></div>
 
+<div class="colum">
+<div class="title">HTML5からHTML Living Standardへ</div>
+<div class="text">
+  <p>2021年1月28日にW3CのHTML5が廃止され、HTMLの標準規格はHTML Living Standardになりました。気がかりなのはvalidatorでした。古い規格にしたがってコード検査されてしまうなら新しい規格に準じたコーディングは不可能だからです。しかし<a href="https://whatwg.org/validator/">https://whatwg.org/validator/</a>では下記でvalidatorとして紹介しているThe Nu HTML Checkerが挙げられています。公式サイトで紹介されているなら利用を続けても問題なさそうでしょう。</p>
+</div></div>
+
 <h2 id="validator">Validator</h2>
-<p>文書を書いてWebに公開する際<a href="https://validator.w3.org/">The W3C Markup Validation Service</a>を使ってHTMLコードを検査します。Web上のサービスではなく手元で検査したい場合は<a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。ビルド方法は<a href="#nuhtml">NetBSDでNu HTML Checkerをビルドする</a>を参照してください。Gitを使っているのであれば、<a href="https://git-scm.com/book/ja/v1/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Gitフック</a>のpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下はpre-commitスクリプトの一例です。<code>chmod +x</code>コマンドで実行権限を与え、変数の値は適宜変更してください。</p>
+<p><a href="https://github.com/validator/validator">The Nu HTML Checker</a>がおすすめです。ビルド方法は<a href="#nuhtml">NetBSDでNu HTML Checkerをビルドする</a>を参照してください。Gitを使っているなら、<a href="https://git-scm.com/book/ja/v1/Git-%E3%81%AE%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%9E%E3%82%A4%E3%82%BA-Git-%E3%83%95%E3%83%83%E3%82%AF">Gitフック</a>のpre-commitスクリプト内でこのソフトウェアを使うと良いでしょう。以下はpre-commitスクリプトの一例です。<code>chmod +x</code>コマンドで実行権限を与え、変数の値は適宜変更してください。</p>
 
 <pre><code><b>#!/bin/sh
 
@@ -87,9 +94,7 @@ git diff --cached --name-only --diff-filter=AM HEAD \
   | grep 'html$' \
   | xargs $java -jar $validator_dir/build/dist/vnu.jar</b></code></pre>
 
-<p>個人的には後者のThe Nu HTML Checkerの利用を推奨します。逐一Webブラウザ経由でコードをチェックするのは面倒ですし、commit前にコードを検査することで正しくないコードがpushされるのを予防でき自信を持ってデプロイできます。</p>
-
-<p>公開後は<a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>からページのスコアを確認し、速度が改善できそうな箇所を探します。不要なインデントによるスペース／タブ文字の削除はその代表例です。</p>
+<p>Webページ公開後は<a href="https://developers.google.com/speed/pagespeed/insights/?hl=ja">PageSpeed Insights</a>からページのスコアを確認し、速度が改善できそうな箇所を探します。不要なインデントによるスペース／タブ文字の削除はその代表例です。</p>
 
 <h2 id="textlint">日本語校正</h2>
 <p>日本語の校正には<a href="https://github.com/textlint/textlint">textlint</a>を使います。pkgsrc(7)ではtextlintがパッケージとして提供されていません。そのためlang/npmパッケージをインストールし、npm(1)経由でtextlintとそのルールセットをインストールする必要があります。pkgsrc-2018Q4ではlang/npmパッケージをビルドすると途中でSegmentation Faultが起きたのですが、pkgsrc-2019Q1からは正常にビルドできるようになりました。</p>
@@ -231,19 +236,19 @@ git diff --cached --name-only --diff-filter=AM HEAD \
   | xargs textlint</b></code></pre>
 
 <h2 id="codestyle">一行あたりの文字数とインデント</h2>
-<p>一行あたりの文字数制限はありません。余計な空白が挿入されることを防ぐため、むしろ一段落（<code>p</code>タグで囲う）は一行に収めます。この方針はバージョン管理システムで差分を取ったとき、どこが変更されたのかが分かりづらいという明らかな欠点があります。この欠点を許容できないのであれば、改行は文単位でおこなうべきです。</p>
+<p>一行あたりの文字数制限はありません。余計な空白が挿入されることを防ぐため、むしろ一段落（<code>p</code>タグで囲う）は一行に収めます。この方針はバージョン管理システムで差分を取ったとき、どこが変更されたのかが分かりづらいという明らかな欠点があります。この欠点を許容できないなら改行は文単位でおこなうべきです。</p>
 
 <p>ページサイズを抑えるために、インデントは必要ありません。HTMLのコーディングではPythonのようにインデントが義務付けられていません。複雑なリストを書くときはインデントを使って見やすくしても構いませんが、commitするときはインデントをすべて削除します。</p>
 
 <h2 id="javascript">JavaScript</h2>
-<p>JavaScriptは使いません。TwitterやFacebook, Instagramといったユーザインタラクションが重要視されるサービスはともかく、テキスト中心の静的な技術文書はHTML5とCSSのみで書けます。</p>
+<p>JavaScriptは使いません。TwitterやFacebook, Instagramといったユーザインタラクションが重要視されるサービスはともかく、テキスト中心の静的な技術文書はHTMLとCSSのみで書けます。</p>
 
-<p>必ずしもユーザがJavaScriptを有効にしているとは限らないという点に注意してください。セキュリティ意識が高いユーザはJavaScriptを標準で無効にする拡張機能をブラウザにインストールしていることもあります（NoScriptなど）。またCUI Webブラウザ（w3m, lynxなど）ではJavaScriptを実行できません。一方で見栄え・組版・収益化などの都合でJavaScriptがどうしても欠かせないときもあります。そういった場合にはJavaScriptがなくても最低限、文章だけは読めるようにしてください</p>
+<p>必ずしもユーザがJavaScriptを有効にしているとは限らないという点に注意してください。セキュリティ意識が高いユーザはJavaScriptを標準で無効にする拡張機能をブラウザにインストールしていることもあります（NoScriptなど）。またCUI Webブラウザ（w3m, lynxなど）ではJavaScriptを実行できません。一方で見栄え・組版・収益化などの都合でJavaScriptがどうしても欠かせないときもあります。そういった場合にはJavaScriptがなくても最低限、文章だけは読めるようにしてください。</p>
 
 <h2 id="cache">キャッシュ（cache）</h2>
 <p>キャッシュはできる限り活用しますが、運用について少し考えなければなりません。画像ファイル（png, jpeg）は滅多に上書き変更する機会はないでしょう。論文や発表資料のPDFもそうだと考えられます。つまり一度サーバに公開したらそれっきりな拡張子のファイルはキャッシュの有効期間を長めにします。一方でHTMLファイルやテキストファイルは常に変更される可能性があります。そのためキャッシュは使わないか、使うにしても有効期間を短めにします。</p>
 
-<p>キャッシュの設定はWebサーバのプロバイダに依存します。もしWebサーバがレンタルサーバであれば、/etc/httpdディレクトリ以下にあるファイルを編集したりhttpdデーモンを再起動したりする権限は与えられていないと思われます。したがってこの場合には.htaccessを編集してキャッシュの設定をします。たとえば以下のように.htaccessに追記します。</p>
+<p>キャッシュの設定はWebサーバのプロバイダに依存します。Webサーバがレンタルサーバでなら、/etc/httpdディレクトリ以下にあるファイルを編集したりhttpdデーモンを再起動したりする権限は与えられていないと思われます。したがってこの場合には.htaccessを編集してキャッシュの設定をします。たとえば以下のように.htaccessに追記します。</p>
 
 <pre><code><b>&lt;Files ~ ".(png|jpe?g)"&gt;
     Header set Cache-Control "public, max-age=604800"
@@ -307,9 +312,9 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
 
 <h2 id="tips">Tips</h2>
 <h3 id="cite">引用の方法</h3>
-<p>引用の方法はそれが短いものか長いものかによって変わります。どの程度から長いと判断するかは曖昧ですが、文を2〜3以上引用したいのであれば長い引用の方法をとります。</p>
+<p>引用の方法はそれが短いものか長いものかによって変わります。どの程度から長いと判断するかは曖昧ですが、文を2〜3以上引用するときは長い引用の方法をとります。</p>
 
-<p>短い引用であれば「」で囲んで文中に書き、出典元を（）の中に明記します。たとえば「出版された情報をコンピュータを使って共有しようとする読者は、 法律上は著作権に違反しているのです」（Richard Stallman,『自由か著作権か？』）</p>
+<p>短い引用なら「」で囲んで文中に書き、出典元を（）の中に明記します。たとえば「出版された情報をコンピュータを使って共有しようとする読者は、 法律上は著作権に違反しているのです」（Richard Stallman,『自由か著作権か？』）</p>
 
 <p>長い引用は<code>blockquote</code>タグを使います。コードのフォーマットは以下の通りです（読みやすさを考慮し整形）。</p>
 
@@ -329,7 +334,7 @@ Output file size = 98570 bytes (18290 bytes = 15.65% decrease)</code></pre>
 &mdash;&mdash;<cite>Richard Stallman</cite>, <cite>結城浩（訳）</cite>, <cite>自由か著作権か？</cite>
 </footer></figure>
 
-<h3 id="vimrc">HTML5コーディングのための$HOME/.vimrc</h3>
+<h3 id="vimrc">HTMLコーディングのための$HOME/.vimrc</h3>
 <h4>タグを自動的に閉じる</h4>
 <p>対となるタグを「&lt;/」と入力した時点で閉じるようにします。$HOME/.vimrcに以下を追記します。</p>
 
