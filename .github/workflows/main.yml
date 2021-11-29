@@ -11,7 +11,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Validate HTML5
-        uses: Cyb3r-Jak3/html5validator-action@v0.1
+        uses: Cyb3r-Jak3/html5validator-action@v7.0.0
         with:
           root: .
       - name: Install SSH Key for Deploy
