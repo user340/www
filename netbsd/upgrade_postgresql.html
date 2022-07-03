@@ -61,7 +61,7 @@
 
 <p>移行前に使っていたデータベースおよびユーザを作り直し、先ほどダンプしたデータをインポートします。</p>
 
-<pre><code><b class="root">psql -U ユーザ名 データベース &lt; pgsql-dump</b>
+<pre><code><b class="root">psql -U ユーザ名 データベース &lt; pgsql-dump</b></code></pre>
 
 <p>これで<code>pg_upgrade</code>を使わないアップグレードは完了です。<code>pkg_delete</code>で削除された依存パッケージをインストールし直してください。</p>
 <hr>
