@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>NetBSDで動かしているPostgreSQLサーバをアップグレードする</h1>
+<p style="text-align:right;">2022年07月03日 初稿</p>
+<p>PostgreSQL 12.11から14.4へアップグレードしたときの手順を紹介します。</p>
+<hr>
+
+<h2 id="abstruct">pg_dumpを用いないPostgreSQLのアップグレード</h2>
+
+<p>2022年07月03日現在、pkgsrcで提供されているPostgreSQLパッケージはバージョンごとにバイナリのディレクトリやデータのディレクトリが分離されていないため単純に<code>pg_upgrade</code>を動かして既存のPostgreSQLサーバのアップグレードはできません。</p>
+
+<p>そこで、まずは移行元のバージョンのデータベースをダンプします。その後、移行先のバージョンのデータベースを新しく作り直し、ダンプしたデータを取り込ませることでアップグレードします。</p>
+
+<h2 id="checklist">アップグレードを始める前に</h2>
+
+<p>アップグレードを始める前に以下を確認してください。</p>
+
+<ul>
+  <li>PostgreSQLを利用しているサービスがアップグレード後のバージョンをサポートしている。</li>
+  <li>PostgreSQLを利用しているサービスが停止している。</li>
+</ul>
+
+<p>特に前もってデータベースに対し読み書きをおこなうサービスを停止しておかないと、データをダンプしてバックアップを作成したときとその後の作業の間でなにかしらのデータがサービスによって書き込まれてしまった場合、サービスの状態に齟齬が発生するかもしれません。</p>
+
+<h3 id="dump">データのダンプ</h3>
+
+<p><code>pg_dump</code>コマンドを使い、作成しているデータベースのデータをダンプします。</p>
+
+<pre><code><b class="root">pg_dump -U ユーザ名 データベース名 &gt; pgsql-dump</b></code></pre>
+
+<p>その後PostgreSQLサーバのサービスを停止し、データディレクトリの名前を変更します。データディレクトリの名前を変更するのは、このあと新しいほうのPostgreSQLパッケージであらためてデータベースの初期化をおこなうためです。</p>
+
+<pre><code><b class="root">service pgsql stop</b>
+<b class="root">mv /usr/pkg/pgsql /usr/pkg/pgsql.old</b></code></pre>
+
+<p>古いPostgreSQLパッケージを削除します。ここではPostgreSQLパッケージに依存しているパッケージもすべて削除するようにしています。</p>
+
+<pre><code><b class="root">pkg_delete -r postgresql12-server postgresql12-client</b></code></pre>
+
+<h3 id="install">新しいPostgreSQLサーバのインストール</h3>
+
+<p>pkgsrcから新しいPostgreSQLサーバをインストールします。</p>
+
+<pre><code><b class="root">cd /usr/pkgsrc/databases/postgresql14-server</b>
+<b class="root">make install clean clean-depends</b></code></pre>
+
+<p>正常にパッケージのビルドとインストールが完了したら、新しいバージョンのPostgreSQLでデータベースを初期化しサービスを起動します。</p>
+
+<pre><code><b class="root">/etc/rc.d/pgsql initdb -E UTF8</b>
+<b class="root">service pgsql start</b></code></pre>
+
+<h3 id="import">ダンプしたデータのインポート</h3>
+
+<p>移行前に使っていたデータベースおよびユーザを作り直し、先ほどダンプしたデータをインポートします。</p>
+
+<pre><code><b class="root">psql -U ユーザ名 データベース &lt; pgsql-dump</b>
+
+<p>これで<code>pg_upgrade</code>を使わないアップグレードは完了です。<code>pkg_delete</code>で削除された依存パッケージをインストールし直してください。</p>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
