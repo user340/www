@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>Hello Worldからつかむソフトウェアエンジニアリング</h1>
+<p style="text-align:right;">2022年月日 初稿</p>
+<figure>
+<blockquote>
+我々が提案するのは、「ソフトウェアエンジニアリング」とは単にコードを書く行為のみならず、組織が時間の経過に応じてコードを構築し保守するために用いるツールとプロセス全てをも包含するということである。
+</blockquote>
+<footer>&mdash;&mdash;<cite>Titus Winters, Tom Manshreck, Hyrum Wright 編 竹辺 靖昭 監訳 久富木 隆一 訳</cite>, <cite>Googleのソフトウェアエンジニアリング</cite>, p.x</footer>
+</figure>
+<hr>
+<ol>
+  <li><a href="#software_engineering">ソフトウェアエンジニアリングとはなにか</a></li>
+  <li>Hello Worldの開発環境・実行環境</li>
+  <li>Hello Worldのドキュメンテーション</li>
+  <li>Hello Worldを管理する&mdash;&mdash;バージョン管理システム</li>
+  <li>Hello Worldをテストする</li>
+  <li>Hello Worldのコードレビュー</li>
+  <li>Hello Worldをリリースする&mdash;&mdash;パッケージングとコンテナ化</li>
+  <li>Hello Worldをサポートする</li>
+  <li>Hello Worldをメンテナンスする</li>
+  <li>ビルドとリリースを自動化する</li>
+  <li>Hello Worldのタスクを管理する</li>
+  <li>Hello World開発システムを監視する</li>
+</ol>
+
+<h2 id="software_engineering">ソフトウェアエンジニアリングとはなにか</h2>
+
+<h3>「ソフトウェアエンジニアリング」という言葉の意味</h3>
+
+<p>「ソフトウェアエンジニアリング」と聞いて具体的にどのようなことをするのか想像できるでしょうか？あるいは「わたしはソフトウェアエンジニアです」と言われて、どのような仕事に携わっているのか理解できるでしょうか？</p>
+
+<p>「ソフトウェア」はコンピュータが処理するプログラムを指します。コンピュータの電源を入れたあとで自動的に動くオペレーティングシステム（WindowsやmacOSなど)や、ユーザが入力装置（マウスやキーボードなど）経由でコンピュータに実行を命じるアプリケーション（Webブラウザや文書作成ツールなど）を思い浮かべてください。</p>
+
+<p>エンジニアリング（engineering）を辞書（eow.alc.co.jp）で引くと「（自然科学の応用分野の）工学」あるいは「自然科学や数学を、人間の役に立つ実用的な分野（建築、設計、土木、機械、製造など）に応用したもの」とあります。したがって「ソフトウェアエンジニアリング」を辞書的に解釈するなら「ソフトウェアを実用的な分野に応用すること」となります。また「ソフトウェアエンジニア」はそのようなことをする人ということになります。</p>
+
+<h3>「ソフトウェアエンジニアリング」と「プログラミング」</h3>
+
+<p>いっぽうで「ソフトウェアエンジニア」がおこなう「ソフトウェアエンジニアリング」は「プログラマ」がおこなう「プログラミング」とどのように区別されるのか疑問を抱くかもしれません。</p>
+
+<p>『Googleのソフトウェアエンジニアリング』においてTitus Wintersは「我々の見るところ、プログラミングとソフトウェアエンジニアリングの決定的な違いは3つある。時間、スケール、そして作用しているトレードオフだ」（p.3）とし、「プログラミングは、コードを生産する即時的行動である。ソフトウェアエンジニアリングとは、コードを利用しなければならない期間中に有用に保つのに必要であり、またチームを横断した共同作業を可能とする、ポリシー、プラクティス、ツールのセットである」（p.29）と論じています。</p>
+
+<!-- TODO: 他にも文献をもとに違いを説明する。 -->
+
+<p>つまりソフトウェアエンジニアリングは単にエンジニアがコードを書くというだけに留まらず、チームが一丸となってそのコードを長い期間安定して保守していくために必要な活動すべてを指しているということです。</p>
+
+<h3>本稿のねらい</h3>
+
+<p>本稿はプログラミングを習ったことのある人誰もが一度は見たことがあるHello Worldのコードをもとに、Hello Worldプログラムに対してどのようなソフトウェアエンジニアリングが実践できるのかをテーマとしています。プログラミングの技法については言及しません。またHello Worldにしてはおおげさな前提や仮定も恐れずに使います。Hello Worldをなにか別の立派なプロダクトに置き換えたときでも、本稿の内容が違わず実践できるようにするためです。</p>
+
+<p>本稿ではプラクティスの実践にさいし特定のアプリケーションを使って説明をします。バージョン管理ならGit、パッケージングならRPMといったようにです。未来のことは誰にもわからないので、時が経つにつれ名前が変わったり時代遅れになったり開発プロジェクトそのものが解散するアプリケーションもなくはないでしょう。しかしバージョン管理やパッケージ管理システムという概念そのものがなくなることはおそらくないと見込んで、執筆時点でメジャーなアプリケーションを例にプラクティスを説明していきます。</p>
+
+<p>また本稿はページ最下部にもあるとおりCC0、つまりパブリック・ドメインライセンスのもとに公開します。営利／非営利を問わず複製・改変・翻案・再頒布に対し著者の許可を得る必要はありません。</p>
+
+<p>本文は予告なく変更されます。変更履歴等は明記しません。</p>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
