@@ -19,7 +19,8 @@
 <hr>
 <ol>
   <li><a href="#software_engineering">ソフトウェアエンジニアリングとはなにか</a></li>
-  <li>Hello Worldの開発環境・実行環境</li>
+  <li><a href="#introduction">読み進めるための準備</a></li>
+  <li><a href="#env">Hello Worldの開発環境・実行環境</a></li>
   <li>Hello Worldのドキュメンテーション</li>
   <li>Hello Worldを管理する&mdash;&mdash;バージョン管理システム</li>
   <li>Hello Worldをテストする</li>
@@ -61,5 +62,41 @@
 <p>また本稿はページ最下部にもあるとおりCC0、つまりパブリック・ドメインライセンスのもとに公開します。営利／非営利を問わず複製・改変・翻案・再頒布に対し著者の許可を得る必要はありません。</p>
 
 <p>本文は予告なく変更されます。変更履歴等は明記しません。</p>
+
+<h2 id="prepare">読み進めるための準備</h2>
+
+<h3>Red Hat Enterprise Linux 9のインストール</h3>
+
+<p>本稿を読みその内容を実践するにはLinuxディストリビューション、特にRed Hat Enterprise Linux 9（RHEL9）系のOSを実行できる環境が必要です。RHELクローンのOSやそれ以外の環境でも構いませんが環境の違いによる実行コマンドの差異などは自身で埋めてください。</p>
+
+<p>RHEL9を利用するには、Red Hatアカウントを作成してRHEL 9のインストールISOをダウンロードします。任意の環境でインストーラーを起動したあと、Red Hatアカウントかアクティベーションキーのいずれかを使ってサブスクリプションに登録しインストールをおこないます。インストールの詳しい手順は割愛します。</p>
+
+<h3>仮想環境を使う</h3>
+
+<p>余っているPCや中古の安価なPCを使ってディスクへ直接RHEL9をインストールしても構いませんが、仮想マシンを使うことでホストOSとは独立した環境を用意できます。これに関する導入手順などは同じく割愛します。</p>
+
+<p>Windowsを使っている場合はHyper-V、RHEL以外のLinuxディストリビューションを使っている場合はQEMU/KVMが仮想マシンを提供する仮想化プラットフォームとしてポピュラーなものです。macOSでのtype1ハイパーバイザーがなにか筆者は分かりませんが、type2ならVirtualBoxはmacOS用のパッケージを提供しているようです。</p>
+
+<h2 id="env">Hello Worldの開発環境・実行環境</h2>
+
+<p>以下のようなC言語のHello Worldを使います。<code>main.c</code>というファイルに書くものとします。このコードはこれ以上変更されません。</p>
+
+<pre><code>#include &lt;stdio.h&gt;
+
+int
+main(void)
+{
+        printf("Hello World\n");
+
+        return 0;
+}
+</code></pre>
+
+<p>このコードをGNU Cコンパイラを使ってコンパイルする場合はターミナルで<code>gcc</code>コマンドにコンパイルするファイル名を渡して実行します。カレントディレクトリに<code>a.out</code>というファイルが生成されるので、それを実行すると"Hello World"という文字列がターミナルに表示されます。</p>
+
+<pre><code><b class="user">gcc main.c</b>
+<b class="user">./a.out</b>
+Hello World
+</code></pre>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
