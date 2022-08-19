@@ -63,23 +63,42 @@
 
 <p>本文は予告なく変更されます。変更履歴等は明記しません。</p>
 
+<h3>より理解を深めるために</h3>
+
+<ul>
+  <li>『<b>Googleのソフトウェアエンジニアリング</b>』Titus Winters、Tom Manshreck、Hyrum Wright 編、竹辺 靖昭 監訳、久富木 隆一 訳（O'reilly Japan、2021年）</li>
+</ul>
+
 <h2 id="prepare">読み進めるための準備</h2>
 
 <h3>Red Hat Enterprise Linux 9のインストール</h3>
 
-<p>本稿を読みその内容を実践するにはLinuxディストリビューション、特にRed Hat Enterprise Linux 9（RHEL9）系のOSを実行できる環境が必要です。RHELクローンのOSやそれ以外の環境でも構いませんが環境の違いによる実行コマンドの差異などは自身で埋めてください。</p>
+<p>本稿を読み、その内容を実践するにはLinuxディストリビューション、特にRed Hat Enterprise Linux 9（RHEL9）系のOSを実行できる環境が必要です。RHELクローンのOSやそれ以外の環境でも構いませんが環境の違いによる実行コマンドの差異などは自身で埋めてください。</p>
 
-<p>RHEL9を利用するには、Red Hatアカウントを作成してRHEL 9のインストールISOをダウンロードします。任意の環境でインストーラーを起動したあと、Red Hatアカウントかアクティベーションキーのいずれかを使ってサブスクリプションに登録しインストールをおこないます。インストールの詳しい手順は割愛します。</p>
+<p>RHEL9を利用するには、Red Hatアカウントを作成してRHEL 9のインストールISOをダウンロードします。RHEL9は個人利用なら最大16台まで無料でアップデートリポジトリにアクセスできます。任意の環境でインストーラーを起動したあと、Red Hatアカウントかアクティベーションキーのいずれかを使ってサブスクリプションに登録しインストールをおこないます。インストールの詳しい手順は割愛します。</p>
 
 <h3>仮想環境を使う</h3>
 
 <p>余っているPCや中古の安価なPCを使ってディスクへ直接RHEL9をインストールしても構いませんが、仮想マシンを使うことでホストOSとは独立した環境を用意できます。これに関する導入手順などは同じく割愛します。</p>
 
-<p>Windowsを使っている場合はHyper-V、RHEL以外のLinuxディストリビューションを使っている場合はQEMU/KVMが仮想マシンを提供する仮想化プラットフォームとしてポピュラーなものです。macOSでのtype1ハイパーバイザーがなにか筆者は分かりませんが、type2ならVirtualBoxはmacOS用のパッケージを提供しているようです。</p>
+<p>Windowsを使っている場合はHyper-V、Linuxディストリビューションを使っている場合はQEMU/KVMが仮想マシンを提供する仮想化プラットフォームとしてポピュラーなものです。macOSでのtype1ハイパーバイザーがなにか筆者は分かりませんが、type2ならVirtualBoxはmacOS用のパッケージを提供しているようです。</p>
+
+<h3>まとめ</h3>
+
+<p>本稿を読み進めるためには任意の環境にRHEL 9 OSのインストールが必要です。RHEL 9は個人利用ならRed Hatのアカウントを作成すると無償で利用可能です。</p>
 
 <h2 id="env">Hello Worldの開発環境・実行環境</h2>
 
-<p>以下のようなC言語のHello Worldを使います。<code>main.c</code>というファイルに書くものとします。このコードはこれ以上変更されません。</p>
+<h3>ディレクトリ構造</h3>
+
+<p>任意の場所に<code>engineering_in_hello_world</code>というディレクトリを作成してください。特に明記しない限り、以降はこのディレクトリの中でファイルを作ったりコマンドを実行したりするものとします。</p>
+
+<pre><code><b class="user">mkdir engineering_in_hello_world</b>
+<b class="user">cd engineering_in_hello_world</b></code></pre>
+
+<h3>ソースコードとコンパイル</h3>
+
+<p>以下のようなC言語のHello Worldを使います。<code>main.c</code>というファイルに書くものとします。このコードはこれ以上変更されません。<code>nano</code>などのテキストエディタを使ってこのコードをそのまま写してください。</p>
 
 <pre><code>#include &lt;stdio.h&gt;
 
@@ -92,11 +111,92 @@ main(void)
 }
 </code></pre>
 
-<p>このコードをGNU Cコンパイラを使ってコンパイルする場合はターミナルで<code>gcc</code>コマンドにコンパイルするファイル名を渡して実行します。カレントディレクトリに<code>a.out</code>というファイルが生成されるので、それを実行すると"Hello World"という文字列がターミナルに表示されます。</p>
+<p>このファイルを用意したあとC言語のコンパイラをインストールします。ここではGNU Cコンパイラを使います。</p>
+
+<pre><code><b class="user">sudo dnf install gcc -y</b></code></pre>
+
+<p>このコードをコンパイルするにはターミナルで<code>gcc</code>コマンドにコンパイルするファイル名を渡して実行します。コンパイルに成功するとカレントディレクトリに<code>a.out</code>というファイルが生成さます。それを実行すると次のように"Hello World"という文字列がターミナルに表示されます。</p>
 
 <pre><code><b class="user">gcc main.c</b>
 <b class="user">./a.out</b>
 Hello World
 </code></pre>
+
+<p>これで画面に"Hello World"と表示するソフトウェアが出来上がりました。</p>
+
+<p><code>a.out</code>ではなにをするソフトウェアなのか名前で判別できません。そこで<code>gcc</code>の<code>-o</code>オプションを使い、名前を指定してバイナリを生成するようにします。<code>a.out</code>は削除します。</p>
+
+<pre><code><b class="user">rm ./a.out</b>
+<b class="user">gcc main.c -o hello_world</b>
+<b class="user">./hello_world</b>
+Hello World
+</code></pre>
+
+<h3>Makefileによるビルドの自動化</h3>
+
+<p>ここでは<code>main.c</code>ひとつしかソースコードのファイルがありませんが、現実に利用される大規模なソフトウェアのソースコードは機能や役割ごとにソースコードのファイルやファイルを配置するディレクトリが分割されています。</p>
+
+<p>ソフトウェア全体をコンパイルするとき、毎回<code>gcc</code>コマンドにコンパイルすべきファイル名をすべて渡して実行するのは非効率です。また、それぞれのソースコードをコンパイルする前にソースコードの静的検査やユニットテストなど事前に動かしておきたいタスクもあります。コンパイルして生成されたバイナリファイルを削除したい場合もあるでしょう。</p>
+
+<p>このようにただコンパイラを実行してソフトウェアをコンパイルするだけでなく、その前後になにかしらのタスクを挟むプロセスを本稿では<b>ビルド</b>と呼ぶことにします。C言語のみならずコンパイラを呼び出してソースコードをコンパイルするタイプのプログラミング言語に対しては、<code>make</code>コマンドとMakefileというファイルを用意すると便利です。</p>
+
+<p>まずは<code>make</code>コマンドを使うためにそのパッケージをインストールします。</p>
+
+<pre><code><b class="user">sudo dnf install make -y</b></code></pre>
+
+<p>ファイル<code>Makefile</code>に次の内容を書きます。Makefileの場合、インデントはスペースではなくタブでなければなりません。</p>
+
+<pre><code>NAME=     hello_world
+PROGRAM=  main.c
+
+all: build
+
+build: ${NAME}
+
+${NAME}: ${PROGRAM}
+        gcc ${PROGRAM} -o $@
+
+clean:
+        rm -f ./${NAME}
+</code></pre>
+
+<p>1行目では変数<code>NAME</code>に<code>hello_world</code>を代入し変数定義しています。<code>hello_world</code>という文字列はこのファイルの中で合計3箇所使われるため、このように変数化することでコードの重複を避けています。Makefileでは、変数は<code>${NAME}</code>のように書くことで参照されます。したがってこのように書いてある箇所はすべて<code>hello_world</code>と書いてあるんだと解釈してください。同様に、<code>main.c</code>という文字列も複数ヶ所書くことから変数<code>PROGRAM</code>にまとめています。なお、変数定義しているところの空白はスペースではなくタブです。</p>
+
+<p><code>all</code>や<code>build</code>、<code>clean</code>といったコロン（<code>:</code>）の前に書かれているものを<b>ターゲット</b>と呼びます。ターゲットのあとにファイル名が渡されているとき、そのターゲットと同じ名前のファイルが存在しない場合は次の行から続くタブ文字でインデントされたコマンドが1行ずつ実行されます。すでにそのターゲットと同じ名前のファイルが存在する場合は、ターゲットに渡されているファイルのタイムスタンプが更新されていない限りコマンドは実行されません。また、ターゲットにほかのターゲット名が渡されているときは、そのターゲットが順番に実行されます。</p>
+
+<p>コマンドラインで<code>make</code>を実行したとき、<code>all:</code>のあとに渡されているターゲットが順番に実行されます。ここではまず<code>build</code>が実行され、<code>build</code>には<code>${NAME}</code>が渡されているため最終的には<code>${NAME}</code>ターゲット（<code>hello_world</code>ターゲット）が実行されます。カレントディレクトリにファイル<code>hello_world</code>が存在しないか、<code>main.c</code>のタイムスタンプが変更されていれば<code>gcc ${PROGRAM} -o $@</code>が動きます。</p>
+
+<p>Makefileでは変数<code>$@</code>はターゲット名を参照します。つまりこのコマンドは最終的には<code>gcc main.c -o hello_world</code>と展開されます。</p>
+
+<p><code>make clean</code>で<code>hello_world</code>を削除してから<code>make</code>コマンドを実行してみましょう。</p>
+
+<pre><code><b class="user">make clean</b>
+rm -f ./hello_world
+<b class="user">make</b>
+cc main.c -o hello_world
+<b class="user">./hello_world</b>
+Hello World</code></pre>
+
+<p>もう一度<code>make</code>を実行すると、<code>main.c</code>にはなにも変更が加わっていないためコマンドはなにも実行されません。</p>
+
+<pre><code><b class="user">make</b>
+make: 'all' に対して行うべき事はありません.
+</code></pre>
+
+<h3>まとめ</h3>
+
+<p>C言語のソースコードのコンパイル方法と、Makefileの簡単な文法について説明しました。現時点でディレクトリ<code>engineering_in_hello_world</code>は次のような構造になっているはずです。</p>
+
+<pre><code>engineering_in_hello_world
+├── hello_world
+├── main.c
+└── Makefile</code></pre>
+
+<h3>より理解を深めるために</h3>
+
+<ul>
+  <li>『<b>プログラミング言語C</b>』Brian W. Kernighan、Dennis M. Ritchie 著、石田 晴久 訳（共立出版、1989年）</li>
+  <li>『<b>GNU Make 第3版</b>』Robert Mecklenburg 著、矢吹 道郎 監訳、菊池 彰 訳（O'Reilly Japan、2005年）</li>
+</ul>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
