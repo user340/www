@@ -21,7 +21,7 @@
   <li><a href="#software_engineering">ソフトウェアエンジニアリングとはなにか</a></li>
   <li><a href="#introduction">読み進めるための準備</a></li>
   <li><a href="#env">Hello Worldの開発環境・実行環境</a></li>
-  <li>Hello Worldのドキュメンテーション</li>
+  <li><a href="#documentation">Hello Worldのドキュメンテーション</a></li>
   <li>Hello Worldを管理する&mdash;&mdash;バージョン管理システム</li>
   <li>Hello Worldをテストする</li>
   <li>Hello Worldのコードレビュー</li>
@@ -80,7 +80,7 @@
 
 <ul>
   <li>『<b>Googleのソフトウェアエンジニアリング</b>』Titus Winters、Tom Manshreck、Hyrum Wright 編、竹辺 靖昭 監訳、久富木 隆一 訳（O'reilly Japan、2021年）</li>
-  <li>『モダン・ソフトウェアエンジニアリング』Ivar Jacobson、Harold "Bud" Lawson、Pan-Wei Ng、Paul E. McMahon、Michael Goedicke 著、角 征典 訳、鷲崎 弘宜 監修（翔泳社、2020年）</li>
+  <li>『<b>モダン・ソフトウェアエンジニアリング</b>』Ivar Jacobson、Harold "Bud" Lawson、Pan-Wei Ng、Paul E. McMahon、Michael Goedicke 著、角 征典 訳、鷲崎 弘宜 監修（翔泳社、2020年）</li>
   <li>『<b>実践ソフトウェアエンジニアリング [第9版]</b>』Roger S. Pressman、Bruce R. Maxim 共著、SEPA翻訳プロジェクト 訳（オーム社、2021年）</li>
 </ul>
 
@@ -91,6 +91,8 @@
 <p>本稿を読み、その内容を実践するにはLinuxディストリビューション、特にRed Hat Enterprise Linux 9（RHEL9）系のOSを実行できる環境が必要です。RHELクローンのOSやそれ以外の環境でも構いませんが環境の違いによる実行コマンドの差異などは自身で埋めてください。</p>
 
 <p>RHEL9を利用するには、Red Hatアカウントを作成してRHEL 9のインストールISOをダウンロードします。RHEL9は個人利用なら最大16台まで無料でアップデートリポジトリにアクセスできます。任意の環境でインストーラーを起動したあと、Red Hatアカウントかアクティベーションキーのいずれかを使ってサブスクリプションに登録しインストールをおこないます。インストールの詳しい手順は割愛します。</p>
+
+<!-- どのような環境が必要か。 エディタやターミナルの準備 -->
 
 <h3>仮想環境を使う</h3>
 
@@ -213,5 +215,21 @@ make: 'all' に対して行うべき事はありません.
   <li>『<b>プログラミング言語C</b>』Brian W. Kernighan、Dennis M. Ritchie 著、石田 晴久 訳（共立出版、1989年）</li>
   <li>『<b>GNU Make 第3版</b>』Robert Mecklenburg 著、矢吹 道郎 監訳、菊池 彰 訳（O'Reilly Japan、2005年）</li>
 </ul>
+
+<h2 id="documentation">Hello Worldのドキュメンテーション</h2>
+
+<p>ここまででHello Worldプログラムを作り、そのビルドをMakefileで自動化することができました。次にやるべきことは、これまでに用意したファイル等について説明する<b>ドキュメント</b>を作るというものです。</p>
+
+<p>なぜドキュメントを作らなければならないのでしょうか？ドキュメントは自分以外の誰かに対してビルドやソフトウェアを利用するための方法を説明したり、プロジェクトの意義や目的などを文章として残したりするために必要です。そして一般にソフトウェア開発は開発者一人だけでおこなわれずに、複数人がチームとして共同で作業することで達成されます。またソフトウェア開発プロジェクトが大規模になり時間がかかればかかるほど、戦力として新しくメンバーが参加する可能性もあります。</p>
+
+<p>プライベートの時間で開発したソフトウェアならドキュメントは不要でしょうか？そうではありません。なぜなら人間はものごとを忘れる生き物だからです。そのソフトウェアに夢中になっているあいだは問題ないかもしれませんが、もし時間を空けて再度そのプロジェクトに取り掛かったりその成果物を使いたくなったたりしたときには、曖昧な記憶に頼るよりはドキュメントを読んだほうが手っ取り早いですし確実でしょう。</p>
+
+<p>一方でドキュメンテーションはプログラミング等の作業と比べて優先順位が下がりがちな傾向にあります。アジャイルソフトウェア開発宣言（<a href="https://agilemanifesto.org/iso/ja/manifesto.html">https://agilemanifesto.org/iso/ja/manifesto.html</a>）では「包括的なドキュメントよりも動くソフトウェアを」という言葉もあります（これはドキュメントに価値がないという意味ではありません）。また Andrew HuntとDavid Thomasは『達人プログラマー』において「ほとんどの開発者はドキュメントのことについてあまり考えていません」（p.276）と断言しています。その上でAndrewらは「我々はコードとドキュメントを分けるという考え方から離れ、それらを同じモデルの2つのビューとして扱うべきなのです。……（略）……すべてのドキュメントはコードを反映したものになっているはずです」（p.276）と述べ、もしドキュメントとソースコードとの間でなにかしらの矛盾があった場合は「どんな場合であれ、それはコードの問題へとつながっていくのです」と論じています。つまりドキュメンテーションはソースコードの問題を燻り出す可能性も秘めているのです。</p>
+
+<h3>より理解を深めるために</h3>
+
+<ol>
+  <li>『<b>新装版 達人プログラマー 職人から名匠への道</b>』Andrew Hunt、David Thomas 著、村上 雅章 訳（オーム社、2016年）</li>
+</ol>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
