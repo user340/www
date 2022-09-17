@@ -22,7 +22,7 @@
   <li><a href="#introduction">読み進めるための準備</a></li>
   <li><a href="#env">Hello Worldの開発環境・実行環境</a></li>
   <li><a href="#documentation">Hello Worldのドキュメンテーション</a></li>
-  <li>Hello Worldを管理する&mdash;&mdash;バージョン管理システム</li>
+  <li><a href="#vcs">Hello Worldを管理する&mdash;&mdash;バージョン管理システム</a></li>
   <li>Hello Worldをテストする</li>
   <li>Hello Worldのコードレビュー</li>
   <li>Hello Worldをリリースする&mdash;&mdash;パッケージングとコンテナ化</li>
@@ -283,6 +283,8 @@ make
 
 <p>もっとわかりやすい書き方や修飾の仕方があるかもしれませんが、ここではこのようにしておきます。</p>
 
+<p>ドキュメントを書いたあとはそれを初めから終わりまで通読し書いてあるとおりの手順で書かれていることが実現できるかを確認してください。ドキュメントの量が多くなるほど、その執筆者による暗黙の了解や意図せず省略してしまった前提や手順などが紛れ込む可能性が高くなります。</p>
+
 <p>ここまでで<code>engineering_in_hello_world</code>のディレクトリは次のようになっています。</p>
 
 <pre><code>engineering_in_hello_world
@@ -296,5 +298,22 @@ make
 <ol>
   <li>『<b>新装版 達人プログラマー 職人から名匠への道</b>』Andrew Hunt、David Thomas 著、村上 雅章 訳（オーム社、2016年）</li>
 </ol>
+
+<h2 id="vcs">Hello Worldを管理する&mdash;&mdash;バージョン管理システム</h2>
+
+<p>いままでに書いてきたソースコードやドキュメントはあなたの開発マシン上に残されています。このプロジェクトもあなたひとりだけのものです。</p>
+
+<p>現実には、企業の中でおこなわれるソフトウェアプロジェクトには複数人の技術者が参画します。主語は「わたし」から「わたしたち」になるわけです。ここでは開発者ひとりひとりが互いに協同することによって製品が作り上げられていきます。つまり個人プレイからチームプレイへ移行するのです。</p>
+
+<p>では複数人でこのHello Worldプロジェクトに取り掛かると仮定して、ひとりだけで取り組むときと比べてどのようなトラブルが発生するのか考えてみましょう。以下に軽く思いつくものを列挙しました。</p>
+
+<ul>
+  <li>変更記録を残しておかないと誰がなにをどのような意図でどう変更したのかわからなくなる。</li>
+  <li>もし誰かが誤ったコードやドキュメントを書いたとき、バックアップがないと元通りにするのが面倒。</li>
+  <li>ソースコードがひとりの開発マシンにしか存在しないので複数人でひとつのマシンを共有しないといけない。</li>
+  <li>ひとりひとり好みのエディタやその設定が違うのでマシンを共有する場合は設定を調整したり各人に合わせた設定を別途用意する必要がある。</li>
+</ul>
+
+<p>これらのトラブルは「ソースコードの変更管理」と「共同作業」2つの問題に大別できます。それぞれの問題について個別の解決方法は確かに存在するでしょう。しかしソフトウェア開発という長い歴史の中でこれらの問題を一気に解決する技術が成熟してきました。それが「<b>バージョン管理システム</b>」（Version Control System）です。</p>
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
