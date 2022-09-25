@@ -76,7 +76,7 @@
 
 <p>本稿ではHello Worldのプログラムを通じてソフトウェアエンジニアリングの実践を試みます。</p>
 
-<h3>より理解を深めるために</h3>
+<h3>参考文献</h3>
 
 <ul>
   <li>『<b>Googleのソフトウェアエンジニアリング</b>』Titus Winters、Tom Manshreck、Hyrum Wright 編、竹辺 靖昭 監訳、久富木 隆一 訳（O'reilly Japan、2021年）</li>
@@ -209,7 +209,7 @@ make: 'all' に対して行うべき事はありません.
 ├── main.c
 └── Makefile</code></pre>
 
-<h3>より理解を深めるために</h3>
+<h3>参考文献</h3>
 
 <ul>
   <li>『<b>プログラミング言語C</b>』Brian W. Kernighan、Dennis M. Ritchie 著、石田 晴久 訳（共立出版、1989年）</li>
@@ -293,13 +293,15 @@ make
 ├── Makefile
 └── README</code></pre>
 
-<h3>より理解を深めるために</h3>
+<h3>参考文献</h3>
 
-<ol>
+<ul>
   <li>『<b>新装版 達人プログラマー 職人から名匠への道</b>』Andrew Hunt、David Thomas 著、村上 雅章 訳（オーム社、2016年）</li>
-</ol>
+</ul>
 
 <h2 id="vcs">Hello Worldを管理する&mdash;&mdash;バージョン管理システム</h2>
+
+<h3>個人プレイからチームプレイへ</h3>
 
 <p>いままでに書いてきたソースコードやドキュメントはあなたの開発マシン上に残されています。このプロジェクトもあなたひとりだけのものです。</p>
 
@@ -315,5 +317,25 @@ make
 </ul>
 
 <p>これらのトラブルは「ソースコードの変更管理」と「共同作業」2つの問題に大別できます。それぞれの問題について個別の解決方法は確かに存在するでしょう。しかしソフトウェア開発という長い歴史の中でこれらの問題を一気に解決する技術が成熟してきました。それが「<b>バージョン管理システム</b>」（Version Control System）です。</p>
+
+<h3>バージョン管理システムとは</h3>
+
+<p>「バージョン管理システム」について、Chaconらは「バージョン管理とは、一つのファイルやファイルの集合に対して時間とともに加えられていく変更を記録するシステムで、後で特定バージョンを呼び出すことができるようにするためのものです」（p.25）と説明しています。つまりバージョン管理システムを使うことでどのファイルがいつ・どのように・誰によって追加・変更・削除されたのかを常に追跡できるようになります。</p>
+
+<p>不特定多数のプログラマが同じコードツリーを編集するにあたり求められてきたバージョン管理システムには長い歴史があります。Fogelらが示すように<code>diff</code>と<code>patch</code>による電子メール経由での変更から始まり、Revision Control System（RCS）・Concurrent Versions System（CVS）・Apache Subversion（SVN）・Bitkeeper・MercurialおよびGitといったさまざまなバージョン管理システムが登場しました。これらツールがそれぞれ機能的・ライセンス的にどのように異なり使い勝手が違うのかといった調査は読者に任せますが、機能や使い勝手に対する利用者のニーズ・ツールそのもののデザインに対する考え方・利用規約・そのバージョン管理システムを利用できるWebプラットフォームなどさまざまな要素が時代によって変遷していき今に至ったことは確かです。</p>
+
+<p>現在では<a href="https://github.com">GitHub</a>や<a href="https://gitlab.com">GitLab</a>といったGitをベースとしたソースコード管理サービスが世界的に使われていることもあり、本稿ではバージョン管理システムとしてGitをHello Worldプロジェクトに導入することにします。ただし本稿はGitHubやGitLabといったWebサービスの利用方法については触れません。</p>
+
+<h3>Git</h3>
+
+<p>GitはGNU General Public License version 2.0でライセンスされたオープンソースのバージョン管理システムです。2005年12月に初版がリリースされて以来、GitHubなどWeb上の高機能なホスティングサービスも相まって現在に至るまで全世界のソフトウェア開発者に利用されています。</p>
+
+<h3>参考文献</h3>
+
+<ul>
+  <li>『<b><a href="https://progit-ja.github.io/">Pro Git</a></b>』Scott Chacon、Ben Straub 著、高木正弘、Yusuke Sato、harupong 訳（Apress、2015年）</li>
+  <li>『<b>CVS CVSによるオープンソース開発</b>』Karl Fogel、Moshe Bar 著、でびあんぐる 監訳、竹内里佳 訳（オーム社、2002年）</li>
+</ul>
+
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
