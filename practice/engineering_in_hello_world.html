@@ -475,12 +475,126 @@ index b30ff53..68985eb 100644
  clean:
         rm -f ./${NAME}</code></pre>
 
-<p>これでハッピーパスのテストが自動化されました。</p>
+<p>これでハッピーパスのテストが自動化されました。まだ<code>git commit</code>はしないでください。</p>
 
 <pre><code><b class="user">make test</b>
 Hello World</code></pre>
 
-<p>ただしこれではテストが通っているのか単に<code>hello_world</code>を動かしただけなのか判別し難いです。</p>
+<p><code>grep</code>を通しているので<code>Hello World</code>が出力されていればOKなのですが、テストが通っているのか単に<code>hello_world</code>を動かしただけなのか判別し難いですね？そこでテスト用のシェルスクリプトを別途用意し、テスト用コマンドの正否にあわせてテスト結果を報告するようにしてみましょう。ディレクトリに<code>tests</code>ディレクトリを作り、その中のファイル<code>main.sh</code>にテストの実装を書いていきます。</p>
+
+<pre><code><b class="user">mkdir tests</b></code></pre>
+
+<pre><code>#!/bin/sh
+
+_fail()
+{
+  echo "[FAIL] $@"
+  exit 1
+}
+
+NAME="hello_world"
+
+test -f "$NAME" || _fail "Binary $NAME not found"
+
+OUTPUT="$(./$NAME)"
+if echo "$OUTPUT" | grep -q "^Hello World$"; then
+  echo "[SUCCESS] $NAME shows excepted output: $OUTPUT"
+else
+  _fail "$NAME shows \"$OUTPUT\" but we excepted \"Hello World\""
+fi
+
+exit 0
+</code></pre>
+
+<p>このテストコードに実行権限を付与します。</p>
+
+<pre><code><b class="user">chmod +x tests/main.sh</b></code></pre>
+
+<p>Makefileでこのテストが動くよう変更します。</p>
+
+<pre><code>diff --git a/Makefile b/Makefile
+index b30ff53..aa574cd 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,12 +1,15 @@
+ NAME=          hello_world
+ PROGRAM=       main.c
+
+-all: build
++all: build test
+
+ build: ${NAME}
+
+ ${NAME}: ${PROGRAM}
+        gcc ${PROGRAM} -o $@
+
++test:
++       @./tests/main.sh
++
+ clean:
+        rm -f ./${NAME}</code></pre>
+
+<p>これで<code>make test</code>を実行するとテスト結果が出力されます。</p>
+
+<pre><code><b class="user">make test</b>
+[SUCCESS] hello_world shows excepted output: Hello World</code></pre>
+
+<p>一見これでテストをひとつ書き終えたように思えますが、Hello Worldのプログラム側になにか問題があったときにそれをこのテストで検知できるかどうかも確認しておきましょう。出力する文字列を変えて<code>make</code>するとどうなるでしょうか？ここではHelloとだけ出力するようにします。</p>
+
+<pre><code>diff --git a/main.c b/main.c
+index fee9147..8b51bca 100644
+--- a/main.c
++++ b/main.c
+@@ -3,7 +3,7 @@
+ int
+ main(void)
+ {
+-       printf("Hello World\n");
++       printf("Hello\n");
+
+        return 0;
+ }</code></pre>
+
+<p>これで<code>make</code>すると期待どおりテストが失敗します。</p>
+
+<pre><code><b class="user">make</b>
+gcc main.c -o hello_world
+[FAIL] hello_world shows "Hello" but we excepted "Hello World"
+make: *** [Makefile:12: test] エラー 1</code></pre>
+
+<p>このように、実装したテストコードが失敗するケースも確かめることではじめてテストが十分に機能するかどうかがわかるのです。</p>
+
+<p>最後に<code>Makefile</code>と<code>tests/main.sh</code>を<code>git commit</code>します。</p>
+
+<pre><code><b class="user">git add Makefile tests/main.sh</b>
+<b class="user">git commit</b></code></pre>
+
+<p>コミットメッセージは次のようにすればいいでしょう。</p>
+
+<pre><code>commit 431aeedc6eba41ba29e359d10b73b48ddeebf1bd (HEAD -> master)
+Author: Yuuki Enomoto <uki@localhost.localdomain>
+Date:   Sat Nov 19 10:30:29 2022 +0900
+
+    テストコードを追加した
+
+    Hello Worldのテストコードを追加した。
+
+    main.cを変更したあとmakeする。make testでテストを再実行できる。
+</code></pre>
+
+<h3>課題</h3>
+
+<ul>
+  <li><code>README</code>にテスト内容やテスト方法について書きリポジトリにコミットしましょう。</li>
+  <li>テストコードをシェルスクリプトではなく<a href="https://cucumber.io/">Cucumber</a>や<a href="https://robotframework.org/">Robot Framework</a>といったテストフレームワークを使って実装し直してみましょう。
+    <ul>
+      <li>シェルスクリプトからテストフレームワークへ移行できたらそれをリポジトリへコミットしましょう。</li>
+      <li><code>README</code>を更新しましょう。</li>
+      <li>なぜシェルスクリプトの代わりにテストフレームワークを使うといいのか考えてみましょう。</li>
+    </ul>
+  </li>
+  <li>Hello Worldに対してほかにどのようなテストができるか考えてみましょう。</li>
+</ul>
 
 <h3>参考文献</h3>
 
