@@ -10,8 +10,14 @@
 <article class="tiny">
 <h1>syspkg開発メモ</h1>
 <p style="text-align:right;">2023年2月10日 初稿</p>
+
+<ol>
+  <li><a href="#build">パッケージをビルドする</a></li>
+  <li><a href="#pkg_add">パッケージインストール時にルートディレクトリを変更する</a></li>
+  <li><a href="#force_build">一度ビルドしたあとでもregpkgなどへの変更をビルドに反映させる</a></li>
+</ol>
 <hr>
-<h2>パッケージをビルドする</h2>
+<h2 id="build">パッケージをビルドする</h2>
 
 <p>はじめに<code>build.sh</code>は<code>distribution</code>までビルドしておきます。</p>
 
@@ -32,7 +38,15 @@
 ...
 -V SYSPKGSETS=base syspkgs</b></code></pre>
 
-<h2>一度ビルドしたあとでも<code>regpkg</code>などへの変更をビルドに反映させる</h2>
+<h2 id="pkg_add">パッケージインストール時にルートディレクトリを変更する</h2>
+
+<p><code>pkg_add</code>コマンドでパッケージをインストールするとき、なにもオプションを付けずにこのコマンドを実行してしまうと<code>/</code>以下のファイルやディレクトリが上書きされたり削除される可能性があります。</p>
+
+<p>インストール先のルートディレクトリを<code>/</code>から変更するには<code>pkg_add</code>の<p>-p</p>オプションを使います。またシステムデフォルトのパッケージデータベースを汚さないために<code>-K</code>オプションでsyspkg用のデータベースを別途渡すといいでしょう。</p>
+
+<pre><code><b class="user">pkg_add -p ./pkgtest -K ./pkgtest/usr/pkg/pkgdb base-sys-root-9.99.96.0.20220429.tgz</b></code></pre>
+
+<h2 id="force_build">一度ビルドしたあとでもregpkgなどへの変更をビルドに反映させる</h2>
 
 <p>現在<code>build.sh syspkgs</code>を実行したあと<code>distrib/sets</code>以下のsyspkgビルド用スクリプトを更新し再度パッケージビルドをしてもその変更はパッケージの中身には反映されません。おそらく古いキャッシュかなにかを参照したままなのだと思われます。</p>
 
