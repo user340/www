@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>syspkg開発メモ</h1>
+<p style="text-align:right;">2023年2月10日 初稿</p>
+<hr>
+<h2>パッケージをビルドする</h2>
+
+<p>はじめに<code>build.sh</code>は<code>distribution</code>までビルドしておきます。</p>
+
+<p>例：</p>
+
+<pre><code><b class="root">./build.sh -u -m amd64 \
+-D /opt/builds/trunk/amd64/102-dest \
+-M /opt/builds/trunk/amd64/102-obj \
+-R /opt/builds/trunk/amd64/102-release \
+-T /opt/builds/trunk/amd64/102-tools \
+-X /usr/xsrc -x -N0 -j6 syspkgs</b></code></pre>
+
+<p>デフォルトではNetBSDのベースシステムのセット（baseやcomp、etcなど）すべてのパッケージがビルドされます。開発中の場合だとこの設定は時間がかかり煩わしいだけです。そこでビルドするパッケージのセットを<code>SYSPKGSETS</code>変数から指定することで時間短縮が可能です。</p>
+
+<p>たとえばbaseセットのパッケージのみをビルドする場合、<code>build.sh</code>の<code>-V</code>オプションを使ってコマンドラインから変数定義します。</p>
+
+<pre><code><b class="root">./build.sh -u -m amd64 \
+...
+-V SYSPKGSETS=base syspkgs</b></code></pre>
+
+<h2>一度ビルドしたあとでも<code>regpkg</code>などへの変更をビルドに反映させる</h2>
+
+<p>現在<code>build.sh syspkgs</code>を実行したあと<code>distrib/sets</code>以下のsyspkgビルド用スクリプトを更新し再度パッケージビルドをしてもその変更はパッケージの中身には反映されません。おそらく古いキャッシュかなにかを参照したままなのだと思われます。</p>
+
+<p><code>build.sh syspkgs</code>の処理では、Makefileから最終的に<code>distrib/sets/regpkgset</code>というスクリプトが実行されパッケージが作成されます。ここで、このスクリプトの引数に<code>-f</code>を渡してあげるとビルドスクリプトへの変更が反映されるようになります。</p>
+
+<p><code>distrib/sets/Makefile</code>では変数<code>REGPKG.force</code>を参照してこの<code>-f</code>オプションをつけるか否かを処理しているようです。ただし<code>build.sh -V REGPKG.force=-f</code>のようにしてもエラーになるだけですのでMakefileを直接編集して変えてしまったほうがいっそ楽です。</p>
+
+<p>ここでは<code>regpkgset</code>に<code>-f</code>オプションを渡すようにし、キャッシュを使わないよう<code>-c</code>オプションを削除しています。</p>
+
+<pre><code>--- a/distrib/sets/Makefile     Tue Feb 07 14:27:59 2023 +0000
++++ b/distrib/sets/Makefile     Fri Feb 10 22:28:44 2023 +0900
+@@ -286,8 +286,8 @@
+ .else  # MAKEVERBOSE >= 2
+ REGPKG.verbose?= -v
+ .endif
+-REGPKG.force?=         # -f, or empty
+-REGPKG.cache?= -c      # -c, or empty
++REGPKG.force?= -f              # -f, or empty
++REGPKG.cache?= # -c, or empty
+ REGPKG.update:= ${MKUPDATE:tl:Nno:C/..*/-u/}
+ SYSPKGSETS?= all
+ makesyspkgs: .PHONY check_DESTDIR check_RELEASEDIR \</code></pre>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
