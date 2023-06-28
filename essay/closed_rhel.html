@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>「Red Hat Enterprise Linux互換OS」の終わりと所感</h1>
+<p style="text-align:right;">2023年6月28日 初稿</p>
+<hr>
+
+<p>Red HatはRed Hat Enterprise Linux（RHEL）のソースコード（正確にはSRPM）リポジトリの公開を止め、ライセンス契約しているユーザにのみ提供するようです。これに関しては分かりやすくまとめてあるニュースが多々あるので詳しい内容についてここで繰り返すつもりはありません。</p>
+
+<dl>
+  <dt>Red HatがクローンOSベンダを非難、「付加価値もなくコードをリビルドするだけなら、それはオープンソースに対する脅威だ」と</dt>
+  <dd><a href="https://www.publickey1.jp/blog/23/red_hatos.html">https://www.publickey1.jp/blog/23/red_hatos.html</a></dd>
+  <dt>Red HatがクローンOSベンダを非難　「付加価値もなくコードをリビルドするだけなら、それはオープンソースに対する脅威だ」</dt>
+  <dd><a href="https://www.itmedia.co.jp/news/articles/2306/28/news119.html">https://www.itmedia.co.jp/news/articles/2306/28/news119.html</a></dd>
+  <dt>Red HatがRHELソースコードの一般公開をやめて顧客限定に、自由ソフトウェアの原則を軸にしてきたLinux関係者たちから猛批判を受ける</dt>
+  <dd><a href="https://gigazine.net/news/20230623-rhel/">https://gigazine.net/news/20230623-rhel/</a></dd>
+  <dt>Red Hat、Red Hat Enterprise Linuxのパブリックソースコード公開の変更を発表、ソースコードの配布を顧客限定に</dt>
+  <dd><a href="https://thinkit.co.jp/news/bn/22209">https://thinkit.co.jp/news/bn/22209</a></dd>
+</dl>
+
+<p>AlmaLinuxやRocky Linuxといったいわゆる「Red Hatクローン」と呼ばれるOSでは、RHELのリポジトリからSRPMを取得し、それをそのままあるいはブランド名の変更やパッチの追加などをして再ビルドしていました。今後はそのようなことができなくなるということです。CentOS Streamの公開は引き続きおこなわれるようですので、今後はCentOS StreamのSRPMを使って互換OSを作るということになります。つまり厳密に言えば「RHEL互換OS」というものはこの世からなくなります。</p>
+
+<p>RHELのSRPMを再頒布した場合はRed Hatとの契約違反という扱いになるようです（XXX: 要出典）。この対応が各種GPLライセンスとどう共存するのか、法律の素人が素朴に考えれば疑問ではあります。しかしこの決定はRed Hat社内で弁護士を交え慎重に議論されたうえでのものでしょうから一朝一夕には覆らないとみていいでしょう。上の記事で述べられているようなFLOSSの理念がどうという話もRed Hat社内ではすでに解決済みの議論なのでしょう。</p>
+
+<p>これは恨み言のようにも見えますが決してそのような意図はなく、なにが言いたいかというと単に理念に基づいてRed Hat社あるいはIBM社にメール・電話・SNSで抗議をしても無駄ということです。これまでRHELクローンを作ってきたチームは淡々とできることをやっていくしか存続の道はないということです。</p>
+
+<p>この件にどうしても納得がいかないのなら、簡単なものから難しいものまでいくつか闘争手段はあります。</p>
+
+<ol>
+  <li>RHEL、CentOS Stream、Fedoraの利用を止め代替を探す</li>
+  <li>GPL違反を主張して訴訟する</li>
+  <li>IBM（NYSE: IBM）の大口株主となり物申す</li>
+</ol>
+
+<p>いずれも行動に移したところで解決には膨大な時間がかかります。なら前向きに今やれることをやろうというわけです。</p>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
