@@ -25,21 +25,46 @@
   <dd><a href="https://thinkit.co.jp/news/bn/22209">https://thinkit.co.jp/news/bn/22209</a></dd>
 </dl>
 
-<p>AlmaLinuxやRocky Linuxといったいわゆる「Red Hatクローン」と呼ばれるOSでは、RHELのリポジトリからSRPMを取得し、それをそのままあるいはブランド名の変更やパッチの追加などをして再ビルドしていました。今後はそのようなことができなくなるということです。CentOS Streamの公開は引き続きおこなわれるようですので、今後はCentOS StreamのSRPMを使って互換OSを作るということになります。つまり厳密に言えば「RHEL互換OS」というものはこの世からなくなります。</p>
+<p>AlmaLinuxやRocky Linuxといったいわゆる「RHELクローン」と呼ばれるOSでは、RHELのリポジトリからSRPMを取得し、それをそのままあるいはブランド名の変更やパッチの追加などをして再ビルドしていました。今後はそのようなことができなくなるということです。CentOS Streamの公開は引き続きおこなわれるようですので、今後はCentOS StreamのSRPMを使って互換OSを作るということになります。つまり厳密に言えば「RHEL互換OS」というものはこの世からなくなります。</p>
 
 <p>RHELのSRPMを再頒布した場合はRed Hatとの契約違反という扱いになるようです（XXX: 要出典）。この対応が各種GPLライセンスとどう共存するのか、法律の素人が素朴に考えれば疑問ではあります。しかしこの決定はRed Hat社内で弁護士を交え慎重に議論されたうえでのものでしょうから一朝一夕には覆らないとみていいでしょう。上の記事で述べられているようなFLOSSの理念がどうという話もRed Hat社内ではすでに解決済みの議論なのでしょう。</p>
 
-<p>これは恨み言のようにも見えますが決してそのような意図はなく、なにが言いたいかというと単に理念に基づいてRed Hat社あるいはIBM社にメール・電話・SNSで抗議をしても無駄ということです。これまでRHELクローンを作ってきたチームは淡々とできることをやっていくしか存続の道はないということです。</p>
+<p>これは恨み言のようにも見えますがそうではなく、単に理念や思想に基づいてRed Hat社あるいはIBM社に抗議をしても無駄ということです。そういう批判は織り込み済みでしょうし、これまでRHELクローンを作ってきたチームは淡々とできることをやっていくしか存続の道はないということです。</p>
 
-<p>この件にどうしても納得がいかないのなら、簡単なものから難しいものまでいくつか闘争手段はあります。</p>
+<p>この件に納得がいかないのなら、簡単なものから難しいものまでいくつか闘争手段はあります。</p>
 
 <ol>
   <li>RHEL、CentOS Stream、Fedoraの利用を止め代替を探す</li>
   <li>GPL違反を主張して訴訟する</li>
-  <li>IBM（NYSE: IBM）の大口株主となり物申す</li>
+  <li>IBM（NYSE: IBM）の大口株主となり経営方針に口を出す</li>
 </ol>
 
-<p>いずれも行動に移したところで解決には膨大な時間がかかります。なら前向きに今やれることをやろうというわけです。</p>
+<p>いずれも行動に移したところでこの問題の解決には膨大な時間がかかります。それよりも、この件で気になったのはRed Hat社のMike McGrathによるこの文章です。</p>
+
+<blockquote>
+  <figure>
+    <p><b>Simply rebuilding code, without adding value or changing it in any way, represents a real threat to open source companies everywhere. This is a real threat to open source, and one that has the potential to revert open source back into a hobbyist- and hackers-only activity.</b></p>
+  </figure>
+  <figcaption>Mike McGrath,『<cite>Red Hat’s commitment to open source: A response to the git.centos.org changes </cite>』,<a href="https://www.redhat.com/en/blog/red-hats-commitment-open-source-response-gitcentosorg-changes">https://www.redhat.com/en/blog/red-hats-commitment-open-source-response-gitcentosorg-changes</a></figcaption>
+</blockquote>
+
+<p>なんの付加価値を与えることなくコードをリビルドする行為は、オープンソース企業への脅威となると言いたいわけです。そしてその行為は、オープンソース活動をソフトウェアを趣味にしている人やハッカーだけの活動に逆戻りさせてしまう可能性があるとも言い切っています。せっかく営利企業がFLOSSのやり方にしたがったうえで独自の価値を与えたのに、それにタダ乗りするならわざわざ企業がオープンソースに力を注ぐ理由もなくなるという意味だと思います。</p>
+
+<p>これは暗にRHELクローンOSはRed Hatに一切の価値や利益をもたらさず邪魔な存在でしかないという意思表示とも解釈できます。そのような存在も、ライセンスにしたがってさえいればその価値がどうであろうと許容しなければならないというのがFLOSSの原理原則にのっとった解釈です。しかしたしかに幾多もあるLinuxディストリビューションの中には、ブランドと統合デスクトップ環境をクローン元から変えただけじゃないかと言いたくなるようなものもあります。結局そのようなディストリビューションは、ソフトウェアの品質をその開発者自身ではなくクローン元の開発者に委ねています。</p>
+
+<p>そこであらためて考えてみましょう。<b>わたしたちは価値をFLOSSのアップストリームへ、Red Hatへ還元できていたか？</b>と。ここはいっそ憤りを表明する場ではなく自省する場ととらえ、自身のFLOSSへの姿勢を振り返ってみることにしましょう。そっちのほうがよほど建設的です。</p>
+
+<p>もしできていたなら、それは少なくともRed Hatにとって価値あるものとは捉えられなかったか、Red Hatのエンジニアによる仕事に比べれば量が少なく誤差と思われていたということです。仮に「ホビイスト」や「ハッカー」らによる貢献の質が高ければ、彼らへ自由に使わせないことによるデメリットのほうが大きいと判断されるはずです。一方でもし還元できていなかったのであれば、それはもうなるべくしてなったということです。あきらめましょう。</p>
+
+<p>ここでいくつか教訓を得られるかと思います。</p>
+
+<ol>
+  <li>なるべくFLOSSのアップストリームへバグ報告やパッチ投稿をするようにしましょう。</li>
+  <li>FLOSSのアップストリームへ貢献しているユーザがいることを積極的にアピールしましょう。もし企業としてなにかしらFLOSSに貢献しているならそれをホームページなどわかりやすい場所で公開してみましょう。</li>
+  <li>FLOSSのためにできることを検討してみましょう。</li>
+</ol>
+
+<p>これらを実践したところで、営利企業が公開しているFLOSSはRed Hatと同じように契約でクローズドになっていく場合もあるかもしれません。しかしなにも行動を起こさないよりかは、企業に強いユーザの下支えを感じさせてあげるほうが今回のような事態に発展する確率は低そうに見えますし、わずかなあいだでもそのプロダクトが良くなることを思えば苦ではないはずです。</p>
 
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
