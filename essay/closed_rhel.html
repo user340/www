@@ -25,9 +25,18 @@
   <dd><a href="https://thinkit.co.jp/news/bn/22209">https://thinkit.co.jp/news/bn/22209</a></dd>
 </dl>
 
-<p>AlmaLinuxやRocky Linuxといったいわゆる「RHELクローン」と呼ばれるOSでは、RHELのリポジトリからSRPMを取得し、それをそのままあるいはブランド名の変更やパッチの追加などをして再ビルドしていました。今後はそのようなことができなくなるということです。CentOS Streamの公開は引き続きおこなわれるようですので、今後はCentOS StreamのSRPMを使って互換OSを作るということになります。つまり厳密に言えば「RHEL互換OS」というものはこの世からなくなります。</p>
+<p>AlmaLinuxやRocky Linuxといったいわゆる「RHELクローン」と呼ばれるOSでは、RHELのリポジトリからSRPMを取得し、ブランド名の変更やパッチの追加などをして再ビルドしていました。今後はそのようなことができなくなるということです。CentOS Streamの公開は引き続きおこなわれるようですので、今後はCentOS StreamのSRPMを使ってLinuxディストリビューションを作るということになります。つまり厳密に言えば「RHEL互換OS」というものはこの世からなくなります。</p>
 
-<p>RHELのSRPMを再頒布した場合はRed Hatとの契約違反という扱いになるようです（XXX: 要出典）。この対応が各種GPLライセンスとどう共存するのか、法律の素人が素朴に考えれば疑問ではあります。しかしこの決定はRed Hat社内で弁護士を交え慎重に議論されたうえでのものでしょうから一朝一夕には覆らないとみていいでしょう。上の記事で述べられているようなFLOSSの理念がどうという話もRed Hat社内ではすでに解決済みの議論なのでしょう。</p>
+<p>RHELのSRPMを再頒布した場合はサブスクリプションサービスの不正利用という扱いになるようです。以下はRed Hatの『製品付属文書 1 ソフトウェア サブスクリプション及びサポートサブスクリプション』の1.2 (g)を引用したものです。</p>
+
+<figure>
+  <blockquote>
+    <p><b>サブスクリプションサービスの不正な利用。</b>サブスクリプションサービスを不正に利用することは、本契約に対する重大な違反となります。サブスクリプションサービスの不正利用には、(a)ユニット総数の一部についてしかサブスクリプションサービスを購入もしくは更新しないこと、(b)1つのソフトウェアサブスクリプションを2つ以上のユニットに分割し、又は適用すること、(c)第三者にサブスクリプションサービスを（全部又は一部）提供すること、(d)本ソフトウェアの再配布に関連してサブスクリプションサービスを利用すること、又は(e)その都度サブスクリプションサービスを購入することなくレッドハット以外のソフトウェア製品のサポートもしくはメンテナンスにサブスクリプションサービスを利用することが含まれます（併せて「サブスクリプションサービスの不正な利用」と呼びます）。</p>
+  </blockquote>
+  <figcaption><a href="https://www.redhat.com/licenses/Appendx-1-Japanese-20230313.pdf">https://www.redhat.com/licenses/Appendx-1-Japanese-20230313.pdf</a> (2023/07/05閲覧)</figcaption>
+</figure>
+
+<p>「(d)本ソフトウェアの再配布に関連してサブスクリプションサービスを利用すること」が本件に関わってくるのでしょう。この対応が各種GPLライセンスとどう共存するのか、法律の素人が素朴に考えれば疑問ではあります。しかしこの決定はRed Hat社内で弁護士を交え慎重に議論されたうえでのものでしょうから一朝一夕には覆らないとみていいでしょう。</p>
 
 <p>これは恨み言のようにも見えますがそうではなく、単に理念や思想に基づいてRed Hat社あるいはIBM社に抗議をしても無駄ということです。そういう批判は織り込み済みでしょうし、これまでRHELクローンを作ってきたチームは淡々とできることをやっていくしか存続の道はないということです。</p>
 
@@ -41,12 +50,12 @@
 
 <p>いずれも行動に移したところでこの問題の解決には膨大な時間がかかります。それよりも、この件で気になったのはRed Hat社のMike McGrathによるこの文章です。</p>
 
-<blockquote>
-  <figure>
+<figure>
+  <blockquote>
     <p><b>Simply rebuilding code, without adding value or changing it in any way, represents a real threat to open source companies everywhere. This is a real threat to open source, and one that has the potential to revert open source back into a hobbyist- and hackers-only activity.</b></p>
-  </figure>
+  </blockquote>
   <figcaption>Mike McGrath,『<cite>Red Hat’s commitment to open source: A response to the git.centos.org changes </cite>』,<a href="https://www.redhat.com/en/blog/red-hats-commitment-open-source-response-gitcentosorg-changes">https://www.redhat.com/en/blog/red-hats-commitment-open-source-response-gitcentosorg-changes</a></figcaption>
-</blockquote>
+</figure>
 
 <p>なんの付加価値を与えることなくコードをリビルドする行為は、オープンソース企業への脅威となると言いたいわけです。そしてその行為は、オープンソース活動をソフトウェアを趣味にしている人やハッカーだけの活動に逆戻りさせてしまう可能性があるとも言い切っています。せっかく営利企業がFLOSSのやり方にしたがったうえで独自の価値を与えたのに、それにタダ乗りするならわざわざ企業がオープンソースに力を注ぐ理由もなくなるという意味だと思います。</p>
 
@@ -66,9 +75,11 @@
 
 <p>これらを実践したところで、営利企業が公開しているFLOSSはRed Hatと同じように契約の都合で実質クローズドになっていく場合もあるかもしれません。しかしなにも行動を起こさないよりかは、企業に強いユーザの下支えを感じさせてあげるほうが今回のような事態に発展する確率は低そうに見えますし、わずかなあいだでもそのプロダクトが良くなることを思えば苦ではないはずです。</p>
 
-<p>一方でこんな強気の表明をしてしまった以上、今後はRed HatにFLOSS開発者&mdash;&mdash;特にRed HatによってパッケージングされているFLOSSの開発者&mdash;&mdash;から厳しい目が注がれることでしょう。「会社としてあんなことを書いたのに、私のプロダクトにはなにも還元してくれないじゃないか」と。Red HatはFLOSSのトップランナー的存在ではありますから杞憂のような気はしますが、プレッシャーが高くなっていることは確かだと思います。</p>
+<p>一方でこんな強気の表明をしてしまった以上、今後はRed HatにFLOSS開発者&mdash;&mdash;特にRed HatによってパッケージングされているFLOSSの開発者&mdash;&mdash;から厳しい目が注がれることでしょう。「会社としてあんなことを書いたのに、私のプロダクトにはなにも貢献してくれないじゃないか」と。Red HatはFLOSSのトップランナー的存在ではありますから杞憂のような気はしますが、プレッシャーが高くなっていることは確かだと思います。</p>
 
-<p>当然これはRed Hatに限った話ではありませんから、FLOSSを利用している企業やFLOSSをforkするかたちで製品として利用している企業もじゅうぶん留意すべき点ではあります。個人的な意見としてですが、この件をきっかけに企業によるFLOSSへの貢献は一層注目されると考えています。備えましょう。</p>
+<p>当然これはRed Hatに限った話ではありませんから、FLOSSを利用している企業やFLOSSをforkするかたちで製品として利用している企業もじゅうぶん留意すべき点ではあります。僕は、この件をきっかけに企業によるFLOSSへの貢献ぶりがステークホルダーから一層注目されると強く考えています。注目と言っても関心ではなく、監視として。</p>
+
+<p>つまり「FLOSSは無料で使えて質も高い」というありがちな認識はもう捨てて「無料で室の高いFLOSSを使わせてもらう以上はその恩返しのやり方を常に模索しよう」という心構えがより必要になっていくのです。</p>
 
 <hr>
 <footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="https://i.creativecommons.org/p/zero/1.0/88x31.png" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
