@@ -28,7 +28,7 @@
 
 <p><code><b>gpart show -p</b></code>を実行する場合、種類が<code>efi</code>となっているパーティションを探します。以下の実行例では<code>ada0p1</code>が該当します。</p>
 
-<pre><code class="user"><b>gpart show -p</b>
+<pre><code><b class="user">gpart show -p</b>
 =&gt;       40  976773088    ada0  GPT  (466G)
          40     409600  ada0p1  efi  (200M)
      409640       1024  ada0p2  freebsd-boot  (512K)
@@ -41,7 +41,7 @@
 
 <p><code><b>efibootmgr -v</b></code>を実行するにはroot権限が必要です。このコマンド出力では<code>/EFI/BOOT/BOOTX64.EFI</code>がどのパーティションに存在するかを確認すればいいです。以下の実行例では<code>ada0p1</code>が該当します。</p>
 
-<pre><code class="root"><b>efibootmgr -v</b>
+<pre><code><b class="root">efibootmgr -v</b>
 Boot to FW : false
 BootCurrent: 0002
 Timeout    : 1 seconds
@@ -60,18 +60,18 @@ BootOrder  : 0002, 0001, 0003, 0004, 0005
 
 <p>次に<code>ada0p1</code>をマウントします。</p>
 
-<pre><code class="root"><b>mount -t msdosfs /dev/ada0p1 /mnt</b></code></pre>
+<pre><code><b class="root">mount -t msdosfs /dev/ada0p1 /mnt</b></code></pre>
 
 <h2>新しいブートローダを配置する</h2>
 
 <p>マウント先の<code>efi/boot</code>ディレクトリに新しいブートローダを配置します。ここでは念のため古いブートローダのバックアップをとっています。</p>
 
-<pre><code class="root"><b>cp /mnt/efi/boot/BOOTx64.efi{,.orig}</b></code>
-<code class="root"><b>cp /boot/loader.efi /mnt/efi/boot/BOOTx64.efi</b></code></pre>
+<pre><code><b class="root">cp /mnt/efi/boot/BOOTx64.efi{,.orig}</b></code>
+<code><b class="root">cp /boot/loader.efi /mnt/efi/boot/BOOTx64.efi</b></code></pre>
 
 <p>最後にEFIパーティションをアンマウントします。</p>
 
-<pre><code class="root"><b>umount /mnt</b></code></pre>
+<pre><code><b class="root">umount /mnt</b></code></pre>
 
 <h1>おわりに</h1>
 
