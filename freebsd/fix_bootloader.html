@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>FreeBSD 14.0へアップグレードしたあとにブートローダを直す</h1>
+<p style="text-align:right;">2024年9月7日 初稿</p>
+<hr>
+<h1>事象</h1>
+<p>FreeBSD 14.0がリリースされたあと<code><b>freebsd-update</b></code>でバージョンアップグレードをすると、再起動後にカーネルが自動でブートされずずっと困っていました。</p>
+
+<img src="./images/booterror.jpg" alt="boot error"/>
+
+<p><code><b>boot</b></code>を実行すればブートするので深刻ではなかったのですがマシンの電源を落とす頻度は下がりました。</p>
+
+<h1>解決方法</h1>
+
+<p>本腰を入れて修正しようと思いたち、同じ事象を報告しているページを探しました。すると『<a href="https://forums.freebsd.org/threads/problem-upgrading-from-13-3-release-to-14-1-release-lua-error-upon-booting-kernel.93737/">Problem Upgrading from 13.3-RELEASE to 14.1-RELEASE: Lua Error Upon Booting Kernel</a>』のコメントからFreeBSDのBugzilla『<a href="https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=279829">Unable to automatically boot after upgrading to 14.1-RELEASE</a>』を見つけ、最終的には『<a href="https://www.jan0sch.de/post/freebsd-upgrade-uefi-bootloader/">FreeBSD upgrading the bootloader on UEFI boots</a>』にて具体的なブートローダの更新手順を知ることができました。どうやら<code><b>freebsd-update</b></code>ではブートローダの更新まではやってもらえず、手動で更新する必要があるとわかりました。</p>
+
+<h2>マウントすべきディスクパーティションを探す</h2>
+
+<p>はじめに<code><b>gpart show -p</b></code>あるいは<code><b>efibootmgr -v</b></code>でEFIパーティションを確認します。</p>
+
+<p><code><b>gpart show -p</b></code>を実行する場合、種類が<code>efi</code>となっているパーティションを探します。以下の実行例では<code>ada0p1</code>が該当します。</p>
+
+<pre><code class="user"><b>gpart show -p</b>
+=&gt;       40  976773088    ada0  GPT  (466G)
+         40     409600  ada0p1  efi  (200M)
+     409640       1024  ada0p2  freebsd-boot  (512K)
+     410664        984          - free -  (492K)
+     411648    4194304  ada0p3  freebsd-swap  (2.0G)
+    4605952  972167168  ada0p4  freebsd-zfs  (464G)
+  976773120          8          - free -  (4.0K)
+
+</code></pre>
+
+<p><code><b>efibootmgr -v</b></code>を実行するにはroot権限が必要です。このコマンド出力では<code>/EFI/BOOT/BOOTX64.EFI</code>がどのパーティションに存在するかを確認すればいいです。以下の実行例では<code>ada0p1</code>が該当します。</p>
+
+<pre><code class="root"><b>efibootmgr -v</b>
+Boot to FW : false
+BootCurrent: 0002
+Timeout    : 1 seconds
+BootOrder  : 0002, 0001, 0003, 0004, 0005
++Boot0002* UEFI OS HD(1,GPT,c531e91d-295f-11ea-aa96-04d9f58606dc,0x28,0x64000)/File(\EFI\BOOT\BOOTX64.EFI)
+                      ada0p1:/EFI/BOOT/BOOTX64.EFI (null)
+ Boot0001* Hard Drive BBS(HD,,0x0)
+ Boot0003* UEFI:CD/DVD Drive BBS(0x81,,0x0)
+ Boot0004* UEFI:Removable Device BBS(0x82,,0x0)
+ Boot0005* UEFI:Network Device BBS(0x83,,0x0)
+</code></pre>
+
+<p>EFIパーティションは<code>ada0p1</code>です。</p>
+
+<h2>EFIパーティションをマウントする</h2>
+
+<p>次に<code>ada0p1</code>をマウントします。</p>
+
+<pre><code class="root"><b>mount -t msdosfs /dev/ada0p1 /mnt</b></code></pre>
+
+<h2>新しいブートローダを配置する</h2>
+
+<p>マウント先の<code>efi/boot</code>ディレクトリに新しいブートローダを配置します。ここでは念のため古いブートローダのバックアップをとっています。</p>
+
+<pre><code class="root"><b>cp /mnt/efi/boot/BOOTx64.efi{,.orig}</b></code>
+<code class="root"><b>cp /boot/loader.efi /mnt/efi/boot/BOOTx64.efi</b></code></pre>
+
+<p>最後にEFIパーティションをアンマウントします。</p>
+
+<pre><code class="root"><b>umount /mnt</b></code></pre>
+
+<h1>おわりに</h1>
+
+<p>ブートローダは手動で更新する必要があるのを知らず不便な思いをしていました。次にアップグレードするときはこの作業も忘れずにやるつもりです。</p>
+
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="../cc0.svg" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
