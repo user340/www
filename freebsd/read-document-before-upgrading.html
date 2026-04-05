@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="/css/my.css">
+<title>e-yuuki.org</title>
+</head>
+<body>
+<article class="tiny">
+<h1>アップグレードはドキュメントを読んでから&mdash;&mdash;14.3から15.0へのアップグレードを例に</h1>
+<p style="text-align:right;">2026年4月5日 初稿</p>
+<hr>
+<h2>結論</h2>
+<p><b>まずは関連するドキュメントを読んでからアップグレードすること。</b></p>
+
+<h2>発端と問題</h2>
+<p>FreeBSD 15.0がリリースされていることに気がついたので<code>freebsd-update</code>をなんの考えなしに実行したところ、再起動後にこのようなエラーが出るようになりました。</p>
+
+<pre><code>ld-elf.so.1: Shared object "libsys.so.7" not found, required by "libc.so.7"</code></pre>
+
+<p>どうやらlibcにリンクしているバイナリを実行すると<code>libsys.so.7</code>が存在していないことでエラーになってしまうようです。</p>
+
+<h2>解決策</h2>
+<p>任意のFTPサーバからFreeBSD 15.0の<code>base.txz</code>を取得し、その中から<code>lib/libsys.so.7</code>をUSBメモリなどの外部ストレージにコピーします。FreeBSDマシンにそのストレージを接続し、<code>libsys.so.7</code>を<code>/lib</code>へコピーします。USBメモリであれば以下のコマンドを実行してマウントできます。</p>
+
+<pre><code><b class="root">/rescure/mount_msdos /dev/da0 /mnt</b></code></pre>
+
+<p>その後おそらく中断されていたであろうインストールプロセスをやり直します。</p>
+
+<pre><code><b class="root">freebsd-update -r 15.0 fetch -F</b>
+<b class="root">freebsd-update install</b></code></pre>
+
+<h2>どうすればよかったのか</h2>
+<p>アップグレードのようなクリティカルな操作については公式にドキュメントが用意されているものなのでそれを熟読したうえでおこなえばよかったのです。</p>
+
+<p><a href="https://www.freebsd.org/releases/15.0R/installation/">FreeBSD 15.0-RELEASE Installation Instructions</a></p>
+
+<blockquote cite="https://www.freebsd.org/releases/15.0R/installation/">
+  <p>This step is essential, as upgrading to 15.0-RELEASE without applying the FreeBSD-EN-25:18.freebsd-update errata update will result in an inoperative system! </p>
+</blockquote>
+
+<h2>関連リンク</h2>
+<ul>
+  <li><a href="https://www.freebsd.org/releases/15.0R/installation/">FreeBSD 15.0-RELEASE Installation Instructions</a></li>
+  <li><a href="https://www.freebsd.org/security/advisories/FreeBSD-EN-25:18.freebsd-update.asc">FreeBSD-EN-25:18.freebsd-update</a></li>
+  <li><a href="https://forums.freebsd.org/threads/libsys-so-7-not-found-after-freebsd-update-upgrade.101075/">libsys.so.7 not found after freebsd-update upgrade</a></li>
+  <li><a href="http://takeno.iee.niit.ac.jp/~shige/FreeBSD/fbsd-imemo.html">FreeBSD: インストールに関するメモ</a></li>
+</ul>
+<hr>
+<footer><div style="text-align:center;padding-top:2em;padding-bottom:2em;"><a rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/"><img src="../cc0.svg" alt="CC0" /></a></div><p>To the extent possible under law, <a href="mailto:uki@e-yuuki.org">Yuuki Enomoto</a> has waived all copyright and related or neighboring rights to e-yuuki.org. This work is published from: Japan.</p></footer></article></body></html>
